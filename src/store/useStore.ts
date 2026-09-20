@@ -64,7 +64,33 @@ const upsert = <T extends { id: string }>(arr: T[], item: T): T[] => {
 
 const removeById = <T extends { id: string }>(arr: T[], id: string): T[] => arr.filter((x) => x.id !== id)
 
-const notifyError = (message: string) => useToastStore.getState().show(message)
+/**
+ * Supabase query errors (PostgrestError) only extend `Error` when a call uses
+ * `.throwOnError()` — we don't. In every other case (including the plain object
+ * we re-`throw` from `initializeForUser`), it's a plain `{ message, details, hint,
+ * code }` object with no `Error` in its prototype chain, so `err instanceof Error`
+ * is false and its real message gets lost. This reads `.message`/`.hint` off
+ * whatever shape the error actually is, so the real Postgres/PostgREST message —
+ * e.g. "permission denied for table storage_units" — reaches the UI instead of a
+ * generic fallback.
+ */
+const describeError = (err: unknown, fallback: string): string => {
+  if (err && typeof err === 'object') {
+    const { message, hint, code } = err as { message?: unknown; hint?: unknown; code?: unknown }
+    if (typeof message === 'string' && message) {
+      const codePart = typeof code === 'string' && code ? ` [${code}]` : ''
+      const hintPart = typeof hint === 'string' && hint ? ` — ${hint}` : ''
+      return `${message}${hintPart}${codePart}`
+    }
+  }
+  if (err instanceof Error && err.message) return err.message
+  return fallback
+}
+
+const notifyError = (message: string, err?: unknown) => {
+  if (err !== undefined) console.error(`[Kitchen] ${message}`, err)
+  useToastStore.getState().show(message)
+}
 
 let activeChannel: RealtimeChannel | null = null
 
@@ -169,6 +195,17 @@ export const useStore = create<AppState>()((set, get) => ({
         supabase.from('user_settings').select('*').maybeSingle(),
       ])
 
+      const namedResults: [string, { error: unknown }][] = [
+        ['storage_units', storageRes],
+        ['categories', categoriesRes],
+        ['inventory_items', itemsRes],
+        ['shopping_list_items', shoppingRes],
+        ['stat_events', statsRes],
+        ['user_settings', settingsRes],
+      ]
+      for (const [table, res] of namedResults) {
+        if (res.error) console.error(`[Kitchen] Failed to load "${table}":`, res.error)
+      }
       const firstError =
         storageRes.error || categoriesRes.error || itemsRes.error || shoppingRes.error || statsRes.error || settingsRes.error
       if (firstError) throw firstError
@@ -251,7 +288,8 @@ export const useStore = create<AppState>()((set, get) => ({
         )
         .subscribe()
     } catch (err) {
-      set({ dataStatus: 'error', dataError: err instanceof Error ? err.message : 'Failed to load your data.' })
+      console.error('[Kitchen] initializeForUser failed:', err)
+      set({ dataStatus: 'error', dataError: describeError(err, 'Failed to load your data.') })
     }
   },
 
@@ -284,7 +322,7 @@ export const useStore = create<AppState>()((set, get) => ({
       .upsert({ user_id: userId, onboarding_complete: true }, { onConflict: 'user_id' })
 
     if (unitsError || settingsError) {
-      notifyError("Something went wrong finishing setup — check your connection and try again.")
+      notifyError("Something went wrong finishing setup — check your connection and try again.", unitsError || settingsError)
     }
   },
 
@@ -299,7 +337,7 @@ export const useStore = create<AppState>()((set, get) => ({
       .insert({ id, user_id: userId, name, type, created_at: unit.createdAt })
     if (error) {
       set((s) => ({ storageUnits: removeById(s.storageUnits, id) }))
-      notifyError(`Couldn't add ${name}`)
+      notifyError(`Couldn't add ${name}`, error)
     }
     return id
   },
@@ -311,7 +349,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('storage_units').update({ name }).eq('id', id)
     if (error) {
       set((s) => ({ storageUnits: s.storageUnits.map((u) => (u.id === id ? previous : u)) }))
-      notifyError("Couldn't rename storage")
+      notifyError("Couldn't rename storage", error)
     }
   },
 
@@ -325,7 +363,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('storage_units').delete().eq('id', id)
     if (error) {
       set({ storageUnits: previousUnits, items: previousItems })
-      notifyError("Couldn't delete storage")
+      notifyError("Couldn't delete storage", error)
     }
   },
 
@@ -338,7 +376,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('categories').insert({ id, user_id: userId, name, icon, is_custom: true })
     if (error) {
       set((s) => ({ categories: removeById(s.categories, id) }))
-      notifyError("Couldn't add category")
+      notifyError("Couldn't add category", error)
     }
     return id
   },
@@ -350,7 +388,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('categories').delete().eq('id', id)
     if (error) {
       set((s) => ({ categories: [...s.categories, category] }))
-      notifyError("Couldn't delete category")
+      notifyError("Couldn't delete category", error)
     }
   },
 
@@ -366,7 +404,7 @@ export const useStore = create<AppState>()((set, get) => ({
       const { error } = await supabase.from('inventory_items').update({ quantity: updated.quantity }).eq('id', duplicate.id)
       if (error) {
         set((s) => ({ items: upsert(s.items, duplicate) }))
-        notifyError(`Couldn't update ${duplicate.name}`)
+        notifyError(`Couldn't update ${duplicate.name}`, error)
       }
       return { merged: true, item: updated }
     }
@@ -400,7 +438,7 @@ export const useStore = create<AppState>()((set, get) => ({
     })
     if (error) {
       set((s) => ({ items: removeById(s.items, id) }))
-      notifyError(`Couldn't add ${input.name}`)
+      notifyError(`Couldn't add ${input.name}`, error)
     }
     return { merged: false, item }
   },
@@ -426,7 +464,7 @@ export const useStore = create<AppState>()((set, get) => ({
       .eq('id', id)
     if (error) {
       set((s) => ({ items: upsert(s.items, previous) }))
-      notifyError(`Couldn't save changes to ${previous.name}`)
+      notifyError(`Couldn't save changes to ${previous.name}`, error)
     }
   },
 
@@ -440,7 +478,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('inventory_items').update({ quantity: nextQuantity }).eq('id', id)
     if (error) {
       set((s) => ({ items: upsert(s.items, previous) }))
-      notifyError("Couldn't update quantity")
+      notifyError("Couldn't update quantity", error)
       return previous
     }
     if (consumedAmount > 0) {
@@ -457,7 +495,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('inventory_items').delete().eq('id', id)
     if (error) {
       set((s) => ({ items: upsert(s.items, item) }))
-      notifyError(`Couldn't delete ${item.name}`)
+      notifyError(`Couldn't delete ${item.name}`, error)
     }
   },
 
@@ -497,7 +535,7 @@ export const useStore = create<AppState>()((set, get) => ({
     })
     if (error) {
       set((s) => ({ shoppingList: removeById(s.shoppingList, id) }))
-      notifyError(`Couldn't add ${name}`)
+      notifyError(`Couldn't add ${name}`, error)
     }
   },
 
@@ -552,7 +590,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('user_settings').upsert(row, { onConflict: 'user_id' })
     if (error) {
       set({ settings: previous })
-      notifyError("Couldn't save settings")
+      notifyError("Couldn't save settings", error)
     }
   },
 
@@ -671,8 +709,8 @@ export const useStore = create<AppState>()((set, get) => ({
       await importBackupToCloud(userId, parsed, get().categories)
       await get().initializeForUser(userId)
       return true
-    } catch {
-      notifyError('Could not import that file')
+    } catch (err) {
+      notifyError('Could not import that file', err)
       return false
     }
   },
@@ -719,8 +757,8 @@ export const useStore = create<AppState>()((set, get) => ({
       )
       await get().initializeForUser(userId)
     } catch (err) {
-      notifyError('Could not reset your data — please try again.')
-      set({ dataStatus: 'ready', dataError: err instanceof Error ? err.message : null })
+      notifyError('Could not reset your data — please try again.', err)
+      set({ dataStatus: 'ready', dataError: describeError(err, 'Could not reset your data.') })
     }
   },
 }))
