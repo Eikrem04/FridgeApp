@@ -1,5 +1,6 @@
-import { Bell, Info, AlarmClock } from 'lucide-react'
+import { Bell, Info, AlarmClock, LogOut, Mail } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useAuthStore } from '../store/useAuthStore'
 import { TopBar } from '../components/layout/TopBar'
 import { SettingsSection, SettingsRow } from '../components/settings/SettingsSection'
 import { StorageUnitsSection } from '../components/settings/StorageUnitsSection'
@@ -20,6 +21,8 @@ export const Settings = () => {
   const settings = useStore((s) => s.settings)
   const updateSettings = useStore((s) => s.updateSettings)
   const setTheme = useStore((s) => s.setTheme)
+  const user = useAuthStore((s) => s.user)
+  const signOut = useAuthStore((s) => s.signOut)
 
   const requestNotificationPermission = async () => {
     if (typeof Notification === 'undefined') return
@@ -31,6 +34,11 @@ export const Settings = () => {
     <div className="pb-28 md:pb-12">
       <TopBar title="Settings" />
       <div className="px-5 md:px-8">
+        <SettingsSection title="Account">
+          <SettingsRow icon={<Mail size={16} />} label={user?.email ?? 'Signed in'} sub="Synced across your devices" />
+          <SettingsRow icon={<LogOut size={16} />} label="Log out" onClick={() => void signOut()} />
+        </SettingsSection>
+
         <StorageUnitsSection />
 
         <SettingsSection title="Appearance">

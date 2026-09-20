@@ -42,8 +42,8 @@ export const AddItem = () => {
     )
   }
 
-  const handleSubmit = (values: ItemFormValues) => {
-    const { merged, item } = addItem(values)
+  const handleSubmit = async (values: ItemFormValues) => {
+    const { merged, item } = await addItem(values)
     showToast(merged ? `Combined with existing ${item.name}` : `${item.name} added`)
     navigate(`/storage/${values.storageId}`)
   }

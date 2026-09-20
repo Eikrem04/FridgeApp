@@ -62,8 +62,8 @@ export const ItemDetailSheet = () => {
     })
   }
 
-  const handleQuantityChange = (delta: number) => {
-    const updated = changeQuantity(item.id, delta)
+  const handleQuantityChange = async (delta: number) => {
+    const updated = await changeQuantity(item.id, delta)
     if (updated && updated.quantity === 0) {
       setZeroPrompt(true)
     }

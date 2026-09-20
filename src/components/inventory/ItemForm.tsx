@@ -26,8 +26,11 @@ interface ItemFormProps {
 
 export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormProps) => {
   const storageUnits = useStore((s) => s.storageUnits)
+  const categories = useStore((s) => s.categories)
+  const defaultCategoryId =
+    categories.find((c) => c.name.toLowerCase() === 'other')?.id ?? categories[0]?.id ?? ''
   const [name, setName] = useState(initial?.name ?? '')
-  const [categoryId, setCategoryId] = useState(initial?.categoryId ?? 'other')
+  const [categoryId, setCategoryId] = useState(initial?.categoryId ?? defaultCategoryId)
   const [quantity, setQuantity] = useState(initial?.quantity ?? 1)
   const [unit, setUnit] = useState(initial?.unit ?? 'pcs')
   const [storageId, setStorageId] = useState(initial?.storageId ?? storageUnits[0]?.id ?? '')

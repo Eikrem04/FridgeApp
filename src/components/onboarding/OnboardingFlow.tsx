@@ -31,6 +31,7 @@ export const OnboardingFlow = () => {
   }, [fridgeCount, freezerCount])
 
   const [names, setNames] = useState<Record<string, string>>({})
+  const [finishing, setFinishing] = useState(false)
 
   const goToNames = () => {
     const initial: Record<string, string> = {}
@@ -39,9 +40,10 @@ export const OnboardingFlow = () => {
     setStep('names')
   }
 
-  const finish = () => {
-    if (userName.trim()) updateSettings({ userName: userName.trim() })
-    completeOnboarding(unitDrafts.map((u) => ({ name: (names[u.key] || u.defaultName).trim(), type: u.type })))
+  const finish = async () => {
+    setFinishing(true)
+    if (userName.trim()) await updateSettings({ userName: userName.trim() })
+    await completeOnboarding(unitDrafts.map((u) => ({ name: (names[u.key] || u.defaultName).trim(), type: u.type })))
   }
 
   return (
@@ -153,8 +155,8 @@ export const OnboardingFlow = () => {
                 ))}
               </div>
 
-              <Button fullWidth size="lg" className="mt-8" onClick={finish}>
-                Start using Kitchen
+              <Button fullWidth size="lg" className="mt-8" onClick={finish} disabled={finishing}>
+                {finishing ? 'Setting up…' : 'Start using Kitchen'}
               </Button>
               <button
                 type="button"

@@ -14,16 +14,16 @@ export const CategoryPicker = ({ value, onChange }: CategoryPickerProps) => {
   const [adding, setAdding] = useState(false)
   const [newName, setNewName] = useState('')
 
-  const submitNew = () => {
+  const submitNew = async () => {
     const name = newName.trim()
     if (!name) {
       setAdding(false)
       return
     }
-    const id = addCategory(name)
-    onChange(id)
-    setNewName('')
     setAdding(false)
+    setNewName('')
+    const id = await addCategory(name)
+    onChange(id)
   }
 
   return (

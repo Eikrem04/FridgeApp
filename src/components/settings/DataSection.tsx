@@ -26,8 +26,8 @@ export const DataSection = () => {
 
   const handleImportFile = async (file: File) => {
     const text = await file.text()
-    const ok = importData(text)
-    showToast(ok ? 'Data imported successfully' : 'Could not import that file')
+    const ok = await importData(text)
+    if (ok) showToast('Data imported successfully')
   }
 
   return (
@@ -63,8 +63,8 @@ export const DataSection = () => {
         message="This permanently deletes every item, storage unit and setting. This cannot be undone."
         confirmLabel="Reset everything"
         onConfirm={() => {
-          resetAllData()
           setConfirmReset(false)
+          void resetAllData()
         }}
         onCancel={() => setConfirmReset(false)}
       />
