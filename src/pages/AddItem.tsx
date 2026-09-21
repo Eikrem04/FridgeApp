@@ -71,10 +71,13 @@ export const AddItem = () => {
       (product.categoryId && categories.some((c) => c.id === product.categoryId) ? product.categoryId : undefined) ??
       guessCategoryIdFromTags(product.categoryTags, categories) ??
       fallbackCategoryId()
+    // Quantity and unit intentionally stay at the form's own defaults (1 /
+    // "pcs") for every scanned product. Open Food Facts' package size (e.g.
+    // "300 g") describes the contents of ONE package, not how many Kitchen
+    // has — it's surfaced as read-only text in the banner below instead.
     setPrefill({
       name: product.name,
       categoryId,
-      unit: product.unit,
       storageId: presetStorageId,
       imageUrl: product.imageUrl,
     })
@@ -165,7 +168,8 @@ export const AddItem = () => {
               <>
                 <PackageSearch size={18} className="shrink-0 text-[var(--color-accent)]" />
                 <p className="flex-1 text-[13.5px] font-medium text-[var(--color-ink)]">
-                  Filled in from {lookup.product.source === 'cache' ? 'a product you scanned before' : 'Open Food Facts'} —
+                  Filled in from {lookup.product.source === 'cache' ? 'a product you scanned before' : 'Open Food Facts'}
+                  {lookup.product.packageSize ? ` — package size ${lookup.product.packageSize}` : ''}. Quantity defaults to 1 —
                   double-check before saving.
                 </p>
               </>

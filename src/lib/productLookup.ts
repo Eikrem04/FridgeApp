@@ -5,7 +5,14 @@ export interface ProductInfo {
   name: string
   brand?: string
   imageUrl?: string
-  unit?: string
+  /**
+   * Open Food Facts' free-text package-size string (e.g. "300 g", "1 l"),
+   * shown to the user as-is for reference only. This describes how big ONE
+   * package is — it is NOT how many of them Kitchen has, and must never be
+   * written into an item's countable `quantity`/`unit` fields (those always
+   * default to 1 / "pcs" for a scanned product; see AddItem.tsx).
+   */
+  packageSize?: string
   /** Already-resolved Kitchen category id (comes from a previous cache hit). */
   categoryId?: string
   /** Raw Open Food Facts category tags, to be resolved against live categories. */
@@ -21,23 +28,18 @@ export type ProductLookupState =
 const OFF_TIMEOUT_MS = 8000
 
 /**
- * Best-effort, conservative parse of Open Food Facts' free-text `quantity`
- * field (e.g. "1 l", "500 g", "6x25cl") into one of Kitchen's own units.
- * Only ever returns a value it's confident about — a multipack like "6x25cl"
- * or an unrecognized word correctly yields undefined rather than a guess.
+ * Open Food Facts' `quantity` field is free text describing one package
+ * (e.g. "300 g", "1 l", "6x25cl") — shown to the user verbatim, never
+ * parsed into a Kitchen unit. Only accepted when it actually contains a
+ * digit, which also guards against a `known_products` row cached by an
+ * older build of Kitchen that stored a bare normalized unit letter (e.g.
+ * "g") in this same column — those no longer resemble a real package size
+ * and are dropped here rather than displayed or reused.
  */
-const parseUnitFromQuantity = (quantity: string | undefined): string | undefined => {
-  if (!quantity) return undefined
-  const match = quantity
-    .toLowerCase()
-    .match(/\d[\d.,]*\s*(kg|g|ml|l|kilograms?|liters?|litres?|milliliters?|millilitres?)(?![a-z])/)
-  if (!match) return undefined
-  const raw = match[1]
-  if (raw.startsWith('kg') || raw.startsWith('kilogram')) return 'kg'
-  if (raw.startsWith('ml') || raw.startsWith('millilit')) return 'ml'
-  if (raw.startsWith('l') || raw.startsWith('lit')) return 'l'
-  if (raw.startsWith('g')) return 'g'
-  return undefined
+const sanitizePackageSize = (value: string | null | undefined): string | undefined => {
+  const trimmed = value?.trim()
+  if (!trimmed || !/\d/.test(trimmed)) return undefined
+  return trimmed
 }
 
 interface OffProductResponse {
@@ -79,7 +81,7 @@ export const lookupProductByBarcode = async (barcode: string): Promise<ProductLo
       name,
       brand: data.product.brands?.trim() || undefined,
       imageUrl: data.product.image_front_url || data.product.image_url || undefined,
-      unit: parseUnitFromQuantity(data.product.quantity),
+      packageSize: sanitizePackageSize(data.product.quantity),
       categoryTags: data.product.categories_tags,
       source: 'openfoodfacts',
     }
@@ -98,6 +100,7 @@ interface KnownProductRow {
   name: string
   brand: string | null
   category_id: string | null
+  /** Column name predates this fix — holds the package-size string now, see `ProductInfo.packageSize`. */
   unit: string | null
   image_url: string | null
 }
@@ -129,7 +132,7 @@ export const getCachedProduct = async (userId: string, barcode: string): Promise
       name: data.name,
       brand: data.brand ?? undefined,
       categoryId: data.category_id ?? undefined,
-      unit: data.unit ?? undefined,
+      packageSize: sanitizePackageSize(data.unit),
       imageUrl: data.image_url ?? undefined,
       source: 'cache',
     }
@@ -158,7 +161,7 @@ export const cacheKnownProduct = async (
         name: product.name,
         brand: product.brand ?? null,
         category_id: categoryId ?? null,
-        unit: product.unit ?? null,
+        unit: product.packageSize ?? null,
         image_url: product.imageUrl ?? null,
         source: 'openfoodfacts',
         last_used_at: new Date().toISOString(),

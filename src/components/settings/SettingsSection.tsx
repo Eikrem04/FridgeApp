@@ -16,22 +16,31 @@ export const SettingsRow = ({
   sub,
   right,
   onClick,
+  tone = 'default',
 }: {
   icon?: ReactNode
   label: string
   sub?: string
   right?: ReactNode
   onClick?: () => void
+  /** 'accent' visually marks the row as an action, e.g. "Log out" — distinct from a plain info row. */
+  tone?: 'default' | 'accent'
 }) => {
+  const iconToneClass =
+    tone === 'accent'
+      ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
+      : 'bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10'
+  const labelToneClass = tone === 'accent' ? 'text-[var(--color-accent)]' : 'text-[var(--color-ink)]'
+
   const content = (
     <>
       {icon && (
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10">
+        <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${iconToneClass}`}>
           {icon}
         </span>
       )}
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-[15px] font-medium text-[var(--color-ink)]">{label}</span>
+        <span className={`block truncate text-[15px] font-medium ${labelToneClass}`}>{label}</span>
         {sub && <span className="block truncate text-[12.5px] text-[var(--color-ink-faint)]">{sub}</span>}
       </span>
       {right}
@@ -40,7 +49,12 @@ export const SettingsRow = ({
 
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} className="flex w-full items-center gap-3 px-4 py-3.5 text-left">
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={label}
+        className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition hover:bg-black/[0.03] active:bg-black/[0.05] dark:hover:bg-white/5 dark:active:bg-white/10"
+      >
         {content}
       </button>
     )

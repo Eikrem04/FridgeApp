@@ -505,7 +505,10 @@ export const useStore = create<AppState>()((set, get) => ({
     const updated = { ...item, isFavorite: !item.isFavorite }
     set((s) => ({ items: upsert(s.items, updated) }))
     const { error } = await supabase.from('inventory_items').update({ is_favorite: updated.isFavorite }).eq('id', id)
-    if (error) set((s) => ({ items: upsert(s.items, item) }))
+    if (error) {
+      set((s) => ({ items: upsert(s.items, item) }))
+      notifyError("Couldn't update favorite", error)
+    }
   },
 
   addShoppingItem: async (name, opts) => {
@@ -543,7 +546,10 @@ export const useStore = create<AppState>()((set, get) => ({
     const previous = get().shoppingList
     set((s) => ({ shoppingList: removeById(s.shoppingList, id) }))
     const { error } = await supabase.from('shopping_list_items').delete().eq('id', id)
-    if (error) set({ shoppingList: previous })
+    if (error) {
+      set({ shoppingList: previous })
+      notifyError("Couldn't remove item", error)
+    }
   },
 
   togglePurchased: async (id) => {
@@ -552,7 +558,10 @@ export const useStore = create<AppState>()((set, get) => ({
     const updated = { ...item, purchased: !item.purchased }
     set((s) => ({ shoppingList: upsert(s.shoppingList, updated) }))
     const { error } = await supabase.from('shopping_list_items').update({ purchased: updated.purchased }).eq('id', id)
-    if (error) set((s) => ({ shoppingList: upsert(s.shoppingList, item) }))
+    if (error) {
+      set((s) => ({ shoppingList: upsert(s.shoppingList, item) }))
+      notifyError("Couldn't update item", error)
+    }
   },
 
   clearPurchased: async () => {
@@ -561,7 +570,10 @@ export const useStore = create<AppState>()((set, get) => ({
     const previous = get().shoppingList
     set((s) => ({ shoppingList: s.shoppingList.filter((s2) => !s2.purchased) }))
     const { error } = await supabase.from('shopping_list_items').delete().in('id', purchasedIds)
-    if (error) set({ shoppingList: previous })
+    if (error) {
+      set({ shoppingList: previous })
+      notifyError("Couldn't clear purchased items", error)
+    }
   },
 
   restockShoppingItem: async (id, storageId) => {
@@ -584,7 +596,10 @@ export const useStore = create<AppState>()((set, get) => ({
     const previous = get().shoppingList
     set((s) => ({ shoppingList: removeById(s.shoppingList, id) }))
     const { error } = await supabase.from('shopping_list_items').delete().eq('id', id)
-    if (error) set({ shoppingList: previous })
+    if (error) {
+      set({ shoppingList: previous })
+      notifyError(`Added ${shopItem.name} to your kitchen, but couldn't remove it from the shopping list`, error)
+    }
   },
 
   updateSettings: async (patch) => {

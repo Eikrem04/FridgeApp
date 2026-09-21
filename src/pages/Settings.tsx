@@ -36,7 +36,7 @@ export const Settings = () => {
       <div className="px-5 md:px-8">
         <SettingsSection title="Account">
           <SettingsRow icon={<Mail size={16} />} label={user?.email ?? 'Signed in'} sub="Synced across your devices" />
-          <SettingsRow icon={<LogOut size={16} />} label="Log out" onClick={() => void signOut()} />
+          <SettingsRow icon={<LogOut size={16} />} label="Log out" tone="accent" onClick={() => void signOut()} />
         </SettingsSection>
 
         <StorageUnitsSection />

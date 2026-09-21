@@ -11,6 +11,7 @@ import { LocalDataMigration } from './components/onboarding/LocalDataMigration'
 import { AppShell } from './components/layout/AppShell'
 import { ConfigMissingScreen, ErrorScreen, LoadingScreen } from './components/ui/StatusScreens'
 import { Auth } from './pages/Auth'
+import { ResetPassword } from './pages/ResetPassword'
 import { Home } from './pages/Home'
 import { Inventory } from './pages/Inventory'
 import { StorageDetail } from './pages/StorageDetail'
@@ -26,6 +27,7 @@ function App() {
 
   const authStatus = useAuthStore((s) => s.status)
   const user = useAuthStore((s) => s.user)
+  const isPasswordRecovery = useAuthStore((s) => s.isPasswordRecovery)
 
   const dataStatus = useStore((s) => s.dataStatus)
   const dataError = useStore((s) => s.dataError)
@@ -66,6 +68,13 @@ function App() {
 
   if (authStatus === 'unauthenticated') {
     return <Auth />
+  }
+
+  // A recovery-link session grants "authenticated" status, but the user
+  // must set a new password before they see the normal app — checked here,
+  // before any data loading/onboarding gate below.
+  if (isPasswordRecovery) {
+    return <ResetPassword />
   }
 
   if (dataStatus === 'idle' || dataStatus === 'loading') {
