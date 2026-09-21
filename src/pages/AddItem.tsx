@@ -6,7 +6,7 @@ import { useToastStore } from '../store/useToastStore'
 import { TopBar } from '../components/layout/TopBar'
 import { ItemForm, type ItemFormValues } from '../components/inventory/ItemForm'
 import { BarcodeScanner } from '../components/inventory/BarcodeScanner'
-import { getFrequentItems } from '../lib/inventory'
+import { getFrequentItems, type FrequentEntry } from '../lib/inventory'
 import { CategoryIcon } from '../lib/icons'
 import { EmptyState } from '../components/ui/EmptyState'
 import { Button } from '../components/ui/Button'
@@ -15,16 +15,36 @@ export const AddItem = () => {
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const storageUnits = useStore((s) => s.storageUnits)
+  const categories = useStore((s) => s.categories)
+  const items = useStore((s) => s.items)
   const addItem = useStore((s) => s.addItem)
   const statEvents = useStore((s) => s.statEvents)
   const showToast = useToastStore((s) => s.show)
   const [scannerOpen, setScannerOpen] = useState(false)
-  const [prefillName, setPrefillName] = useState<string | undefined>(undefined)
+  const [prefill, setPrefill] = useState<Partial<ItemFormValues>>({})
   const [formKey, setFormKey] = useState(0)
 
   const presetStorageId = params.get('storage') || storageUnits[0]?.id
 
-  const frequent = useMemo(() => getFrequentItems(statEvents, 8), [statEvents])
+  const frequent = useMemo(() => getFrequentItems(statEvents, items, 8), [statEvents, items])
+
+  // A frequent item's remembered category/storage may reference a category or
+  // storage unit that's since been deleted — fall back rather than submitting
+  // a stale id that no longer exists.
+  const applyFrequentEntry = (entry: FrequentEntry) => {
+    const storageId =
+      entry.storageId && storageUnits.some((u) => u.id === entry.storageId) ? entry.storageId : presetStorageId
+    const categoryId =
+      entry.categoryId && categories.some((c) => c.id === entry.categoryId) ? entry.categoryId : undefined
+    setPrefill({
+      name: entry.name,
+      categoryId,
+      unit: entry.unit,
+      quantity: entry.quantity && entry.quantity >= 1 ? entry.quantity : undefined,
+      storageId,
+    })
+    setFormKey((k) => k + 1)
+  }
 
   if (storageUnits.length === 0) {
     return (
@@ -69,10 +89,7 @@ export const AddItem = () => {
                 <button
                   key={f.name}
                   type="button"
-                  onClick={() => {
-                    setPrefillName(f.name)
-                    setFormKey((k) => k + 1)
-                  }}
+                  onClick={() => applyFrequentEntry(f)}
                   className="flex shrink-0 items-center gap-1.5 rounded-full bg-black/[0.05] px-3.5 py-2 text-[13.5px] font-semibold text-[var(--color-ink)] dark:bg-white/10"
                 >
                   <CategoryIcon name="Star" size={13} />
@@ -85,7 +102,7 @@ export const AddItem = () => {
 
         <ItemForm
           key={formKey}
-          initial={{ storageId: presetStorageId, name: prefillName }}
+          initial={{ storageId: presetStorageId, ...prefill }}
           submitLabel="Add item"
           onSubmit={handleSubmit}
         />
@@ -96,7 +113,7 @@ export const AddItem = () => {
         onClose={() => setScannerOpen(false)}
         onDetected={() => {
           setScannerOpen(false)
-          setPrefillName('')
+          setPrefill({ storageId: presetStorageId, name: '' })
           setFormKey((k) => k + 1)
           showToast('Barcode scanned — enter the product name')
         }}

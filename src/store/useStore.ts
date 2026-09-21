@@ -143,7 +143,7 @@ interface AppState {
   removeShoppingItem: (id: string) => Promise<void>
   togglePurchased: (id: string) => Promise<void>
   clearPurchased: () => Promise<void>
-  restockShoppingItem: (id: string, storageId: string, categoryId: string) => Promise<void>
+  restockShoppingItem: (id: string, storageId: string) => Promise<void>
 
   // settings
   updateSettings: (patch: Partial<AppSettings>) => Promise<void>
@@ -564,12 +564,18 @@ export const useStore = create<AppState>()((set, get) => ({
     if (error) set({ shoppingList: previous })
   },
 
-  restockShoppingItem: async (id, storageId, categoryId) => {
+  restockShoppingItem: async (id, storageId) => {
     const shopItem = get().shoppingList.find((s) => s.id === id)
     if (!shopItem) return
+    const categories = get().categories
+    // Manually-typed shopping items never have a categoryId of their own. Resolve
+    // the real "Other" category id from this account's categories rather than
+    // hardcoding one — category ids are Supabase-generated UUIDs, not fixed
+    // strings, so a literal fallback like "other" would fail the insert.
+    const fallbackCategoryId = categories.find((c) => c.name.toLowerCase() === 'other')?.id ?? categories[0]?.id ?? ''
     await get().addItem({
       name: shopItem.name,
-      categoryId: shopItem.categoryId || categoryId,
+      categoryId: shopItem.categoryId || fallbackCategoryId,
       quantity: shopItem.quantity || 1,
       unit: shopItem.unit || 'pcs',
       storageId,

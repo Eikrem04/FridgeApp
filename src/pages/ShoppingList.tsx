@@ -136,7 +136,7 @@ export const ShoppingList = () => {
                   fullWidth
                   onClick={() => {
                     if (restockTarget) {
-                      restockShoppingItem(restockTarget, restockStorage, 'other')
+                      restockShoppingItem(restockTarget, restockStorage)
                       showToast('Added to inventory')
                     }
                     setRestockTarget(null)

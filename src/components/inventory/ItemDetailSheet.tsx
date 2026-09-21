@@ -157,8 +157,8 @@ export const ItemDetailSheet = () => {
       <ConfirmDialog
         open={zeroPrompt}
         danger={false}
-        title="You're out of this"
-        message={`${item.name} is now at 0. Remove it from inventory, or add it to your shopping list?`}
+        title={`You're out of ${item.name}`}
+        message="Adding it to your shopping list will remove it from your inventory. Or keep it here at 0 until you're ready to deal with it."
         confirmLabel="Add to shopping list"
         cancelLabel="Keep at 0"
         onConfirm={() => {
@@ -166,7 +166,7 @@ export const ItemDetailSheet = () => {
           deleteItem(item.id, 'consumed')
           setZeroPrompt(false)
           handleClose()
-          showToast(`${item.name} added to shopping list`)
+          showToast(`${item.name} moved to shopping list`)
         }}
         onCancel={() => setZeroPrompt(false)}
       />
