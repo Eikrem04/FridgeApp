@@ -31,6 +31,7 @@ export const ItemDetailSheet = () => {
   const [editing, setEditing] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [zeroPrompt, setZeroPrompt] = useState(false)
+  const [imageFailed, setImageFailed] = useState(false)
 
   if (!item) return null
 
@@ -88,9 +89,18 @@ export const ItemDetailSheet = () => {
           <div className="flex flex-col gap-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3.5">
-                <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${colors.bg} ${colors.text}`}>
-                  <CategoryIcon name={category?.icon || 'Package'} size={26} />
-                </span>
+                {item.imageUrl && !imageFailed ? (
+                  <img
+                    src={item.imageUrl}
+                    alt=""
+                    className="h-14 w-14 shrink-0 rounded-2xl object-cover"
+                    onError={() => setImageFailed(true)}
+                  />
+                ) : (
+                  <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${colors.bg} ${colors.text}`}>
+                    <CategoryIcon name={category?.icon || 'Package'} size={26} />
+                  </span>
+                )}
                 <div>
                   <h3 className="text-[19px] font-bold text-[var(--color-ink)]">{item.name}</h3>
                   <p className="text-[13.5px] text-[var(--color-ink-dim)]">{category?.name} · {storage?.name}</p>

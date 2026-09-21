@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import type { InventoryItem } from '../../types'
 import { useStore } from '../../store/useStore'
@@ -13,6 +14,7 @@ export const ItemRow = ({ item, showStorage = false }: { item: InventoryItem; sh
   const openItem = useUiStore((s) => s.openItem)
   const status = getExpirationStatus(item, expiringSoonDays)
   const colors = statusColors[status]
+  const [imageFailed, setImageFailed] = useState(false)
 
   return (
     <motion.button
@@ -25,9 +27,18 @@ export const ItemRow = ({ item, showStorage = false }: { item: InventoryItem; sh
       transition={{ duration: 0.2 }}
       className="flex w-full items-center gap-3.5 rounded-2xl bg-[var(--color-surface)] px-4 py-3.5 text-left transition active:scale-[0.99]"
     >
-      <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${colors.bg} ${colors.text}`}>
-        <CategoryIcon name={category?.icon || 'Package'} size={20} />
-      </span>
+      {item.imageUrl && !imageFailed ? (
+        <img
+          src={item.imageUrl}
+          alt=""
+          className="h-11 w-11 shrink-0 rounded-full object-cover"
+          onError={() => setImageFailed(true)}
+        />
+      ) : (
+        <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${colors.bg} ${colors.text}`}>
+          <CategoryIcon name={category?.icon || 'Package'} size={20} />
+        </span>
+      )}
       <span className="min-w-0 flex-1">
         <span className="flex items-center gap-1.5">
           <span className="truncate text-[15.5px] font-semibold text-[var(--color-ink)]">{item.name}</span>

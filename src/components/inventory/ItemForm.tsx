@@ -15,6 +15,7 @@ export interface ItemFormValues {
   storageId: string
   expirationDate: string | null
   notes: string
+  imageUrl?: string
 }
 
 interface ItemFormProps {
@@ -36,6 +37,7 @@ export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormP
   const [storageId, setStorageId] = useState(initial?.storageId ?? storageUnits[0]?.id ?? '')
   const [expirationDate, setExpirationDate] = useState<string | null>(initial?.expirationDate ?? null)
   const [notes, setNotes] = useState(initial?.notes ?? '')
+  const [imageUrl] = useState(initial?.imageUrl)
 
   const canSubmit = name.trim().length > 0 && storageId
 
@@ -44,7 +46,7 @@ export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormP
       onSubmit={(e) => {
         e.preventDefault()
         if (!canSubmit) return
-        onSubmit({ name: name.trim(), categoryId, quantity, unit, storageId, expirationDate, notes: notes.trim() })
+        onSubmit({ name: name.trim(), categoryId, quantity, unit, storageId, expirationDate, notes: notes.trim(), imageUrl })
       }}
       className="flex flex-col gap-5"
     >
@@ -60,13 +62,26 @@ export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormP
       </FieldWrap>
 
       <FieldWrap label="Name">
-        <TextInput
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Milk"
-          autoFocus
-          required
-        />
+        <div className="flex items-center gap-3">
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt=""
+              className="h-11 w-11 shrink-0 rounded-xl object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+          )}
+          <TextInput
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Milk"
+            autoFocus
+            required
+            className="flex-1"
+          />
+        </div>
       </FieldWrap>
 
       <FieldWrap label="Category">
