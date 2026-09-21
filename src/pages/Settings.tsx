@@ -1,4 +1,5 @@
-import { Bell, Info, AlarmClock, LogOut, Mail } from 'lucide-react'
+import { useState } from 'react'
+import { Bell, Info, AlarmClock, LogOut, Mail, Trash2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useAuthStore } from '../store/useAuthStore'
 import { TopBar } from '../components/layout/TopBar'
@@ -6,6 +7,7 @@ import { SettingsSection, SettingsRow } from '../components/settings/SettingsSec
 import { StorageUnitsSection } from '../components/settings/StorageUnitsSection'
 import { CategoriesSection } from '../components/settings/CategoriesSection'
 import { DataSection } from '../components/settings/DataSection'
+import { DeleteAccountSheet } from '../components/settings/DeleteAccountSheet'
 import { Segmented } from '../components/ui/Segmented'
 import { Stepper } from '../components/ui/Stepper'
 import type { NotificationTiming, ThemePreference } from '../types'
@@ -23,6 +25,7 @@ export const Settings = () => {
   const setTheme = useStore((s) => s.setTheme)
   const user = useAuthStore((s) => s.user)
   const signOut = useAuthStore((s) => s.signOut)
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false)
 
   const requestNotificationPermission = async () => {
     if (typeof Notification === 'undefined') return
@@ -37,6 +40,12 @@ export const Settings = () => {
         <SettingsSection title="Account">
           <SettingsRow icon={<Mail size={16} />} label={user?.email ?? 'Signed in'} sub="Synced across your devices" />
           <SettingsRow icon={<LogOut size={16} />} label="Log out" tone="accent" onClick={() => void signOut()} />
+          <SettingsRow
+            icon={<Trash2 size={16} />}
+            label="Delete account"
+            tone="danger"
+            onClick={() => setDeleteAccountOpen(true)}
+          />
         </SettingsSection>
 
         <StorageUnitsSection />
@@ -140,6 +149,8 @@ export const Settings = () => {
           <SettingsRow icon={<Info size={16} />} label="Kitchen" sub="Version 1.0.0" />
         </SettingsSection>
       </div>
+
+      <DeleteAccountSheet open={deleteAccountOpen} onClose={() => setDeleteAccountOpen(false)} />
     </div>
   )
 }

@@ -24,6 +24,7 @@ interface AuthState {
   requestPasswordReset: (email: string) => Promise<{ error: string | null }>
   updatePassword: (password: string) => Promise<{ error: string | null }>
   clearPasswordRecovery: () => void
+  deleteAccount: () => Promise<{ error: string | null }>
 }
 
 const friendlyAuthError = (message: string): string => {
@@ -142,4 +143,42 @@ export const useAuthStore = create<AuthState>()((set) => ({
   },
 
   clearPasswordRecovery: () => set({ isPasswordRecovery: false }),
+
+  // Calls the `delete-account` Edge Function using the CURRENT session —
+  // supabase-js automatically attaches this user's own access token as the
+  // request's Authorization header, so there is no id to pass and no way
+  // for this call to name a different account. The function derives the id
+  // to delete solely from that token server-side (see
+  // supabase/functions/delete-account/index.ts). Local sign-out is
+  // deliberately NOT performed here — the caller (the confirmation UI)
+  // only does that after this resolves without an error, so a failed or
+  // interrupted request never leaves the user logged out with an intact
+  // account still sitting on the server.
+  deleteAccount: async () => {
+    set({ authError: null })
+    const { data, error } = await supabase.functions.invoke<{ success?: boolean; error?: string }>('delete-account')
+
+    if (error) {
+      let message = 'Could not delete your account. Please try again.'
+      const context = (error as { context?: Response }).context
+      if (context) {
+        try {
+          const body = (await context.json()) as { error?: string }
+          if (body?.error) message = body.error
+        } catch {
+          // Response body wasn't JSON (e.g. a network-level failure) — keep the generic message.
+        }
+      }
+      set({ authError: message })
+      return { error: message }
+    }
+
+    if (data?.success === false) {
+      const message = data.error ?? 'Could not delete your account. Please try again.'
+      set({ authError: message })
+      return { error: message }
+    }
+
+    return { error: null }
+  },
 }))

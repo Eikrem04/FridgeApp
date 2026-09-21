@@ -1,0 +1,16 @@
+# Minimal Supabase CLI config — only what's needed to deploy the
+# `delete-account` Edge Function. `project_id` here is just a local label
+# the CLI uses (e.g. for local `supabase start` container naming); it is
+# NOT a secret and does not need to match your real project ref — that's
+# supplied separately when you deploy (via `supabase link` or
+# `--project-ref`), which is a manual step, not something in this file.
+#
+# No secrets belong in this file, ever — none are present here.
+project_id = "fridgeapp"
+
+[functions.delete-account]
+# Require a valid Supabase Auth JWT before this function's code even runs
+# (the function also explicitly re-verifies the caller itself — see
+# supabase/functions/delete-account/index.ts — this is defense in depth,
+# not a substitute for that in-function check).
+verify_jwt = true

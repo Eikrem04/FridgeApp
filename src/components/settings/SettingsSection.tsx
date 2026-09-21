@@ -23,14 +23,21 @@ export const SettingsRow = ({
   sub?: string
   right?: ReactNode
   onClick?: () => void
-  /** 'accent' visually marks the row as an action, e.g. "Log out" — distinct from a plain info row. */
-  tone?: 'default' | 'accent'
+  /**
+   * 'accent' visually marks the row as an action, e.g. "Log out" — distinct
+   * from a plain info row. 'danger' marks it as destructive, e.g. "Delete
+   * account" — distinct from both.
+   */
+  tone?: 'default' | 'accent' | 'danger'
 }) => {
   const iconToneClass =
     tone === 'accent'
       ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
-      : 'bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10'
-  const labelToneClass = tone === 'accent' ? 'text-[var(--color-accent)]' : 'text-[var(--color-ink)]'
+      : tone === 'danger'
+        ? 'bg-[var(--color-bad-soft)] text-[var(--color-bad)]'
+        : 'bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10'
+  const labelToneClass =
+    tone === 'accent' ? 'text-[var(--color-accent)]' : tone === 'danger' ? 'text-[var(--color-bad)]' : 'text-[var(--color-ink)]'
 
   const content = (
     <>
