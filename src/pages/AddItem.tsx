@@ -125,7 +125,7 @@ export const AddItem = () => {
         <div className="px-5 md:px-8">
           <EmptyState
             icon={<Refrigerator size={26} />}
-            title="Add a fridge or freezer first"
+            title="Add a storage unit first"
             subtitle="You'll need at least one storage unit before adding items."
             action={<Button onClick={() => navigate('/settings')}>Set up storage</Button>}
           />

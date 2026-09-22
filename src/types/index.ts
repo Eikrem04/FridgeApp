@@ -1,4 +1,4 @@
-export type StorageType = 'fridge' | 'freezer'
+export type StorageType = 'fridge' | 'freezer' | 'pantry'
 
 export interface StorageUnit {
   id: string

@@ -1,4 +1,4 @@
-export type StorageTypeRow = 'fridge' | 'freezer'
+export type StorageTypeRow = 'fridge' | 'freezer' | 'pantry'
 export type StatEventTypeRow = 'added' | 'consumed' | 'expired' | 'discarded'
 export type NotificationTimingRow = '0' | '1' | '2' | '3' | 'never'
 export type ThemeRow = 'light' | 'dark' | 'system'

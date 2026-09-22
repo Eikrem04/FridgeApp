@@ -53,7 +53,7 @@ export const Home = () => {
           <EmptyState
             icon={<Refrigerator size={26} />}
             title="No storage units yet"
-            subtitle="Add your first fridge or freezer to start tracking what's inside."
+            subtitle="Add your first storage unit to start tracking what's inside."
             action={
               <Button icon={<Plus size={16} />} onClick={() => navigate('/settings')}>
                 Add storage

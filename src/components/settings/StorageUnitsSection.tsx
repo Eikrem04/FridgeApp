@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Refrigerator, Snowflake, Pencil, Trash2 } from 'lucide-react'
+import { Plus, Pencil, Trash2 } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import type { StorageType, StorageUnit } from '../../types'
 import { Sheet } from '../ui/Sheet'
@@ -8,6 +8,7 @@ import { Segmented } from '../ui/Segmented'
 import { Button } from '../ui/Button'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 import { SettingsSection, SettingsRow } from './SettingsSection'
+import { STORAGE_TYPE_META, STORAGE_TYPE_OPTIONS } from '../../lib/storageTypes'
 
 export const StorageUnitsSection = () => {
   const storageUnits = useStore((s) => s.storageUnits)
@@ -35,10 +36,12 @@ export const StorageUnitsSection = () => {
 
   return (
     <SettingsSection title="Storage units">
-      {storageUnits.map((unit) => (
+      {storageUnits.map((unit) => {
+        const UnitIcon = STORAGE_TYPE_META[unit.type].icon
+        return (
         <SettingsRow
           key={unit.id}
-          icon={unit.type === 'fridge' ? <Refrigerator size={17} /> : <Snowflake size={17} />}
+          icon={<UnitIcon size={17} />}
           label={unit.name}
           sub={`${items.filter((it) => it.storageId === unit.id).length} items`}
           right={
@@ -60,7 +63,8 @@ export const StorageUnitsSection = () => {
             </div>
           }
         />
-      ))}
+        )
+      })}
 
       <button
         type="button"
@@ -70,26 +74,19 @@ export const StorageUnitsSection = () => {
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-accent-soft)]">
           <Plus size={16} />
         </span>
-        Add fridge or freezer
+        Add storage
       </button>
 
       <Sheet open={adding} onClose={() => setAdding(false)} title="Add storage">
         <div className="flex flex-col gap-4">
           <FieldWrap label="Type">
-            <Segmented
-              options={[
-                { value: 'fridge', label: 'Fridge' },
-                { value: 'freezer', label: 'Freezer' },
-              ]}
-              value={type}
-              onChange={setType}
-            />
+            <Segmented options={STORAGE_TYPE_OPTIONS} value={type} onChange={setType} />
           </FieldWrap>
           <FieldWrap label="Name">
             <TextInput
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder={type === 'fridge' ? 'e.g. Main Fridge' : 'e.g. Chest Freezer'}
+              placeholder={type === 'fridge' ? 'e.g. Main Fridge' : type === 'freezer' ? 'e.g. Chest Freezer' : 'e.g. Kitchen Pantry'}
               autoFocus
             />
           </FieldWrap>

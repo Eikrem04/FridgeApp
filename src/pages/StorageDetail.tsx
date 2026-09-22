@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import { ChevronLeft, Pencil, Plus, Refrigerator, Snowflake, Trash2 } from 'lucide-react'
+import { ChevronLeft, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { ItemRow } from '../components/inventory/ItemRow'
 import { EmptyState } from '../components/ui/EmptyState'
@@ -11,6 +11,7 @@ import { Sheet } from '../components/ui/Sheet'
 import { TextInput } from '../components/ui/Field'
 import { sortByExpirationAsc } from '../lib/selectors'
 import { getExpirationStatus } from '../lib/expiration'
+import { STORAGE_TYPE_META } from '../lib/storageTypes'
 
 export const StorageDetail = () => {
   const { id } = useParams()
@@ -38,7 +39,8 @@ export const StorageDetail = () => {
     )
   }
 
-  const isFridge = unit.type === 'fridge'
+  const meta = STORAGE_TYPE_META[unit.type]
+  const Icon = meta.icon
 
   return (
     <div className="pb-28 md:pb-12">
@@ -73,12 +75,8 @@ export const StorageDetail = () => {
 
       <div className="px-5 md:px-8">
         <div className="flex items-center gap-3.5">
-          <span
-            className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
-              isFridge ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'bg-[var(--color-frozen-soft)] text-[var(--color-frozen)]'
-            }`}
-          >
-            {isFridge ? <Refrigerator size={26} /> : <Snowflake size={26} />}
+          <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${meta.bg} ${meta.text}`}>
+            <Icon size={26} />
           </span>
           <div>
             <h1 className="text-[24px] font-bold text-[var(--color-ink)]">{unit.name}</h1>
@@ -98,7 +96,7 @@ export const StorageDetail = () => {
           </AnimatePresence>
           {sorted.length === 0 && (
             <EmptyState
-              icon={isFridge ? <Refrigerator size={26} /> : <Snowflake size={26} />}
+              icon={<Icon size={26} />}
               title={`Your ${unit.name.toLowerCase()} is looking pretty empty`}
               subtitle="Add your first item to start tracking what's inside."
               action={

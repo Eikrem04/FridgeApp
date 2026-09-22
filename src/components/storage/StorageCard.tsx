@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Refrigerator, Snowflake, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import type { StorageUnit } from '../../types'
 import { useStore } from '../../store/useStore'
 import { getExpirationStatus } from '../../lib/expiration'
+import { STORAGE_TYPE_META } from '../../lib/storageTypes'
 
 export const StorageCard = ({ unit, index = 0 }: { unit: StorageUnit; index?: number }) => {
   const navigate = useNavigate()
@@ -14,7 +15,8 @@ export const StorageCard = ({ unit, index = 0 }: { unit: StorageUnit; index?: nu
 
   const expiringSoon = items.filter((it) => getExpirationStatus(it, expiringSoonDays) === 'expiringSoon' || getExpirationStatus(it, expiringSoonDays) === 'expiresToday').length
   const expired = items.filter((it) => getExpirationStatus(it, expiringSoonDays) === 'expired').length
-  const isFridge = unit.type === 'fridge'
+  const meta = STORAGE_TYPE_META[unit.type]
+  const Icon = meta.icon
 
   return (
     <motion.button
@@ -25,12 +27,8 @@ export const StorageCard = ({ unit, index = 0 }: { unit: StorageUnit; index?: nu
       transition={{ duration: 0.32, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
       className="flex w-full items-center gap-4 rounded-3xl bg-[var(--color-surface)] p-5 text-left transition active:scale-[0.985]"
     >
-      <span
-        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${
-          isFridge ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'bg-[var(--color-frozen-soft)] text-[var(--color-frozen)]'
-        }`}
-      >
-        {isFridge ? <Refrigerator size={26} /> : <Snowflake size={26} />}
+      <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${meta.bg} ${meta.text}`}>
+        <Icon size={26} />
       </span>
       <div className="min-w-0 flex-1">
         <h3 className="truncate text-[17px] font-bold text-[var(--color-ink)]">{unit.name}</h3>

@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Refrigerator, Snowflake } from 'lucide-react'
+import { Refrigerator } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import { Button } from '../ui/Button'
 import { Stepper } from '../ui/Stepper'
 import { TextInput } from '../ui/Field'
+import { STORAGE_TYPE_META } from '../../lib/storageTypes'
+import type { StorageType } from '../../types'
 
 type Step = 'welcome' | 'counts' | 'names'
 
@@ -14,21 +16,18 @@ export const OnboardingFlow = () => {
   const [step, setStep] = useState<Step>('welcome')
   const [fridgeCount, setFridgeCount] = useState(1)
   const [freezerCount, setFreezerCount] = useState(1)
+  const [pantryCount, setPantryCount] = useState(1)
   const [userName, setUserName] = useState('')
 
   const unitDrafts = useMemo(() => {
-    const fridges = Array.from({ length: fridgeCount }, (_, i) => ({
-      key: `fridge-${i}`,
-      type: 'fridge' as const,
-      defaultName: fridgeCount === 1 ? 'Fridge' : `Fridge ${i + 1}`,
-    }))
-    const freezers = Array.from({ length: freezerCount }, (_, i) => ({
-      key: `freezer-${i}`,
-      type: 'freezer' as const,
-      defaultName: freezerCount === 1 ? 'Freezer' : `Freezer ${i + 1}`,
-    }))
-    return [...fridges, ...freezers]
-  }, [fridgeCount, freezerCount])
+    const draftsFor = (type: StorageType, count: number) =>
+      Array.from({ length: count }, (_, i) => ({
+        key: `${type}-${i}`,
+        type,
+        defaultName: count === 1 ? STORAGE_TYPE_META[type].label : `${STORAGE_TYPE_META[type].label} ${i + 1}`,
+      }))
+    return [...draftsFor('fridge', fridgeCount), ...draftsFor('freezer', freezerCount), ...draftsFor('pantry', pantryCount)]
+  }, [fridgeCount, freezerCount, pantryCount])
 
   const [names, setNames] = useState<Record<string, string>>({})
   const [finishing, setFinishing] = useState(false)
@@ -64,7 +63,7 @@ export const OnboardingFlow = () => {
               </span>
               <h1 className="text-[30px] font-bold tracking-tight text-[var(--color-ink)]">Welcome to Kitchen</h1>
               <p className="mt-3 text-[16px] leading-relaxed text-[var(--color-ink-dim)]">
-                Keep track of everything in your fridge and freezer — never let food go to waste again.
+                Keep track of everything in your fridge, freezer, and pantry — never let food go to waste again.
               </p>
 
               <div className="mt-8 w-full">
@@ -95,32 +94,40 @@ export const OnboardingFlow = () => {
               <p className="mt-2 text-[15px] text-[var(--color-ink-dim)]">Tell us how many storage units you have. You can change this anytime.</p>
 
               <div className="mt-8 flex flex-col gap-3">
-                <div className="flex items-center justify-between rounded-3xl bg-[var(--color-surface)] p-5">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-accent-soft)] text-[var(--color-accent)]">
-                      <Refrigerator size={20} />
-                    </span>
-                    <span className="text-[16px] font-semibold text-[var(--color-ink)]">Refrigerators</span>
-                  </div>
-                  <Stepper value={fridgeCount} onChange={setFridgeCount} min={0} max={6} />
-                </div>
-
-                <div className="flex items-center justify-between rounded-3xl bg-[var(--color-surface)] p-5">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--color-frozen-soft)] text-[var(--color-frozen)]">
-                      <Snowflake size={20} />
-                    </span>
-                    <span className="text-[16px] font-semibold text-[var(--color-ink)]">Freezers</span>
-                  </div>
-                  <Stepper value={freezerCount} onChange={setFreezerCount} min={0} max={6} />
-                </div>
+                {(
+                  [
+                    { type: 'fridge', pluralLabel: 'Refrigerators', count: fridgeCount, setCount: setFridgeCount },
+                    { type: 'freezer', pluralLabel: 'Freezers', count: freezerCount, setCount: setFreezerCount },
+                    { type: 'pantry', pluralLabel: 'Pantries', count: pantryCount, setCount: setPantryCount },
+                  ] as const
+                ).map(({ type, pluralLabel, count, setCount }) => {
+                  const meta = STORAGE_TYPE_META[type]
+                  const Icon = meta.icon
+                  return (
+                    <div key={type} className="flex items-center justify-between rounded-3xl bg-[var(--color-surface)] p-5">
+                      <div className="flex items-center gap-3">
+                        <span className={`flex h-11 w-11 items-center justify-center rounded-2xl ${meta.bg} ${meta.text}`}>
+                          <Icon size={20} />
+                        </span>
+                        <span className="text-[16px] font-semibold text-[var(--color-ink)]">{pluralLabel}</span>
+                      </div>
+                      <Stepper value={count} onChange={setCount} min={0} max={6} />
+                    </div>
+                  )
+                })}
               </div>
 
-              <Button fullWidth size="lg" className="mt-8" disabled={fridgeCount + freezerCount === 0} onClick={goToNames}>
+              <Button
+                fullWidth
+                size="lg"
+                className="mt-8"
+                disabled={fridgeCount + freezerCount + pantryCount === 0}
+                onClick={goToNames}
+              >
                 Continue
               </Button>
-              {fridgeCount + freezerCount === 0 && (
-                <p className="mt-2 text-center text-[13px] text-[var(--color-ink-faint)]">Add at least one fridge or freezer</p>
+              {fridgeCount + freezerCount + pantryCount === 0 && (
+                <p className="mt-2 text-center text-[13px] text-[var(--color-ink-faint)]">Add at least one storage unit</p>
               )}
             </motion.div>
           )}
@@ -138,21 +145,21 @@ export const OnboardingFlow = () => {
               <p className="mt-2 text-[15px] text-[var(--color-ink-dim)]">Give each one a name you'll recognize.</p>
 
               <div className="mt-6 flex max-h-[46vh] flex-col gap-3 overflow-y-auto pr-0.5">
-                {unitDrafts.map((u) => (
+                {unitDrafts.map((u) => {
+                  const meta = STORAGE_TYPE_META[u.type]
+                  const Icon = meta.icon
+                  return (
                   <div key={u.key} className="flex items-center gap-3">
-                    <span
-                      className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
-                        u.type === 'fridge' ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]' : 'bg-[var(--color-frozen-soft)] text-[var(--color-frozen)]'
-                      }`}
-                    >
-                      {u.type === 'fridge' ? <Refrigerator size={19} /> : <Snowflake size={19} />}
+                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${meta.bg} ${meta.text}`}>
+                      <Icon size={19} />
                     </span>
                     <TextInput
                       value={names[u.key] ?? u.defaultName}
                       onChange={(e) => setNames((prev) => ({ ...prev, [u.key]: e.target.value }))}
                     />
                   </div>
-                ))}
+                  )
+                })}
               </div>
 
               <Button fullWidth size="lg" className="mt-8" onClick={finish} disabled={finishing}>

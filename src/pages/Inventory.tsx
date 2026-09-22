@@ -11,7 +11,7 @@ import type { SortMode } from '../lib/selectors'
 import { sortItems } from '../lib/selectors'
 import { getExpirationStatus } from '../lib/expiration'
 
-type QuickFilter = 'all' | 'expiring' | 'expired' | 'fridge' | 'freezer'
+type QuickFilter = 'all' | 'expiring' | 'expired' | 'fridge' | 'freezer' | 'pantry'
 
 export const Inventory = () => {
   const [params] = useSearchParams()
@@ -34,12 +34,9 @@ export const Inventory = () => {
       arr = arr.filter((it) => ['expiringSoon', 'expiresToday'].includes(getExpirationStatus(it, expiringSoonDays)))
     } else if (quickFilter === 'expired') {
       arr = arr.filter((it) => getExpirationStatus(it, expiringSoonDays) === 'expired')
-    } else if (quickFilter === 'fridge') {
-      const fridgeIds = new Set(storageUnits.filter((u) => u.type === 'fridge').map((u) => u.id))
-      arr = arr.filter((it) => fridgeIds.has(it.storageId))
-    } else if (quickFilter === 'freezer') {
-      const freezerIds = new Set(storageUnits.filter((u) => u.type === 'freezer').map((u) => u.id))
-      arr = arr.filter((it) => freezerIds.has(it.storageId))
+    } else if (quickFilter === 'fridge' || quickFilter === 'freezer' || quickFilter === 'pantry') {
+      const ids = new Set(storageUnits.filter((u) => u.type === quickFilter).map((u) => u.id))
+      arr = arr.filter((it) => ids.has(it.storageId))
     }
     if (storageId) arr = arr.filter((it) => it.storageId === storageId)
     if (categoryId) arr = arr.filter((it) => it.categoryId === categoryId)
@@ -54,6 +51,7 @@ export const Inventory = () => {
     { value: 'expired', label: 'Expired' },
     { value: 'fridge', label: 'Fridge' },
     { value: 'freezer', label: 'Freezer' },
+    { value: 'pantry', label: 'Pantry' },
   ]
 
   return (

@@ -21,6 +21,8 @@
   --color-bad-soft: rgba(255, 59, 48, 0.12);
   --color-frozen: #5AC8FA;
   --color-frozen-soft: rgba(90, 200, 250, 0.12);
+  --color-pantry: #A2845E;
+  --color-pantry-soft: rgba(162, 132, 94, 0.14);
 
   --animate-pop: pop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   --animate-rise: rise 0.32s cubic-bezier(0.16, 1, 0.3, 1);
@@ -56,6 +58,8 @@
   --color-bad-soft: rgba(255, 69, 58, 0.18);
   --color-frozen: #64D2FF;
   --color-frozen-soft: rgba(100, 210, 255, 0.16);
+  --color-pantry: #B59469;
+  --color-pantry-soft: rgba(181, 148, 105, 0.18);
 }
 
 * {

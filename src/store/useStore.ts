@@ -94,6 +94,18 @@ const notifyError = (message: string, err?: unknown) => {
 
 let activeChannel: RealtimeChannel | null = null
 
+/**
+ * Guards the existing-account Pantry backfill (see `initializeForUser`)
+ * against running twice concurrently for the same user — which otherwise
+ * happens reliably in local dev, where React StrictMode intentionally
+ * double-invokes effects (a dev-only behavior; production builds don't do
+ * this). Without this guard, both concurrent calls independently see "no
+ * Pantry yet" and both insert one with a different id, and the two calls'
+ * `dataStatus` writes can also race and overwrite each other. Module-level
+ * (not per-call) so it's shared across every invocation of the action.
+ */
+let pantryBackfillInFlight = false
+
 const teardownChannel = () => {
   if (activeChannel) {
     supabase.removeChannel(activeChannel)
@@ -210,8 +222,10 @@ export const useStore = create<AppState>()((set, get) => ({
         storageRes.error || categoriesRes.error || itemsRes.error || shoppingRes.error || statsRes.error || settingsRes.error
       if (firstError) throw firstError
 
+      const loadedStorageUnits = (storageRes.data ?? []).map(storageUnitFromRow)
+
       set({
-        storageUnits: (storageRes.data ?? []).map(storageUnitFromRow),
+        storageUnits: loadedStorageUnits,
         categories: (categoriesRes.data ?? []).map(categoryFromRow),
         items: (itemsRes.data ?? []).map(itemFromRow),
         shoppingList: (shoppingRes.data ?? []).map(shoppingItemFromRow),
@@ -219,6 +233,48 @@ export const useStore = create<AppState>()((set, get) => ({
         settings: settingsRes.data ? settingsFromRow(settingsRes.data) : defaultSettings,
         dataStatus: 'ready',
       })
+
+      // Existing (already-onboarded) accounts that predate the Pantry
+      // default get one added automatically, exactly once — naturally
+      // idempotent, since this only runs when nothing pantry-like exists
+      // yet, so it can never re-fire for the same account once it
+      // succeeds. Brand-new users are unaffected (onboarding_complete is
+      // false for them at this point) — they choose their own Pantry
+      // count during onboarding instead (see OnboardingFlow.tsx). A name
+      // match (e.g. a "Pantry" the user already created themselves, even
+      // under the old fridge/freezer-only types) counts as "already has
+      // one" too, so nothing is duplicated or silently renamed.
+      const alreadyOnboarded = settingsRes.data?.onboarding_complete ?? false
+      const hasPantryLike = loadedStorageUnits.some((u) => u.type === 'pantry' || /pantry/i.test(u.name))
+      if (alreadyOnboarded && !hasPantryLike && !pantryBackfillInFlight) {
+        pantryBackfillInFlight = true
+        const pantryId = makeId()
+        const pantryUnit: StorageUnit = { id: pantryId, name: 'Pantry', type: 'pantry', createdAt: nowISO() }
+        void (async () => {
+          try {
+            const { error } = await supabase.from('storage_units').insert({
+              id: pantryId,
+              user_id: userId,
+              name: pantryUnit.name,
+              type: pantryUnit.type,
+              created_at: pantryUnit.createdAt,
+            })
+            if (error) {
+              // Most likely cause: the migration widening storage_units'
+              // `type` check constraint to allow 'pantry' hasn't been
+              // applied to this project yet. Fail silently — this is a
+              // best-effort background nicety, not worth a recurring error
+              // toast — and simply retry next load, since `hasPantryLike`
+              // stays false until it actually succeeds.
+              console.warn('[Kitchen] Could not add default Pantry storage unit', error)
+              return
+            }
+            set((s) => ({ storageUnits: upsert(s.storageUnits, pantryUnit) }))
+          } finally {
+            pantryBackfillInFlight = false
+          }
+        })()
+      }
 
       activeChannel = supabase
         .channel(`kitchen-${userId}`)

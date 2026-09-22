@@ -115,7 +115,7 @@ export const ShoppingList = () => {
       <Sheet open={!!restockTarget} onClose={() => setRestockTarget(null)} title="Add to your kitchen?">
         <div className="flex flex-col gap-4">
           <p className="text-[14.5px] text-[var(--color-ink-dim)]">
-            Nice! Want to add this straight into a fridge or freezer?
+            Nice! Want to add this straight into storage?
           </p>
           {storageUnits.length > 0 ? (
             <>
