@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { ChevronLeft, Pencil, Plus, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import { ItemRow } from '../components/inventory/ItemRow'
 import { EmptyState } from '../components/ui/EmptyState'
@@ -11,9 +12,10 @@ import { Sheet } from '../components/ui/Sheet'
 import { TextInput } from '../components/ui/Field'
 import { sortByExpirationAsc } from '../lib/selectors'
 import { getExpirationStatus } from '../lib/expiration'
-import { STORAGE_TYPE_META } from '../lib/storageTypes'
+import { STORAGE_TYPE_META, getStorageDisplayName } from '../lib/storageTypes'
 
 export const StorageDetail = () => {
+  const { t } = useTranslation(['inventory', 'common'])
   const { id } = useParams()
   const navigate = useNavigate()
   const unit = useStore((s) => s.storageUnits.find((u) => u.id === id))
@@ -24,7 +26,7 @@ export const StorageDetail = () => {
   const deleteStorageUnit = useStore((s) => s.deleteStorageUnit)
 
   const [renaming, setRenaming] = useState(false)
-  const [newName, setNewName] = useState(unit?.name ?? '')
+  const [newName, setNewName] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const sorted = useMemo(() => sortByExpirationAsc(items), [items])
@@ -34,13 +36,14 @@ export const StorageDetail = () => {
   if (!unit) {
     return (
       <div className="px-5 pt-10">
-        <EmptyState title="Storage not found" subtitle="It may have been deleted." />
+        <EmptyState title={t('storageDetail.notFoundTitle')} subtitle={t('storageDetail.notFoundSubtitle')} />
       </div>
     )
   }
 
   const meta = STORAGE_TYPE_META[unit.type]
   const Icon = meta.icon
+  const displayName = getStorageDisplayName(unit, t)
 
   return (
     <div className="pb-28 md:pb-12">
@@ -56,7 +59,7 @@ export const StorageDetail = () => {
           <button
             type="button"
             onClick={() => {
-              setNewName(unit.name)
+              setNewName(displayName)
               setRenaming(true)
             }}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
@@ -79,11 +82,13 @@ export const StorageDetail = () => {
             <Icon size={26} />
           </span>
           <div>
-            <h1 className="text-[24px] font-bold text-[var(--color-ink)]">{unit.name}</h1>
+            <h1 className="text-[24px] font-bold text-[var(--color-ink)]">{displayName}</h1>
             <p className="text-[14px] text-[var(--color-ink-dim)]">
-              {items.length} items
-              {expiringSoon > 0 && <span className="text-[var(--color-warn)]"> · {expiringSoon} expiring soon</span>}
-              {expired > 0 && <span className="text-[var(--color-bad)]"> · {expired} expired</span>}
+              {t('storageDetail.itemsCount', { count: items.length })}
+              {expiringSoon > 0 && (
+                <span className="text-[var(--color-warn)]"> · {t('storageDetail.expiringSoon', { count: expiringSoon })}</span>
+              )}
+              {expired > 0 && <span className="text-[var(--color-bad)]"> · {t('storageDetail.expired', { count: expired })}</span>}
             </p>
           </div>
         </div>
@@ -97,11 +102,11 @@ export const StorageDetail = () => {
           {sorted.length === 0 && (
             <EmptyState
               icon={<Icon size={26} />}
-              title={`Your ${unit.name.toLowerCase()} is looking pretty empty`}
-              subtitle="Add your first item to start tracking what's inside."
+              title={t('storageDetail.emptyTitle', { name: displayName.toLowerCase() })}
+              subtitle={t('storageDetail.emptySubtitle')}
               action={
                 <Button icon={<Plus size={16} />} onClick={() => navigate(`/add?storage=${unit.id}`)}>
-                  Add your first item
+                  {t('storageDetail.addFirstItem')}
                 </Button>
               }
             />
@@ -109,7 +114,7 @@ export const StorageDetail = () => {
         </div>
       </div>
 
-      <Sheet open={renaming} onClose={() => setRenaming(false)} title="Rename storage">
+      <Sheet open={renaming} onClose={() => setRenaming(false)} title={t('storageDetail.renameTitle')}>
         <div className="flex flex-col gap-4">
           <TextInput value={newName} onChange={(e) => setNewName(e.target.value)} autoFocus />
           <Button
@@ -120,16 +125,16 @@ export const StorageDetail = () => {
               setRenaming(false)
             }}
           >
-            Save
+            {t('common:actions.save')}
           </Button>
         </div>
       </Sheet>
 
       <ConfirmDialog
         open={confirmDelete}
-        title={`Delete ${unit.name}?`}
-        message={`This will permanently remove ${unit.name} and all ${items.length} item${items.length === 1 ? '' : 's'} inside it.`}
-        confirmLabel="Delete"
+        title={t('storageDetail.deleteTitle', { name: displayName })}
+        message={t('storageDetail.deleteMessage', { count: items.length })}
+        confirmLabel={t('common:actions.delete')}
         onConfirm={() => {
           deleteStorageUnit(unit.id)
           navigate('/')

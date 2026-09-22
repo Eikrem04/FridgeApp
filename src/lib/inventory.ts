@@ -1,4 +1,14 @@
+import type { TFunction } from 'i18next'
 import type { InventoryItem, StatEvent } from '../types'
+
+/**
+ * Every unit in the app is chosen from the fixed `DEFAULT_UNITS` list (see
+ * src/data/defaultCategories.ts) via a select — there is no free-text unit
+ * entry anywhere, so any stored `unit` value is guaranteed to be one of
+ * these built-in terms, safe to translate. Falls back to the raw value for
+ * old/unexpected data rather than showing nothing.
+ */
+export const getUnitLabel = (unit: string, t: TFunction): string => t(`common:unit.${unit}`, { defaultValue: unit })
 
 export const findDuplicateItem = (
   items: InventoryItem[],

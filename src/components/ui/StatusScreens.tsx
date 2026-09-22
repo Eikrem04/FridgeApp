@@ -1,4 +1,5 @@
 import { AlertTriangle, RefreshCw, Settings2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from './Button'
 
 export const LoadingScreen = ({ message = 'Loading…' }: { message?: string }) => (
@@ -8,20 +9,26 @@ export const LoadingScreen = ({ message = 'Loading…' }: { message?: string }) 
   </div>
 )
 
-export const ErrorScreen = ({ message, onRetry }: { message: string | null; onRetry: () => void }) => (
-  <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-[var(--color-bg)] px-8 text-center">
-    <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-bad-soft)] text-[var(--color-bad)]">
-      <AlertTriangle size={28} />
-    </span>
-    <p className="text-[17px] font-semibold text-[var(--color-ink)]">Couldn't load your kitchen</p>
-    <p className="max-w-xs text-[14.5px] text-[var(--color-ink-dim)]">
-      {message ?? 'Something went wrong talking to the server. Check your connection and try again.'}
-    </p>
-    <Button icon={<RefreshCw size={16} />} onClick={onRetry}>
-      Try again
-    </Button>
-  </div>
-)
+export const ErrorScreen = ({ message, onRetry }: { message: string | null; onRetry: () => void }) => {
+  const { t } = useTranslation('common')
+  // `message` may carry a raw Supabase/Postgrest error string (useful for
+  // debugging, already logged to the console in useStore.ts) — the visible
+  // UI always shows a translated, user-safe message instead of that raw
+  // text, per the "don't expose raw system errors" rule.
+  void message
+  return (
+    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-[var(--color-bg)] px-8 text-center">
+      <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--color-bad-soft)] text-[var(--color-bad)]">
+        <AlertTriangle size={28} />
+      </span>
+      <p className="text-[17px] font-semibold text-[var(--color-ink)]">{t('errors.couldntLoad')}</p>
+      <p className="max-w-xs text-[14.5px] text-[var(--color-ink-dim)]">{t('errors.network')}</p>
+      <Button icon={<RefreshCw size={16} />} onClick={onRetry}>
+        {t('actions.tryAgain')}
+      </Button>
+    </div>
+  )
+}
 
 export const ConfigMissingScreen = () => (
   <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-4 bg-[var(--color-bg)] px-8 text-center">

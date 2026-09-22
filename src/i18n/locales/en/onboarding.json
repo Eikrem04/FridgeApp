@@ -1,0 +1,44 @@
+{
+  "welcome": {
+    "heading": "Welcome to Kitchen",
+    "subtitle": "Keep track of everything in your fridge, freezer, and pantry — never let food go to waste again.",
+    "namePlaceholder": "Your name (optional)",
+    "getStarted": "Get started"
+  },
+  "counts": {
+    "heading": "Set up your kitchen",
+    "subtitle": "Tell us how many storage units you have. You can change this anytime.",
+    "refrigerators": "Refrigerators",
+    "freezers": "Freezers",
+    "pantries": "Pantries",
+    "continue": "Continue",
+    "addAtLeastOne": "Add at least one storage unit"
+  },
+  "names": {
+    "heading": "Name your storage",
+    "subtitle": "Give each one a name you'll recognize.",
+    "finish": "Start using Kitchen",
+    "finishing": "Setting up…",
+    "back": "Back"
+  },
+  "migration": {
+    "heading": "We found data on this device",
+    "bodyPrefix": "Before you signed in, this browser had a local kitchen with",
+    "and": "and",
+    "bodySuffix": "Import it into your account?",
+    "storageUnit_one": "{{count}} storage unit",
+    "storageUnit_other": "{{count}} storage units",
+    "itemCount_one": "{{count}} item",
+    "itemCount_other": "{{count}} items",
+    "shoppingItem_one": "{{count}} shopping list item",
+    "shoppingItem_other": "{{count}} shopping list items",
+    "importError": "Couldn't import your data — check your connection and try again.",
+    "importButton": "Import my data",
+    "importing": "Importing…",
+    "startFresh": "Start fresh instead",
+    "discardTitle": "Discard this device's data?",
+    "discardMessage": "This local data was never uploaded anywhere. If you start fresh, it will be permanently deleted from this device.",
+    "discardConfirm": "Discard",
+    "importedToast": "Your data is now synced to your account"
+  }
+}

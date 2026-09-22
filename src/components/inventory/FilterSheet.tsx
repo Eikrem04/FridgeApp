@@ -1,7 +1,10 @@
+import { useTranslation } from 'react-i18next'
 import { Sheet } from '../ui/Sheet'
 import { useStore } from '../../store/useStore'
 import { Button } from '../ui/Button'
 import { CategoryIcon } from '../../lib/icons'
+import { getStorageDisplayName } from '../../lib/storageTypes'
+import { getCategoryDisplayName } from '../../lib/categoryLocalization'
 import type { SortMode } from '../../lib/selectors'
 
 interface FilterSheetProps {
@@ -15,14 +18,6 @@ interface FilterSheetProps {
   setSort: (v: SortMode) => void
 }
 
-const SORT_OPTIONS: { value: SortMode; label: string }[] = [
-  { value: 'expiration', label: 'Expiration date' },
-  { value: 'name', label: 'Name' },
-  { value: 'recent', label: 'Recently added' },
-  { value: 'quantity', label: 'Quantity' },
-  { value: 'category', label: 'Category' },
-]
-
 export const FilterSheet = ({
   open,
   onClose,
@@ -33,31 +28,40 @@ export const FilterSheet = ({
   sort,
   setSort,
 }: FilterSheetProps) => {
+  const { t } = useTranslation(['inventory', 'common'])
   const storageUnits = useStore((s) => s.storageUnits)
   const categories = useStore((s) => s.categories)
 
+  const SORT_OPTIONS: { value: SortMode; label: string }[] = [
+    { value: 'expiration', label: t('filterSheet.sort.expiration') },
+    { value: 'name', label: t('filterSheet.sort.name') },
+    { value: 'recent', label: t('filterSheet.sort.recent') },
+    { value: 'quantity', label: t('filterSheet.sort.quantity') },
+    { value: 'category', label: t('filterSheet.sort.category') },
+  ]
+
   return (
-    <Sheet open={open} onClose={onClose} title="Filter & sort">
+    <Sheet open={open} onClose={onClose} title={t('filterSheet.title')}>
       <div className="flex flex-col gap-6">
         <div>
-          <p className="mb-2 text-[13px] font-semibold text-[var(--color-ink-dim)]">Storage</p>
+          <p className="mb-2 text-[13px] font-semibold text-[var(--color-ink-dim)]">{t('filterSheet.storage')}</p>
           <div className="no-scrollbar flex gap-2 overflow-x-auto">
-            <Chip active={storageId === null} label="All" onClick={() => setStorageId(null)} />
+            <Chip active={storageId === null} label={t('filterSheet.all')} onClick={() => setStorageId(null)} />
             {storageUnits.map((u) => (
-              <Chip key={u.id} active={storageId === u.id} label={u.name} onClick={() => setStorageId(u.id)} />
+              <Chip key={u.id} active={storageId === u.id} label={getStorageDisplayName(u, t)} onClick={() => setStorageId(u.id)} />
             ))}
           </div>
         </div>
 
         <div>
-          <p className="mb-2 text-[13px] font-semibold text-[var(--color-ink-dim)]">Category</p>
+          <p className="mb-2 text-[13px] font-semibold text-[var(--color-ink-dim)]">{t('filterSheet.category')}</p>
           <div className="no-scrollbar flex gap-2 overflow-x-auto">
-            <Chip active={categoryId === null} label="All" onClick={() => setCategoryId(null)} />
+            <Chip active={categoryId === null} label={t('filterSheet.all')} onClick={() => setCategoryId(null)} />
             {categories.map((c) => (
               <Chip
                 key={c.id}
                 active={categoryId === c.id}
-                label={c.name}
+                label={getCategoryDisplayName(c, t)}
                 icon={<CategoryIcon name={c.icon} size={14} />}
                 onClick={() => setCategoryId(c.id)}
               />
@@ -66,7 +70,7 @@ export const FilterSheet = ({
         </div>
 
         <div>
-          <p className="mb-2 text-[13px] font-semibold text-[var(--color-ink-dim)]">Sort by</p>
+          <p className="mb-2 text-[13px] font-semibold text-[var(--color-ink-dim)]">{t('filterSheet.sortBy')}</p>
           <div className="flex flex-col gap-1.5">
             {SORT_OPTIONS.map((opt) => (
               <button
@@ -85,7 +89,7 @@ export const FilterSheet = ({
         </div>
 
         <Button fullWidth onClick={onClose}>
-          Show results
+          {t('filterSheet.showResults')}
         </Button>
       </div>
     </Sheet>

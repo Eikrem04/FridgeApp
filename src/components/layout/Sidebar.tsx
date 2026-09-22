@@ -1,23 +1,25 @@
 import { NavLink } from 'react-router-dom'
 import { Home, ListChecks, Plus, ShoppingCart, Settings, ChefHat, TrendingUp, Refrigerator } from 'lucide-react'
-
-const items = [
-  { to: '/', label: 'Home', icon: Home, end: true },
-  { to: '/inventory', label: 'Inventory', icon: ListChecks, end: false },
-  { to: '/shopping', label: 'Shopping List', icon: ShoppingCart, end: false },
-  { to: '/recipes', label: 'Recipes', icon: ChefHat, end: false },
-  { to: '/stats', label: 'Statistics', icon: TrendingUp, end: false },
-  { to: '/settings', label: 'Settings', icon: Settings, end: false },
-]
+import { useTranslation } from 'react-i18next'
 
 export const Sidebar = () => {
+  const { t } = useTranslation('common')
+  const items = [
+    { to: '/', label: t('nav.home'), icon: Home, end: true },
+    { to: '/inventory', label: t('nav.inventory'), icon: ListChecks, end: false },
+    { to: '/shopping', label: t('nav.shoppingList'), icon: ShoppingCart, end: false },
+    { to: '/recipes', label: t('nav.recipes'), icon: ChefHat, end: false },
+    { to: '/stats', label: t('nav.stats'), icon: TrendingUp, end: false },
+    { to: '/settings', label: t('nav.settings'), icon: Settings, end: false },
+  ]
+
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-line)] bg-[var(--color-surface)] px-4 py-6 md:flex">
       <div className="mb-8 flex items-center gap-2.5 px-2">
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--color-accent)] text-white">
           <Refrigerator size={20} />
         </span>
-        <span className="text-[17px] font-bold text-[var(--color-ink)]">Kitchen</span>
+        <span className="text-[17px] font-bold text-[var(--color-ink)]">{t('appName')}</span>
       </div>
 
       <NavLink
@@ -25,7 +27,7 @@ export const Sidebar = () => {
         className="mb-6 flex items-center justify-center gap-2 rounded-2xl bg-[var(--color-accent)] px-4 py-3 text-[15px] font-semibold text-white transition active:scale-[0.98]"
       >
         <Plus size={18} strokeWidth={2.5} />
-        Add item
+        {t('nav.addItem')}
       </NavLink>
 
       <nav className="flex flex-col gap-1">
@@ -51,7 +53,7 @@ export const Sidebar = () => {
         })}
       </nav>
 
-      <div className="mt-auto px-2 text-xs text-[var(--color-ink-faint)]">Kitchen v1.0</div>
+      <div className="mt-auto px-2 text-xs text-[var(--color-ink-faint)]">{t('appName')} v1.0</div>
     </aside>
   )
 }

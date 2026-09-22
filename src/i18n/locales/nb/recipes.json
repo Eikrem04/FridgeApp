@@ -1,0 +1,10 @@
+{
+  "title": "Hva kan jeg lage?",
+  "noItemsTitle": "Legg til noen varer først",
+  "noItemsSubtitle": "Når kjøleskapet har ingredienser, foreslår vi retter du kan lage.",
+  "noMatchesTitle": "Ingen matchende oppskrifter ennå",
+  "noMatchesSubtitle": "Legg til noen flere grunnleggende ingredienser, så finner vi noe til deg.",
+  "haveEverything": "Du har alt du trenger!",
+  "missingIngredients_one": "Mangler {{count}} ingrediens",
+  "missingIngredients_other": "Mangler {{count}} ingredienser"
+}

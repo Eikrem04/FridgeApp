@@ -1,0 +1,58 @@
+{
+  "title": "Inventory",
+  "itemsCount_one": "{{count}} item",
+  "itemsCount_other": "{{count}} items",
+  "expiringSoonCount_one": "{{count}} expiring soon",
+  "expiringSoonCount_other": "{{count}} expiring soon",
+  "expiredCount_one": "{{count}} expired",
+  "expiredCount_other": "{{count}} expired",
+  "filters": {
+    "all": "All",
+    "expiring": "Expiring soon",
+    "expired": "Expired",
+    "fridge": "Fridge",
+    "freezer": "Freezer",
+    "pantry": "Pantry"
+  },
+  "noItemsTitle": "No items found",
+  "noItemsSubtitle": "Try a different filter, or add something new to your kitchen.",
+  "filterSheet": {
+    "title": "Filter & sort",
+    "storage": "Storage",
+    "category": "Category",
+    "sortBy": "Sort by",
+    "all": "All",
+    "showResults": "Show results",
+    "sort": {
+      "expiration": "Expiration date",
+      "name": "Name",
+      "recent": "Recently added",
+      "quantity": "Quantity",
+      "category": "Category"
+    }
+  },
+  "storageDetail": {
+    "notFoundTitle": "Storage not found",
+    "notFoundSubtitle": "It may have been deleted.",
+    "itemsCount_one": "{{count}} item",
+    "itemsCount_other": "{{count}} items",
+    "expiringSoon_one": "{{count}} expiring soon",
+    "expiringSoon_other": "{{count}} expiring soon",
+    "expired_one": "{{count}} expired",
+    "expired_other": "{{count}} expired",
+    "emptyTitle": "Your {{name}} is looking pretty empty",
+    "emptySubtitle": "Add your first item to start tracking what's inside.",
+    "addFirstItem": "Add your first item",
+    "renameTitle": "Rename storage",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteMessage_one": "This will remove it and all {{count}} item inside.",
+    "deleteMessage_other": "This will remove it and all {{count}} items inside."
+  },
+  "search": {
+    "placeholder": "Search your fridge & freezer",
+    "emptyTitle": "Search your kitchen",
+    "emptySubtitle": "Find anything across all your fridges and freezers instantly.",
+    "noMatchesTitle": "No matches",
+    "noMatchesSubtitle": "Nothing found for \"{{query}}\""
+  }
+}

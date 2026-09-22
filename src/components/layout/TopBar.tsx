@@ -1,10 +1,12 @@
 import { Bell, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../../store/useStore'
 import { SearchOverlay } from './SearchOverlay'
 import { NotificationsPanel } from './NotificationsPanel'
 
 export const TopBar = ({ title }: { title: string }) => {
+  const { t } = useTranslation('common')
   const [searchOpen, setSearchOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const notifications = useStore((s) => s.notifications)
@@ -21,7 +23,7 @@ export const TopBar = ({ title }: { title: string }) => {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            aria-label="Search"
+            aria-label={t('search')}
             onClick={() => setSearchOpen(true)}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] transition active:scale-90 dark:bg-white/10"
           >
@@ -29,7 +31,7 @@ export const TopBar = ({ title }: { title: string }) => {
           </button>
           <button
             type="button"
-            aria-label="Notifications"
+            aria-label={t('notifications')}
             onClick={() => setNotifOpen(true)}
             className="relative flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] transition active:scale-90 dark:bg-white/10"
           >

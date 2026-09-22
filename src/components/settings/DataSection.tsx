@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react'
 import { Download, RotateCcw, Upload } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../../store/useStore'
 import { useToastStore } from '../../store/useToastStore'
 import { SettingsSection, SettingsRow } from './SettingsSection'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 
 export const DataSection = () => {
+  const { t } = useTranslation('settings')
   const exportData = useStore((s) => s.exportData)
   const importData = useStore((s) => s.importData)
   const resetAllData = useStore((s) => s.resetAllData)
@@ -27,22 +29,22 @@ export const DataSection = () => {
   const handleImportFile = async (file: File) => {
     const text = await file.text()
     const ok = await importData(text)
-    if (ok) showToast('Data imported successfully')
+    if (ok) showToast(t('data.importedToast'))
   }
 
   return (
-    <SettingsSection title="Data">
-      <SettingsRow icon={<Download size={16} />} label="Export data" sub="Save a backup as JSON" onClick={handleExport} />
+    <SettingsSection title={t('data.title')}>
+      <SettingsRow icon={<Download size={16} />} label={t('data.export')} sub={t('data.exportSubtitle')} onClick={handleExport} />
       <SettingsRow
         icon={<Upload size={16} />}
-        label="Import data"
-        sub="Restore from a backup file"
+        label={t('data.import')}
+        sub={t('data.importSubtitle')}
         onClick={() => fileInputRef.current?.click()}
       />
       <SettingsRow
         icon={<RotateCcw size={16} />}
-        label="Reset all data"
-        sub="Erase everything and start over"
+        label={t('data.reset')}
+        sub={t('data.resetSubtitle')}
         onClick={() => setConfirmReset(true)}
       />
       <input
@@ -59,9 +61,9 @@ export const DataSection = () => {
 
       <ConfirmDialog
         open={confirmReset}
-        title="Reset all data?"
-        message="This permanently deletes every item, storage unit and setting. This cannot be undone."
-        confirmLabel="Reset everything"
+        title={t('data.resetConfirmTitle')}
+        message={t('data.resetConfirmMessage')}
+        confirmLabel={t('data.resetConfirmButton')}
         onConfirm={() => {
           setConfirmReset(false)
           void resetAllData()

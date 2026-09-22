@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Barcode, Loader2, PackageSearch, Refrigerator, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import { useToastStore } from '../store/useToastStore'
 import { TopBar } from '../components/layout/TopBar'
@@ -22,9 +23,10 @@ type LookupState =
   | { status: 'looking-up'; barcode: string }
   | { status: 'found'; barcode: string; product: ProductInfo }
   | { status: 'not-found'; barcode: string }
-  | { status: 'error'; barcode: string; message: string }
+  | { status: 'error'; barcode: string; reason: 'http' | 'timeout' | 'network' }
 
 export const AddItem = () => {
+  const { t } = useTranslation(['addItem', 'common'])
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const userId = useStore((s) => s.userId)
@@ -115,19 +117,19 @@ export const AddItem = () => {
     // Network/timeout error — never blocks manual entry.
     setPrefill({ name: '', storageId: presetStorageId })
     setFormKey((k) => k + 1)
-    setLookup({ status: 'error', barcode, message: result.message })
+    setLookup({ status: 'error', barcode, reason: result.reason })
   }
 
   if (storageUnits.length === 0) {
     return (
       <div className="pb-28 md:pb-12">
-        <TopBar title="Add item" />
+        <TopBar title={t('common:nav.addItem')} />
         <div className="px-5 md:px-8">
           <EmptyState
             icon={<Refrigerator size={26} />}
-            title="Add a storage unit first"
-            subtitle="You'll need at least one storage unit before adding items."
-            action={<Button onClick={() => navigate('/settings')}>Set up storage</Button>}
+            title={t('noStorageTitle')}
+            subtitle={t('noStorageSubtitle')}
+            action={<Button onClick={() => navigate('/settings')}>{t('setUpStorage')}</Button>}
           />
         </div>
       </div>
@@ -136,13 +138,16 @@ export const AddItem = () => {
 
   const handleSubmit = async (values: ItemFormValues) => {
     const { merged, item } = await addItem(values)
-    showToast(merged ? `Combined with existing ${item.name}` : `${item.name} added`)
+    showToast(merged ? t('toast.combined', { name: item.name }) : t('toast.added', { name: item.name }))
     navigate(`/storage/${values.storageId}`)
   }
 
+  const errorMessage = (reason: 'http' | 'timeout' | 'network') =>
+    reason === 'timeout' ? t('lookup.errorTimeout') : reason === 'network' ? t('lookup.errorNetwork') : t('lookup.errorHttp')
+
   return (
     <div className="pb-28 md:pb-12">
-      <TopBar title="Add item" />
+      <TopBar title={t('common:nav.addItem')} />
       <div className="px-5 md:px-8">
         <button
           type="button"
@@ -153,7 +158,7 @@ export const AddItem = () => {
           className="mb-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-black/[0.05] py-3.5 text-[14.5px] font-semibold text-[var(--color-ink)] transition active:scale-[0.98] dark:bg-white/10"
         >
           <Barcode size={18} />
-          Scan barcode
+          {t('scanBarcode')}
         </button>
 
         {lookup.status !== 'idle' && (
@@ -161,16 +166,19 @@ export const AddItem = () => {
             {lookup.status === 'looking-up' && (
               <>
                 <Loader2 size={18} className="shrink-0 animate-spin text-[var(--color-ink-dim)]" />
-                <p className="flex-1 text-[13.5px] font-medium text-[var(--color-ink-dim)]">Looking up product…</p>
+                <p className="flex-1 text-[13.5px] font-medium text-[var(--color-ink-dim)]">{t('lookup.lookingUp')}</p>
               </>
             )}
             {lookup.status === 'found' && (
               <>
                 <PackageSearch size={18} className="shrink-0 text-[var(--color-accent)]" />
                 <p className="flex-1 text-[13.5px] font-medium text-[var(--color-ink)]">
-                  Filled in from {lookup.product.source === 'cache' ? 'a product you scanned before' : 'Open Food Facts'}
-                  {lookup.product.packageSize ? ` — package size ${lookup.product.packageSize}` : ''}. Quantity defaults to 1 —
-                  double-check before saving.
+                  {t('lookup.foundMessage', {
+                    source: lookup.product.source === 'cache' ? t('lookup.foundFromCache') : t('lookup.foundFromOff'),
+                    packageSizeClause: lookup.product.packageSize
+                      ? t('lookup.packageSizeClause', { size: lookup.product.packageSize })
+                      : '',
+                  })}
                 </p>
               </>
             )}
@@ -178,7 +186,7 @@ export const AddItem = () => {
               <>
                 <PackageSearch size={18} className="shrink-0 text-[var(--color-ink-faint)]" />
                 <p className="flex-1 text-[13.5px] font-medium text-[var(--color-ink-dim)]">
-                  Barcode {lookup.barcode} isn't in Open Food Facts yet — enter the product below.
+                  {t('lookup.notFound', { barcode: lookup.barcode })}
                 </p>
               </>
             )}
@@ -186,14 +194,14 @@ export const AddItem = () => {
               <>
                 <PackageSearch size={18} className="shrink-0 text-[var(--color-ink-faint)]" />
                 <p className="flex-1 text-[13.5px] font-medium text-[var(--color-ink-dim)]">
-                  {lookup.message} You can still enter the product below.
+                  {errorMessage(lookup.reason)} {t('lookup.errorSuffix')}
                 </p>
               </>
             )}
             <button
               type="button"
               onClick={() => setLookup({ status: 'idle' })}
-              aria-label="Dismiss"
+              aria-label={t('lookup.dismiss')}
               className="shrink-0 rounded-full p-1 text-[var(--color-ink-faint)]"
             >
               <X size={15} />
@@ -203,7 +211,7 @@ export const AddItem = () => {
 
         {frequent.length > 0 && (
           <div className="mb-6">
-            <p className="mb-2.5 px-1 text-[13px] font-semibold text-[var(--color-ink-dim)]">Frequently added</p>
+            <p className="mb-2.5 px-1 text-[13px] font-semibold text-[var(--color-ink-dim)]">{t('frequentlyAdded')}</p>
             <div className="no-scrollbar flex gap-2 overflow-x-auto">
               {frequent.map((f) => (
                 <button
@@ -223,7 +231,7 @@ export const AddItem = () => {
         <ItemForm
           key={formKey}
           initial={{ storageId: presetStorageId, ...prefill }}
-          submitLabel="Add item"
+          submitLabel={t('form.addItem')}
           onSubmit={handleSubmit}
         />
       </div>

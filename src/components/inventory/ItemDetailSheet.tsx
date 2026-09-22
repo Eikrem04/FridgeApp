@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Sheet } from '../ui/Sheet'
 import { useStore } from '../../store/useStore'
 import { useUiStore } from '../../store/useUiStore'
@@ -8,12 +9,15 @@ import { Button } from '../ui/Button'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 import { ItemForm, type ItemFormValues } from './ItemForm'
 import { CategoryIcon } from '../../lib/icons'
+import { getCategoryDisplayName } from '../../lib/categoryLocalization'
+import { getStorageDisplayName } from '../../lib/storageTypes'
 import { formatAddedDate, formatFriendlyDate } from '../../lib/date'
 import { getExpirationStatus, statusColors } from '../../lib/expiration'
 import { StatusBadge } from '../ui/Badge'
 import { Pencil, Star, Trash2 } from 'lucide-react'
 
 export const ItemDetailSheet = () => {
+  const { t } = useTranslation(['addItem', 'common'])
   const selectedItemId = useUiStore((s) => s.selectedItemId)
   const closeItem = useUiStore((s) => s.closeItem)
   const item = useStore((s) => s.items.find((it) => it.id === selectedItemId))
@@ -48,8 +52,8 @@ export const ItemDetailSheet = () => {
     deleteItem(item.id, status === 'expired' ? 'expired' : 'discarded')
     setConfirmDelete(false)
     handleClose()
-    showToast(`${snapshot.name} removed`, {
-      label: 'Undo',
+    showToast(t('detail.removedToast', { name: snapshot.name }), {
+      label: t('detail.undo'),
       onClick: () =>
         addItem({
           name: snapshot.name,
@@ -77,11 +81,11 @@ export const ItemDetailSheet = () => {
 
   return (
     <>
-      <Sheet open={!!selectedItemId} onClose={handleClose} title={editing ? 'Edit item' : undefined}>
+      <Sheet open={!!selectedItemId} onClose={handleClose} title={editing ? t('detail.edit') : undefined}>
         {editing ? (
           <ItemForm
             initial={item}
-            submitLabel="Save changes"
+            submitLabel={t('form.saveChanges')}
             onSubmit={handleSubmitEdit}
             onCancel={() => setEditing(false)}
           />
@@ -103,13 +107,15 @@ export const ItemDetailSheet = () => {
                 )}
                 <div>
                   <h3 className="text-[19px] font-bold text-[var(--color-ink)]">{item.name}</h3>
-                  <p className="text-[13.5px] text-[var(--color-ink-dim)]">{category?.name} · {storage?.name}</p>
+                  <p className="text-[13.5px] text-[var(--color-ink-dim)]">
+                    {category ? getCategoryDisplayName(category, t) : ''} · {storage ? getStorageDisplayName(storage, t) : ''}
+                  </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => toggleFavorite(item.id)}
-                aria-label="Toggle favorite"
+                aria-label={t('detail.toggleFavorite')}
                 className="rounded-full p-2 transition active:scale-90"
               >
                 <Star
@@ -120,35 +126,35 @@ export const ItemDetailSheet = () => {
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-black/[0.03] px-4 py-3.5 dark:bg-white/[0.05]">
-              <span className="text-[14.5px] font-medium text-[var(--color-ink-dim)]">Quantity</span>
+              <span className="text-[14.5px] font-medium text-[var(--color-ink-dim)]">{t('detail.quantity')}</span>
               <Stepper value={item.quantity} onChange={(v) => handleQuantityChange(v - item.quantity)} />
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-black/[0.03] px-4 py-3.5 dark:bg-white/[0.05]">
-              <span className="text-[14.5px] font-medium text-[var(--color-ink-dim)]">Expiration</span>
+              <span className="text-[14.5px] font-medium text-[var(--color-ink-dim)]">{t('detail.expiration')}</span>
               <div className="flex items-center gap-2">
                 {item.expirationDate && (
                   <span className="text-[14px] text-[var(--color-ink)]">{formatFriendlyDate(item.expirationDate)}</span>
                 )}
-                <StatusBadge status={status} label={colors.label} />
+                <StatusBadge status={status} label={t(`common:expiration.${status}`)} />
               </div>
             </div>
 
             {item.notes && (
               <div className="rounded-2xl bg-black/[0.03] px-4 py-3.5 dark:bg-white/[0.05]">
-                <p className="mb-1 text-[13px] font-medium text-[var(--color-ink-dim)]">Notes</p>
+                <p className="mb-1 text-[13px] font-medium text-[var(--color-ink-dim)]">{t('detail.notes')}</p>
                 <p className="text-[14.5px] text-[var(--color-ink)]">{item.notes}</p>
               </div>
             )}
 
-            <p className="px-1 text-xs text-[var(--color-ink-faint)]">Added {formatAddedDate(item.dateAdded)}</p>
+            <p className="px-1 text-xs text-[var(--color-ink-faint)]">{t('detail.added', { date: formatAddedDate(item.dateAdded) })}</p>
 
             <div className="flex gap-3">
               <Button variant="secondary" fullWidth icon={<Pencil size={16} />} onClick={() => setEditing(true)}>
-                Edit
+                {t('detail.edit')}
               </Button>
               <Button variant="danger" fullWidth icon={<Trash2 size={16} />} onClick={() => setConfirmDelete(true)}>
-                Delete
+                {t('detail.delete')}
               </Button>
             </div>
           </div>
@@ -157,9 +163,9 @@ export const ItemDetailSheet = () => {
 
       <ConfirmDialog
         open={confirmDelete}
-        title="Delete this item?"
-        message={`"${item.name}" will be removed from your inventory.`}
-        confirmLabel="Delete"
+        title={t('detail.deleteTitle')}
+        message={t('detail.deleteMessage', { name: item.name })}
+        confirmLabel={t('detail.delete')}
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(false)}
       />
@@ -167,16 +173,16 @@ export const ItemDetailSheet = () => {
       <ConfirmDialog
         open={zeroPrompt}
         danger={false}
-        title={`You're out of ${item.name}`}
-        message="Adding it to your shopping list will remove it from your inventory. Or keep it here at 0 until you're ready to deal with it."
-        confirmLabel="Add to shopping list"
-        cancelLabel="Keep at 0"
+        title={t('detail.zeroPromptTitle', { name: item.name })}
+        message={t('detail.zeroPromptMessage')}
+        confirmLabel={t('detail.addToShoppingList')}
+        cancelLabel={t('detail.keepAtZero')}
         onConfirm={() => {
           addShoppingItem(item.name, { unit: item.unit, categoryId: item.categoryId })
           deleteItem(item.id, 'consumed')
           setZeroPrompt(false)
           handleClose()
-          showToast(`${item.name} moved to shopping list`)
+          showToast(t('detail.movedToShoppingToast', { name: item.name }))
         }}
         onCancel={() => setZeroPrompt(false)}
       />

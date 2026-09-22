@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { RealtimeChannel } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import i18n from '../i18n'
 import type {
   AppSettings,
   Category,
@@ -44,6 +45,7 @@ export type DataStatus = 'idle' | 'loading' | 'ready' | 'error'
 const defaultSettings: AppSettings = {
   onboardingComplete: false,
   theme: 'system',
+  language: 'system',
   notifications: {
     enabled: true,
     timing: 1,
@@ -378,7 +380,7 @@ export const useStore = create<AppState>()((set, get) => ({
       .upsert({ user_id: userId, onboarding_complete: true }, { onConflict: 'user_id' })
 
     if (unitsError || settingsError) {
-      notifyError("Something went wrong finishing setup — check your connection and try again.", unitsError || settingsError)
+      notifyError(i18n.t('common:storeErrors.onboardingSetup'), unitsError || settingsError)
     }
   },
 
@@ -393,7 +395,7 @@ export const useStore = create<AppState>()((set, get) => ({
       .insert({ id, user_id: userId, name, type, created_at: unit.createdAt })
     if (error) {
       set((s) => ({ storageUnits: removeById(s.storageUnits, id) }))
-      notifyError(`Couldn't add ${name}`, error)
+      notifyError(i18n.t('common:storeErrors.addNamed', { name }), error)
     }
     return id
   },
@@ -405,7 +407,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('storage_units').update({ name }).eq('id', id)
     if (error) {
       set((s) => ({ storageUnits: s.storageUnits.map((u) => (u.id === id ? previous : u)) }))
-      notifyError("Couldn't rename storage", error)
+      notifyError(i18n.t('common:storeErrors.renameStorage'), error)
     }
   },
 
@@ -419,7 +421,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('storage_units').delete().eq('id', id)
     if (error) {
       set({ storageUnits: previousUnits, items: previousItems })
-      notifyError("Couldn't delete storage", error)
+      notifyError(i18n.t('common:storeErrors.deleteStorage'), error)
     }
   },
 
@@ -432,7 +434,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('categories').insert({ id, user_id: userId, name, icon, is_custom: true })
     if (error) {
       set((s) => ({ categories: removeById(s.categories, id) }))
-      notifyError("Couldn't add category", error)
+      notifyError(i18n.t('common:storeErrors.addCategory'), error)
     }
     return id
   },
@@ -444,7 +446,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('categories').delete().eq('id', id)
     if (error) {
       set((s) => ({ categories: [...s.categories, category] }))
-      notifyError("Couldn't delete category", error)
+      notifyError(i18n.t('common:storeErrors.deleteCategory'), error)
     }
   },
 
@@ -460,7 +462,7 @@ export const useStore = create<AppState>()((set, get) => ({
       const { error } = await supabase.from('inventory_items').update({ quantity: updated.quantity }).eq('id', duplicate.id)
       if (error) {
         set((s) => ({ items: upsert(s.items, duplicate) }))
-        notifyError(`Couldn't update ${duplicate.name}`, error)
+        notifyError(i18n.t('common:storeErrors.updateNamed', { name: duplicate.name }), error)
       }
       return { merged: true, item: updated }
     }
@@ -494,7 +496,7 @@ export const useStore = create<AppState>()((set, get) => ({
     })
     if (error) {
       set((s) => ({ items: removeById(s.items, id) }))
-      notifyError(`Couldn't add ${input.name}`, error)
+      notifyError(i18n.t('common:storeErrors.addNamed', { name: input.name }), error)
     }
     return { merged: false, item }
   },
@@ -520,7 +522,7 @@ export const useStore = create<AppState>()((set, get) => ({
       .eq('id', id)
     if (error) {
       set((s) => ({ items: upsert(s.items, previous) }))
-      notifyError(`Couldn't save changes to ${previous.name}`, error)
+      notifyError(i18n.t('common:storeErrors.saveChangesNamed', { name: previous.name }), error)
     }
   },
 
@@ -534,7 +536,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('inventory_items').update({ quantity: nextQuantity }).eq('id', id)
     if (error) {
       set((s) => ({ items: upsert(s.items, previous) }))
-      notifyError("Couldn't update quantity", error)
+      notifyError(i18n.t('common:storeErrors.updateQuantity'), error)
       return previous
     }
     if (consumedAmount > 0) {
@@ -551,7 +553,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('inventory_items').delete().eq('id', id)
     if (error) {
       set((s) => ({ items: upsert(s.items, item) }))
-      notifyError(`Couldn't delete ${item.name}`, error)
+      notifyError(i18n.t('common:storeErrors.deleteNamed', { name: item.name }), error)
     }
   },
 
@@ -563,7 +565,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('inventory_items').update({ is_favorite: updated.isFavorite }).eq('id', id)
     if (error) {
       set((s) => ({ items: upsert(s.items, item) }))
-      notifyError("Couldn't update favorite", error)
+      notifyError(i18n.t('common:storeErrors.updateFavorite'), error)
     }
   },
 
@@ -594,7 +596,7 @@ export const useStore = create<AppState>()((set, get) => ({
     })
     if (error) {
       set((s) => ({ shoppingList: removeById(s.shoppingList, id) }))
-      notifyError(`Couldn't add ${name}`, error)
+      notifyError(i18n.t('common:storeErrors.addNamed', { name }), error)
     }
   },
 
@@ -604,7 +606,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('shopping_list_items').delete().eq('id', id)
     if (error) {
       set({ shoppingList: previous })
-      notifyError("Couldn't remove item", error)
+      notifyError(i18n.t('common:storeErrors.removeItem'), error)
     }
   },
 
@@ -616,7 +618,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('shopping_list_items').update({ purchased: updated.purchased }).eq('id', id)
     if (error) {
       set((s) => ({ shoppingList: upsert(s.shoppingList, item) }))
-      notifyError("Couldn't update item", error)
+      notifyError(i18n.t('common:storeErrors.updateItem'), error)
     }
   },
 
@@ -628,7 +630,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('shopping_list_items').delete().in('id', purchasedIds)
     if (error) {
       set({ shoppingList: previous })
-      notifyError("Couldn't clear purchased items", error)
+      notifyError(i18n.t('common:storeErrors.clearPurchased'), error)
     }
   },
 
@@ -654,7 +656,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('shopping_list_items').delete().eq('id', id)
     if (error) {
       set({ shoppingList: previous })
-      notifyError(`Added ${shopItem.name} to your kitchen, but couldn't remove it from the shopping list`, error)
+      notifyError(i18n.t('common:storeErrors.restockPartial', { name: shopItem.name }), error)
     }
   },
 
@@ -667,7 +669,7 @@ export const useStore = create<AppState>()((set, get) => ({
     const { error } = await supabase.from('user_settings').upsert(row, { onConflict: 'user_id' })
     if (error) {
       set({ settings: previous })
-      notifyError("Couldn't save settings", error)
+      notifyError(i18n.t('common:storeErrors.saveSettings'), error)
     }
   },
 
@@ -693,13 +695,13 @@ export const useStore = create<AppState>()((set, get) => ({
       if (existingKeys.has(key)) continue
       const body =
         days === 0
-          ? `${item.name} expires today.`
+          ? i18n.t('settings:notificationsPanel.expiresToday', { name: item.name })
           : days === 1
-            ? `${item.name} expires tomorrow.`
-            : `${item.name} expires in ${days} days.`
+            ? i18n.t('settings:notificationsPanel.expiresTomorrow', { name: item.name })
+            : i18n.t('settings:notificationsPanel.expiresInDays', { name: item.name, days })
       newNotifs.push({
         id: makeId(),
-        title: 'Expiring soon',
+        title: i18n.t('settings:notificationsPanel.expiringSoonTitle'),
         body,
         itemId: item.id,
         createdAt: nowISO(),
@@ -787,7 +789,7 @@ export const useStore = create<AppState>()((set, get) => ({
       await get().initializeForUser(userId)
       return true
     } catch (err) {
-      notifyError('Could not import that file', err)
+      notifyError(i18n.t('common:storeErrors.importFile'), err)
       return false
     }
   },
@@ -834,7 +836,7 @@ export const useStore = create<AppState>()((set, get) => ({
       )
       await get().initializeForUser(userId)
     } catch (err) {
-      notifyError('Could not reset your data — please try again.', err)
+      notifyError(i18n.t('common:storeErrors.resetData'), err)
       set({ dataStatus: 'ready', dataError: describeError(err, 'Could not reset your data.') })
     }
   },

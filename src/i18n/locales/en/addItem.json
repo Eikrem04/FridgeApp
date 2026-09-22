@@ -1,0 +1,77 @@
+{
+  "scanBarcode": "Scan barcode",
+  "frequentlyAdded": "Frequently added",
+  "noStorageTitle": "Add a storage unit first",
+  "noStorageSubtitle": "You'll need at least one storage unit before adding items.",
+  "setUpStorage": "Set up storage",
+  "toast": {
+    "combined": "Combined with existing {{name}}",
+    "added": "{{name}} added"
+  },
+  "lookup": {
+    "lookingUp": "Looking up product…",
+    "foundFromCache": "a product you scanned before",
+    "foundFromOff": "Open Food Facts",
+    "foundMessage": "Filled in from {{source}}{{packageSizeClause}}. Quantity defaults to 1 — double-check before saving.",
+    "packageSizeClause": " — package size {{size}}",
+    "notFound": "Barcode {{barcode}} isn't in Open Food Facts yet — enter the product below.",
+    "errorSuffix": "You can still enter the product below.",
+    "errorTimeout": "Product lookup timed out.",
+    "errorNetwork": "Couldn't reach the product database.",
+    "errorHttp": "Product database returned an error.",
+    "dismiss": "Dismiss"
+  },
+  "form": {
+    "storage": "Storage",
+    "noStorageUnits": "No storage units — add one first",
+    "name": "Name",
+    "namePlaceholder": "e.g. Milk",
+    "category": "Category",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "expirationDate": "Expiration date",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "Anything worth remembering",
+    "addItem": "Add item",
+    "saveChanges": "Save changes",
+    "newCategory": "New",
+    "categoryNamePlaceholder": "Category name"
+  },
+  "expirationPicker": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "days3": "3 days",
+    "week1": "1 week",
+    "weeks2": "2 weeks",
+    "month1": "1 month",
+    "months3": "3 months",
+    "months6": "6 months",
+    "none": "None"
+  },
+  "detail": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteTitle": "Delete this item?",
+    "deleteMessage": "\"{{name}}\" will be removed from your inventory.",
+    "removedToast": "{{name}} removed",
+    "undo": "Undo",
+    "toggleFavorite": "Toggle favorite",
+    "quantity": "Quantity",
+    "expiration": "Expiration",
+    "notes": "Notes",
+    "added": "Added {{date}}",
+    "zeroPromptTitle": "You're out of {{name}}",
+    "zeroPromptMessage": "Adding it to your shopping list will remove it from your inventory. Or keep it here at 0 until you're ready to deal with it.",
+    "addToShoppingList": "Add to shopping list",
+    "keepAtZero": "Keep at 0",
+    "movedToShoppingToast": "{{name}} moved to shopping list"
+  },
+  "scanner": {
+    "title": "Scan barcode",
+    "cancel": "Cancel",
+    "unsupported": "Barcode scanning isn't available in this browser.",
+    "permissionDenied": "Camera access was denied. Allow camera access in your browser settings to scan.",
+    "manualFallback": "You can still add the product manually — just type in its name below.",
+    "hint": "Line up the barcode inside the frame"
+  }
+}

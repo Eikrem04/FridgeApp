@@ -1,0 +1,44 @@
+{
+  "welcome": {
+    "heading": "Velkommen til Kitchen",
+    "subtitle": "Hold oversikt over alt i kjøleskapet, fryseren og tørrvarelageret ditt — kast aldri mat unødvendig igjen.",
+    "namePlaceholder": "Navnet ditt (valgfritt)",
+    "getStarted": "Kom i gang"
+  },
+  "counts": {
+    "heading": "Sett opp kjøkkenet ditt",
+    "subtitle": "Fortell oss hvor mange lagringssteder du har. Du kan endre dette når som helst.",
+    "refrigerators": "Kjøleskap",
+    "freezers": "Frysere",
+    "pantries": "Tørrvarelagre",
+    "continue": "Fortsett",
+    "addAtLeastOne": "Legg til minst ett lagringssted"
+  },
+  "names": {
+    "heading": "Navngi lagringsstedene",
+    "subtitle": "Gi hvert av dem et navn du kjenner igjen.",
+    "finish": "Begynn å bruke Kitchen",
+    "finishing": "Setter opp …",
+    "back": "Tilbake"
+  },
+  "migration": {
+    "heading": "Vi fant data på denne enheten",
+    "bodyPrefix": "Før du logget inn hadde denne nettleseren et lokalt kjøkken med",
+    "and": "og",
+    "bodySuffix": "Vil du importere det til kontoen din?",
+    "storageUnit_one": "{{count}} lagringssted",
+    "storageUnit_other": "{{count}} lagringssteder",
+    "itemCount_one": "{{count}} vare",
+    "itemCount_other": "{{count}} varer",
+    "shoppingItem_one": "{{count}} vare på handlelisten",
+    "shoppingItem_other": "{{count}} varer på handlelisten",
+    "importError": "Kunne ikke importere dataene dine — sjekk tilkoblingen og prøv igjen.",
+    "importButton": "Importer dataene mine",
+    "importing": "Importerer …",
+    "startFresh": "Start på nytt i stedet",
+    "discardTitle": "Forkaste dataene på denne enheten?",
+    "discardMessage": "Disse lokale dataene har aldri blitt lastet opp noe sted. Hvis du starter på nytt, blir de slettet permanent fra denne enheten.",
+    "discardConfirm": "Forkast",
+    "importedToast": "Dataene dine er nå synkronisert til kontoen din"
+  }
+}

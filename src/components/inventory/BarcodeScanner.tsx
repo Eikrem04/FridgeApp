@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Camera, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { BarcodeFormat, BrowserMultiFormatReader, type IScannerControls } from '@zxing/browser'
 import { DecodeHintType } from '@zxing/library'
 
@@ -20,10 +21,8 @@ hints.set(DecodeHintType.POSSIBLE_FORMATS, [
   BarcodeFormat.UPC_E,
 ])
 
-const UNSUPPORTED_MESSAGE = "Barcode scanning isn't available in this browser."
-const PERMISSION_MESSAGE = 'Camera access was denied. Allow camera access in your browser settings to scan.'
-
 export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProps) => {
+  const { t } = useTranslation('addItem')
   const videoRef = useRef<HTMLVideoElement>(null)
   const controlsRef = useRef<IScannerControls | null>(null)
   const [status, setStatus] = useState<ScannerStatus>('starting')
@@ -83,7 +82,8 @@ export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProp
   }
 
   const showCamera = status === 'starting' || status === 'scanning'
-  const message = status === 'permission-denied' ? PERMISSION_MESSAGE : status === 'unsupported' ? UNSUPPORTED_MESSAGE : null
+  const message =
+    status === 'permission-denied' ? t('scanner.permissionDenied') : status === 'unsupported' ? t('scanner.unsupported') : null
 
   return (
     <AnimatePresence>
@@ -95,11 +95,11 @@ export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProp
           className="fixed inset-0 z-[80] flex flex-col bg-black"
         >
           <div className="safe-top flex items-center justify-between px-5 pb-3 pt-4">
-            <span className="text-[15px] font-semibold text-white">Scan barcode</span>
+            <span className="text-[15px] font-semibold text-white">{t('scanner.title')}</span>
             <button
               type="button"
               onClick={handleClose}
-              aria-label="Cancel"
+              aria-label={t('scanner.cancel')}
               className="rounded-full bg-white/15 p-2.5 text-white active:scale-90"
             >
               <X size={19} />
@@ -112,7 +112,7 @@ export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProp
                 <video ref={videoRef} muted playsInline className="h-full w-full object-cover" />
                 <div className="pointer-events-none absolute h-40 w-72 rounded-3xl border-2 border-white/70" />
                 <p className="pointer-events-none absolute bottom-[max(2.5rem,env(safe-area-inset-bottom))] left-6 right-6 text-center text-[13.5px] font-medium text-white/80">
-                  Line up the barcode inside the frame
+                  {t('scanner.hint')}
                 </p>
               </>
             ) : (
@@ -121,9 +121,7 @@ export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProp
                   <Camera size={28} />
                 </span>
                 <p className="text-[16px] font-semibold text-white">{message}</p>
-                <p className="text-[14px] text-white/70">
-                  You can still add the product manually — just type in its name below.
-                </p>
+                <p className="text-[14px] text-white/70">{t('scanner.manualFallback')}</p>
               </div>
             )}
           </div>

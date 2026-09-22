@@ -14,9 +14,11 @@
     "@zxing/browser": "^0.2.1",
     "date-fns": "^4.4.0",
     "framer-motion": "^13.4.0",
+    "i18next": "^26.4.2",
     "lucide-react": "^1.47.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-i18next": "^17.0.15",
     "react-router-dom": "^7.18.4",
     "uuid": "^14.0.2",
     "zustand": "^5.0.15"

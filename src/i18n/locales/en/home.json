@@ -1,0 +1,30 @@
+{
+  "greeting": {
+    "night": "Good night",
+    "morning": "Good morning",
+    "afternoon": "Good afternoon",
+    "evening": "Good evening"
+  },
+  "title": "Your kitchen",
+  "needsAttention": "Needs attention",
+  "expiredCount_one": "{{count}} expired",
+  "expiredCount_other": "{{count}} expired",
+  "expiringSoonCount_one": "{{count}} expiring soon",
+  "expiringSoonCount_other": "{{count}} expiring soon",
+  "noStorageTitle": "No storage units yet",
+  "noStorageSubtitle": "Add your first storage unit to start tracking what's inside.",
+  "addStorage": "Add storage",
+  "useSoon": "Use soon",
+  "seeAll": "See all",
+  "quickTiles": {
+    "shopping": "Shopping",
+    "recipes": "Recipes",
+    "stats": "Stats"
+  },
+  "storageCard": {
+    "expiringSoon_one": "{{count}} expiring soon",
+    "expiringSoon_other": "{{count}} expiring soon",
+    "expired_one": "{{count}} expired",
+    "expired_other": "{{count}} expired"
+  }
+}

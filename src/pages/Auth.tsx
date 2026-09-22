@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Refrigerator, CircleAlert, Mail } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../store/useAuthStore'
 import { Button } from '../components/ui/Button'
 import { FieldWrap, TextInput } from '../components/ui/Field'
@@ -8,6 +9,7 @@ import { FieldWrap, TextInput } from '../components/ui/Field'
 type Mode = 'signIn' | 'signUp' | 'forgotPassword'
 
 export const Auth = () => {
+  const { t } = useTranslation('auth')
   const signIn = useAuthStore((s) => s.signIn)
   const signUp = useAuthStore((s) => s.signUp)
   const requestPasswordReset = useAuthStore((s) => s.requestPasswordReset)
@@ -51,11 +53,11 @@ export const Auth = () => {
     }
 
     if (mode === 'signUp' && password !== confirmPassword) {
-      setFormError("Passwords don't match.")
+      setFormError(t('errors.passwordsDontMatch'))
       return
     }
     if (password.length < 6) {
-      setFormError('Password must be at least 6 characters.')
+      setFormError(t('errors.passwordTooShort'))
       return
     }
 
@@ -77,13 +79,9 @@ export const Auth = () => {
   const errorMessage = formError ?? authError
 
   const heading =
-    mode === 'signIn' ? 'Welcome back' : mode === 'signUp' ? 'Create your account' : 'Reset your password'
+    mode === 'signIn' ? t('signIn.heading') : mode === 'signUp' ? t('signUp.heading') : t('forgotPassword.heading')
   const subtitle =
-    mode === 'signIn'
-      ? 'Log in to sync your kitchen across every device.'
-      : mode === 'signUp'
-        ? 'Your fridge and freezer, kept in sync everywhere you go.'
-        : "Enter your email and we'll send you a link to set a new password."
+    mode === 'signIn' ? t('signIn.subtitle') : mode === 'signUp' ? t('signUp.subtitle') : t('forgotPassword.subtitle')
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-[var(--color-bg)]">
@@ -103,29 +101,24 @@ export const Auth = () => {
           {confirmationSent ? (
             <div className="mt-8 flex w-full flex-col items-center gap-3 rounded-3xl bg-[var(--color-accent-soft)] p-6 text-center">
               <Mail size={28} className="text-[var(--color-accent)]" />
-              <p className="text-[15px] font-semibold text-[var(--color-ink)]">Check your email</p>
-              <p className="text-[13.5px] text-[var(--color-ink-dim)]">
-                We sent a confirmation link to <span className="font-medium">{email}</span>. Confirm it, then log in below.
-              </p>
+              <p className="text-[15px] font-semibold text-[var(--color-ink)]">{t('signupConfirmation.title')}</p>
+              <p className="text-[13.5px] text-[var(--color-ink-dim)]">{t('signupConfirmation.body', { email })}</p>
               <Button variant="secondary" onClick={() => switchMode('signIn')}>
-                Back to log in
+                {t('signupConfirmation.backToLogin')}
               </Button>
             </div>
           ) : resetEmailSent ? (
             <div className="mt-8 flex w-full flex-col items-center gap-3 rounded-3xl bg-[var(--color-accent-soft)] p-6 text-center">
               <Mail size={28} className="text-[var(--color-accent)]" />
-              <p className="text-[15px] font-semibold text-[var(--color-ink)]">Check your email</p>
-              <p className="text-[13.5px] text-[var(--color-ink-dim)]">
-                If an account exists for <span className="font-medium">{email}</span>, we've sent a link to reset your
-                password. It'll bring you right back here.
-              </p>
+              <p className="text-[15px] font-semibold text-[var(--color-ink)]">{t('forgotPassword.successTitle')}</p>
+              <p className="text-[13.5px] text-[var(--color-ink-dim)]">{t('forgotPassword.successBody', { email })}</p>
               <Button variant="secondary" onClick={() => switchMode('signIn')}>
-                Back to log in
+                {t('forgotPassword.backToLogin')}
               </Button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-8 flex w-full flex-col gap-4">
-              <FieldWrap label="Email">
+              <FieldWrap label={t('email')}>
                 <TextInput
                   type="email"
                   autoComplete="email"
@@ -138,7 +131,7 @@ export const Auth = () => {
               </FieldWrap>
 
               {mode !== 'forgotPassword' && (
-                <FieldWrap label="Password">
+                <FieldWrap label={t('password')}>
                   <TextInput
                     type="password"
                     autoComplete={mode === 'signIn' ? 'current-password' : 'new-password'}
@@ -151,7 +144,7 @@ export const Auth = () => {
                 </FieldWrap>
               )}
               {mode === 'signUp' && (
-                <FieldWrap label="Confirm password">
+                <FieldWrap label={t('confirmPassword')}>
                   <TextInput
                     type="password"
                     autoComplete="new-password"
@@ -170,7 +163,7 @@ export const Auth = () => {
                   onClick={() => switchMode('forgotPassword')}
                   className="-mt-2 self-end text-[13px] font-semibold text-[var(--color-accent)]"
                 >
-                  Forgot password?
+                  {t('forgotPassword.link')}
                 </button>
               )}
 
@@ -183,12 +176,12 @@ export const Auth = () => {
 
               <Button type="submit" fullWidth size="lg" className="mt-1" disabled={submitting}>
                 {submitting
-                  ? 'Please wait…'
+                  ? t('pleaseWait')
                   : mode === 'signIn'
-                    ? 'Log in'
+                    ? t('logIn')
                     : mode === 'signUp'
-                      ? 'Sign up'
-                      : 'Send reset link'}
+                      ? t('signUpButton')
+                      : t('forgotPassword.submit')}
               </Button>
 
               {mode === 'forgotPassword' && (
@@ -197,7 +190,7 @@ export const Auth = () => {
                   onClick={() => switchMode('signIn')}
                   className="text-[14px] font-medium text-[var(--color-ink-dim)]"
                 >
-                  Back to log in
+                  {t('forgotPassword.backToLogin')}
                 </button>
               )}
             </form>
@@ -211,11 +204,11 @@ export const Auth = () => {
             >
               {mode === 'signIn' ? (
                 <>
-                  Don't have an account? <span className="font-semibold text-[var(--color-accent)]">Sign up</span>
+                  {t('noAccount')} <span className="font-semibold text-[var(--color-accent)]">{t('signUpLink')}</span>
                 </>
               ) : (
                 <>
-                  Already have an account? <span className="font-semibold text-[var(--color-accent)]">Log in</span>
+                  {t('haveAccount')} <span className="font-semibold text-[var(--color-accent)]">{t('logInLink')}</span>
                 </>
               )}
             </button>

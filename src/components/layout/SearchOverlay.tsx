@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Search, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../../store/useStore'
 import { ItemRow } from '../inventory/ItemRow'
 import { EmptyState } from '../ui/EmptyState'
 
 export const SearchOverlay = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const { t } = useTranslation(['inventory', 'common'])
   const [query, setQuery] = useState('')
   const items = useStore((s) => s.items)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -41,13 +43,14 @@ export const SearchOverlay = ({ open, onClose }: { open: boolean; onClose: () =>
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search your fridge & freezer"
+                placeholder={t('search.placeholder')}
                 className="w-full bg-transparent text-[16px] text-[var(--color-ink)] outline-none placeholder:text-[var(--color-ink-faint)]"
               />
             </div>
             <button
               type="button"
               onClick={onClose}
+              aria-label={t('common:actions.close')}
               className="rounded-full bg-black/[0.05] p-2.5 text-[var(--color-ink)] dark:bg-white/10"
             >
               <X size={19} />
@@ -58,12 +61,12 @@ export const SearchOverlay = ({ open, onClose }: { open: boolean; onClose: () =>
             {query.trim() === '' && (
               <EmptyState
                 icon={<Search size={26} />}
-                title="Search your kitchen"
-                subtitle="Find anything across all your fridges and freezers instantly."
+                title={t('search.emptyTitle')}
+                subtitle={t('search.emptySubtitle')}
               />
             )}
             {query.trim() !== '' && results.length === 0 && (
-              <EmptyState title="No matches" subtitle={`Nothing found for "${query}"`} />
+              <EmptyState title={t('search.noMatchesTitle')} subtitle={t('search.noMatchesSubtitle', { query })} />
             )}
             {results.length > 0 && (
               <div className="flex flex-col gap-2 pt-2">

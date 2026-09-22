@@ -1,13 +1,17 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import type { InventoryItem } from '../../types'
 import { useStore } from '../../store/useStore'
 import { useUiStore } from '../../store/useUiStore'
 import { getExpirationStatus, statusColors } from '../../lib/expiration'
 import { formatRelativeExpiration } from '../../lib/date'
+import { getUnitLabel } from '../../lib/inventory'
+import { getStorageDisplayName } from '../../lib/storageTypes'
 import { CategoryIcon } from '../../lib/icons'
 
 export const ItemRow = ({ item, showStorage = false }: { item: InventoryItem; showStorage?: boolean }) => {
+  const { t } = useTranslation('common')
   const category = useStore((s) => s.categories.find((c) => c.id === item.categoryId))
   const storage = useStore((s) => s.storageUnits.find((u) => u.id === item.storageId))
   const expiringSoonDays = useStore((s) => s.settings.expiration.expiringSoonDays)
@@ -48,13 +52,13 @@ export const ItemRow = ({ item, showStorage = false }: { item: InventoryItem; sh
           {showStorage && storage && (
             <>
               <span className="text-[var(--color-ink-faint)]">·</span>
-              <span className="truncate">{storage.name}</span>
+              <span className="truncate">{getStorageDisplayName(storage, t)}</span>
             </>
           )}
         </span>
       </span>
       <span className="shrink-0 text-[14px] font-medium text-[var(--color-ink-faint)]">
-        {item.quantity} {item.unit}
+        {item.quantity} {getUnitLabel(item.unit, t)}
       </span>
     </motion.button>
   )

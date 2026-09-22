@@ -1,15 +1,17 @@
 import { NavLink } from 'react-router-dom'
 import { Home, ListChecks, Plus, ShoppingCart, Settings } from 'lucide-react'
-
-const items = [
-  { to: '/', label: 'Home', icon: Home, end: true },
-  { to: '/inventory', label: 'Inventory', icon: ListChecks, end: false },
-  { to: '/add', label: 'Add', icon: Plus, end: false, isCenter: true },
-  { to: '/shopping', label: 'Shopping', icon: ShoppingCart, end: false },
-  { to: '/settings', label: 'Settings', icon: Settings, end: false },
-]
+import { useTranslation } from 'react-i18next'
 
 export const BottomNav = () => {
+  const { t } = useTranslation('common')
+  const items = [
+    { to: '/', label: t('nav.home'), icon: Home, end: true },
+    { to: '/inventory', label: t('nav.inventory'), icon: ListChecks, end: false },
+    { to: '/add', label: t('nav.add'), icon: Plus, end: false, isCenter: true },
+    { to: '/shopping', label: t('nav.shopping'), icon: ShoppingCart, end: false },
+    { to: '/settings', label: t('nav.settings'), icon: Settings, end: false },
+  ]
+
   return (
     <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-[var(--color-line)] bg-[var(--color-surface)]/85 backdrop-blur-xl md:hidden">
       <div className="mx-auto flex max-w-lg items-center justify-around px-2 pb-1 pt-1.5">

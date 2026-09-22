@@ -1,0 +1,25 @@
+{
+  "title": "Handleliste",
+  "addPlaceholder": "Legg til en vare, f.eks. Egg",
+  "emptyTitle": "Handlelisten din er tom",
+  "emptySubtitle": "Legg til varer manuelt, eller de dukker opp her automatisk når du går tom.",
+  "toBuy_one": "Å kjøpe ({{count}})",
+  "toBuy_other": "Å kjøpe ({{count}})",
+  "purchased_one": "Kjøpt ({{count}})",
+  "purchased_other": "Kjøpt ({{count}})",
+  "clear": "Tøm",
+  "restock": {
+    "title": "Legg til i kjøkkenet?",
+    "body": "Fint! Vil du legge den rett inn i et lagringssted?",
+    "storage": "Lagringssted",
+    "notNow": "Ikke nå",
+    "addIt": "Legg til",
+    "done": "Ferdig",
+    "addedToast": "Lagt til i beholdningen"
+  },
+  "row": {
+    "markNotPurchased": "Merk som ikke kjøpt",
+    "markPurchased": "Merk som kjøpt",
+    "remove": "Fjern"
+  }
+}

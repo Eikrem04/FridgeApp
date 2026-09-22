@@ -1,0 +1,77 @@
+{
+  "scanBarcode": "Skann strekkode",
+  "frequentlyAdded": "Ofte lagt til",
+  "noStorageTitle": "Legg til et lagringssted først",
+  "noStorageSubtitle": "Du trenger minst ett lagringssted før du kan legge til varer.",
+  "setUpStorage": "Sett opp lagringssted",
+  "toast": {
+    "combined": "Slått sammen med {{name}}",
+    "added": "{{name}} lagt til"
+  },
+  "lookup": {
+    "lookingUp": "Slår opp produkt …",
+    "foundFromCache": "et produkt du har skannet før",
+    "foundFromOff": "Open Food Facts",
+    "foundMessage": "Fylt ut fra {{source}}{{packageSizeClause}}. Antall settes til 1 som standard — dobbeltsjekk før du lagrer.",
+    "packageSizeClause": " — pakningsstørrelse {{size}}",
+    "notFound": "Strekkoden {{barcode}} finnes ikke i Open Food Facts ennå — skriv inn produktet nedenfor.",
+    "errorSuffix": "Du kan fortsatt skrive inn produktet nedenfor.",
+    "errorTimeout": "Produktoppslaget tok for lang tid.",
+    "errorNetwork": "Fikk ikke kontakt med produktdatabasen.",
+    "errorHttp": "Produktdatabasen returnerte en feil.",
+    "dismiss": "Lukk"
+  },
+  "form": {
+    "storage": "Lagringssted",
+    "noStorageUnits": "Ingen lagringssteder — legg til ett først",
+    "name": "Navn",
+    "namePlaceholder": "f.eks. Melk",
+    "category": "Kategori",
+    "quantity": "Antall",
+    "unit": "Enhet",
+    "expirationDate": "Utløpsdato",
+    "notes": "Notater (valgfritt)",
+    "notesPlaceholder": "Noe verdt å huske",
+    "addItem": "Legg til vare",
+    "saveChanges": "Lagre endringer",
+    "newCategory": "Ny",
+    "categoryNamePlaceholder": "Kategorinavn"
+  },
+  "expirationPicker": {
+    "today": "I dag",
+    "tomorrow": "I morgen",
+    "days3": "3 dager",
+    "week1": "1 uke",
+    "weeks2": "2 uker",
+    "month1": "1 måned",
+    "months3": "3 måneder",
+    "months6": "6 måneder",
+    "none": "Ingen"
+  },
+  "detail": {
+    "edit": "Rediger",
+    "delete": "Slett",
+    "deleteTitle": "Slette denne varen?",
+    "deleteMessage": "«{{name}}» blir fjernet fra beholdningen din.",
+    "removedToast": "{{name}} fjernet",
+    "undo": "Angre",
+    "toggleFavorite": "Vis/skjul favoritt",
+    "quantity": "Antall",
+    "expiration": "Utløpsdato",
+    "notes": "Notater",
+    "added": "Lagt til {{date}}",
+    "zeroPromptTitle": "Du er tom for {{name}}",
+    "zeroPromptMessage": "Legger du den til på handlelisten, fjernes den fra beholdningen. Eller behold den her på 0 til du er klar til å ta tak i det.",
+    "addToShoppingList": "Legg til på handleliste",
+    "keepAtZero": "Behold på 0",
+    "movedToShoppingToast": "{{name}} flyttet til handlelisten"
+  },
+  "scanner": {
+    "title": "Skann strekkode",
+    "cancel": "Avbryt",
+    "unsupported": "Strekkodeskanning er ikke tilgjengelig i denne nettleseren.",
+    "permissionDenied": "Kameratilgang ble avvist. Gi kameratilgang i nettleserinnstillingene for å skanne.",
+    "manualFallback": "Du kan fortsatt legge til produktet manuelt — skriv bare inn navnet nedenfor.",
+    "hint": "Plasser strekkoden innenfor rammen"
+  }
+}

@@ -53,9 +53,13 @@ export interface ExpirationSettings {
 
 export type ThemePreference = 'light' | 'dark' | 'system'
 
+/** 'system' resolves at runtime from the browser/device locale — see src/i18n/index.ts. */
+export type LanguagePreference = 'system' | 'en' | 'nb'
+
 export interface AppSettings {
   onboardingComplete: boolean
   theme: ThemePreference
+  language: LanguagePreference
   notifications: NotificationSettings
   expiration: ExpirationSettings
   userName?: string

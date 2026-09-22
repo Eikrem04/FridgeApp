@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { AlertTriangle, ChefHat, Plus, Refrigerator, ShoppingCart, TrendingUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import { TopBar } from '../components/layout/TopBar'
 import { StorageCard } from '../components/storage/StorageCard'
@@ -10,6 +11,7 @@ import { getExpiredItems, getUseSoonItems } from '../lib/selectors'
 import { greetingForTime } from '../lib/date'
 
 export const Home = () => {
+  const { t } = useTranslation('home')
   const navigate = useNavigate()
   const storageUnits = useStore((s) => s.storageUnits)
   const items = useStore((s) => s.items)
@@ -26,7 +28,7 @@ export const Home = () => {
       <div className="px-5 md:px-8">
         <div className="mb-1 pt-1">
           <p className="text-[15px] font-medium text-[var(--color-ink-dim)]">{greetingForTime()}{userName ? `, ${userName}` : ''}</p>
-          <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink)]">Your kitchen</h1>
+          <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink)]">{t('title')}</h1>
         </div>
 
         {(expired.length > 0 || useSoon.length > 0) && (
@@ -39,11 +41,11 @@ export const Home = () => {
               <AlertTriangle size={20} />
             </span>
             <div className="flex-1">
-              <p className="text-[15.5px] font-bold text-[var(--color-ink)]">Needs attention</p>
+              <p className="text-[15.5px] font-bold text-[var(--color-ink)]">{t('needsAttention')}</p>
               <p className="text-[13.5px] text-[var(--color-ink-dim)]">
-                {expired.length > 0 && `${expired.length} expired`}
+                {expired.length > 0 && t('expiredCount', { count: expired.length })}
                 {expired.length > 0 && useSoon.length > 0 && ' · '}
-                {useSoon.length > 0 && `${useSoon.length} expiring soon`}
+                {useSoon.length > 0 && t('expiringSoonCount', { count: useSoon.length })}
               </p>
             </div>
           </button>
@@ -52,11 +54,11 @@ export const Home = () => {
         {storageUnits.length === 0 ? (
           <EmptyState
             icon={<Refrigerator size={26} />}
-            title="No storage units yet"
-            subtitle="Add your first storage unit to start tracking what's inside."
+            title={t('noStorageTitle')}
+            subtitle={t('noStorageSubtitle')}
             action={
               <Button icon={<Plus size={16} />} onClick={() => navigate('/settings')}>
-                Add storage
+                {t('addStorage')}
               </Button>
             }
           />
@@ -71,13 +73,13 @@ export const Home = () => {
         {useSoon.length > 0 && (
           <div className="mt-8">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-[18px] font-bold text-[var(--color-ink)]">Use soon</h2>
+              <h2 className="text-[18px] font-bold text-[var(--color-ink)]">{t('useSoon')}</h2>
               <button
                 type="button"
                 onClick={() => navigate('/inventory?filter=expiring')}
                 className="text-[13.5px] font-semibold text-[var(--color-accent)]"
               >
-                See all
+                {t('seeAll')}
               </button>
             </div>
             <div className="no-scrollbar -mx-5 flex gap-3 overflow-x-auto px-5 md:mx-0 md:px-0">
@@ -89,9 +91,9 @@ export const Home = () => {
         )}
 
         <div className="mt-8 grid grid-cols-3 gap-3">
-          <QuickTile icon={<ShoppingCart size={20} />} label="Shopping" badge={shoppingCount || undefined} onClick={() => navigate('/shopping')} />
-          <QuickTile icon={<ChefHat size={20} />} label="Recipes" onClick={() => navigate('/recipes')} />
-          <QuickTile icon={<TrendingUp size={20} />} label="Stats" onClick={() => navigate('/stats')} />
+          <QuickTile icon={<ShoppingCart size={20} />} label={t('quickTiles.shopping')} badge={shoppingCount || undefined} onClick={() => navigate('/shopping')} />
+          <QuickTile icon={<ChefHat size={20} />} label={t('quickTiles.recipes')} onClick={() => navigate('/recipes')} />
+          <QuickTile icon={<TrendingUp size={20} />} label={t('quickTiles.stats')} onClick={() => navigate('/stats')} />
         </div>
       </div>
     </div>

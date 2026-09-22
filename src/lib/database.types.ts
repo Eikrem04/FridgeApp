@@ -2,6 +2,7 @@ export type StorageTypeRow = 'fridge' | 'freezer' | 'pantry'
 export type StatEventTypeRow = 'added' | 'consumed' | 'expired' | 'discarded'
 export type NotificationTimingRow = '0' | '1' | '2' | '3' | 'never'
 export type ThemeRow = 'light' | 'dark' | 'system'
+export type LanguageRow = 'system' | 'en' | 'nb'
 
 export interface Database {
   public: {
@@ -169,6 +170,7 @@ export interface Database {
         Row: {
           user_id: string
           theme: ThemeRow
+          language: LanguageRow
           onboarding_complete: boolean
           user_name: string | null
           notifications_enabled: boolean
@@ -180,6 +182,7 @@ export interface Database {
         Insert: {
           user_id: string
           theme?: ThemeRow
+          language?: LanguageRow
           onboarding_complete?: boolean
           user_name?: string | null
           notifications_enabled?: boolean
@@ -191,6 +194,7 @@ export interface Database {
         Update: Partial<{
           user_id: string
           theme: ThemeRow
+          language: LanguageRow
           onboarding_complete: boolean
           user_name: string | null
           notifications_enabled: boolean

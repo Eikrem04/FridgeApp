@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import i18n from '../i18n'
 
 export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
 
@@ -27,26 +28,31 @@ interface AuthState {
   deleteAccount: () => Promise<{ error: string | null }>
 }
 
+// Supabase Auth only ever returns these messages in English — matched
+// against the raw text, then re-expressed via the current UI language so a
+// Norwegian-language user never sees a stray English sentence. Anything
+// unrecognized falls back to a generic translated message rather than
+// leaking the raw provider string (see auth:errors.generic).
 const friendlyAuthError = (message: string): string => {
-  if (message.toLowerCase().includes('invalid login credentials')) {
-    return 'Incorrect email or password.'
+  const lower = message.toLowerCase()
+  if (lower.includes('invalid login credentials')) return i18n.t('auth:errors.incorrectCredentials')
+  if (lower.includes('user already registered')) return i18n.t('auth:errors.accountExists')
+  if (lower.includes('password should be at least')) return i18n.t('auth:errors.passwordTooShort')
+  if (lower.includes('email not confirmed')) return i18n.t('auth:errors.emailNotConfirmed')
+  if (lower.includes('link is invalid or has expired')) return i18n.t('auth:errors.resetLinkInvalid')
+  if (lower.includes('should be different from the old password')) return i18n.t('auth:errors.samePassword')
+  return i18n.t('common:errors.generic')
+}
+
+// The delete-account Edge Function (see supabase/functions/delete-account)
+// only ever returns one of a few fixed, safe English strings — matched the
+// same way as friendlyAuthError, never showing raw server text to the user.
+const friendlyDeleteAccountError = (message: string): string => {
+  const lower = message.toLowerCase()
+  if (lower.includes('invalid or expired session') || lower.includes('missing authorization')) {
+    return i18n.t('auth:errors.sessionExpired')
   }
-  if (message.toLowerCase().includes('user already registered')) {
-    return 'An account with this email already exists. Try logging in instead.'
-  }
-  if (message.toLowerCase().includes('password should be at least')) {
-    return 'Password must be at least 6 characters.'
-  }
-  if (message.toLowerCase().includes('email not confirmed')) {
-    return 'Please confirm your email address before logging in.'
-  }
-  if (message.toLowerCase().includes('link is invalid or has expired')) {
-    return 'That reset link is invalid or has expired. Request a new one.'
-  }
-  if (message.toLowerCase().includes('should be different from the old password')) {
-    return 'Choose a password different from your current one.'
-  }
-  return message
+  return i18n.t('common:errors.generic')
 }
 
 let hasInitialized = false
@@ -159,22 +165,23 @@ export const useAuthStore = create<AuthState>()((set) => ({
     const { data, error } = await supabase.functions.invoke<{ success?: boolean; error?: string }>('delete-account')
 
     if (error) {
-      let message = 'Could not delete your account. Please try again.'
+      let rawMessage = ''
       const context = (error as { context?: Response }).context
       if (context) {
         try {
           const body = (await context.json()) as { error?: string }
-          if (body?.error) message = body.error
+          rawMessage = body?.error ?? ''
         } catch {
-          // Response body wasn't JSON (e.g. a network-level failure) — keep the generic message.
+          // Response body wasn't JSON (e.g. a network-level failure) — fall through to the generic message.
         }
       }
+      const message = rawMessage ? friendlyDeleteAccountError(rawMessage) : i18n.t('common:errors.generic')
       set({ authError: message })
       return { error: message }
     }
 
     if (data?.success === false) {
-      const message = data.error ?? 'Could not delete your account. Please try again.'
+      const message = data.error ? friendlyDeleteAccountError(data.error) : i18n.t('common:errors.generic')
       set({ authError: message })
       return { error: message }
     }

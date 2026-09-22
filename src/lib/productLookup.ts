@@ -23,7 +23,7 @@ export interface ProductInfo {
 export type ProductLookupState =
   | { status: 'found'; barcode: string; product: ProductInfo }
   | { status: 'not-found'; barcode: string }
-  | { status: 'error'; barcode: string; message: string }
+  | { status: 'error'; barcode: string; reason: 'http' | 'timeout' | 'network'; httpStatus?: number }
 
 const OFF_TIMEOUT_MS = 8000
 
@@ -69,7 +69,7 @@ export const lookupProductByBarcode = async (barcode: string): Promise<ProductLo
       { signal: controller.signal },
     )
     if (!res.ok) {
-      return { status: 'error', barcode, message: `Product database returned an error (${res.status}).` }
+      return { status: 'error', barcode, reason: 'http', httpStatus: res.status }
     }
     const data = (await res.json()) as OffProductResponse
     const name = data.product?.product_name?.trim()
@@ -88,9 +88,9 @@ export const lookupProductByBarcode = async (barcode: string): Promise<ProductLo
     return { status: 'found', barcode, product }
   } catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError') {
-      return { status: 'error', barcode, message: 'Product lookup timed out.' }
+      return { status: 'error', barcode, reason: 'timeout' }
     }
-    return { status: 'error', barcode, message: "Couldn't reach the product database." }
+    return { status: 'error', barcode, reason: 'network' }
   } finally {
     clearTimeout(timeout)
   }

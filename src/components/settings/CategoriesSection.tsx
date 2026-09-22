@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../../store/useStore'
 import { SettingsSection } from './SettingsSection'
 import { CategoryIcon } from '../../lib/icons'
+import { getCategoryDisplayName } from '../../lib/categoryLocalization'
 import { TextInput } from '../ui/Field'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 import type { Category } from '../../types'
 
 export const CategoriesSection = () => {
+  const { t } = useTranslation(['settings', 'common'])
   const categories = useStore((s) => s.categories)
   const items = useStore((s) => s.items)
   const addCategory = useStore((s) => s.addCategory)
@@ -27,43 +30,24 @@ export const CategoriesSection = () => {
 
   return (
     <>
-      <SettingsSection title="Categories">
+      <SettingsSection title={t('categories.title')}>
         <div className="flex flex-wrap gap-2 p-4">
           {categories.map((cat) => (
-            <span
-              key={cat.id}
-              className="flex items-center gap-1.5 rounded-full bg-black/[0.05] py-1.5 pl-3 pr-1.5 text-[13.5px] font-medium text-[var(--color-ink)] dark:bg-white/10"
-            >
+            <span key={cat.id} className="flex items-center gap-1.5 rounded-full bg-black/[0.05] py-1.5 pl-3 pr-1.5 text-[13.5px] font-medium text-[var(--color-ink)] dark:bg-white/10">
               <CategoryIcon name={cat.icon} size={14} />
-              {cat.name}
+              {getCategoryDisplayName(cat, t)}
               {cat.isCustom && (
-                <button
-                  type="button"
-                  onClick={() => setDeleteTarget(cat)}
-                  className="ml-0.5 flex h-5 w-5 items-center justify-center rounded-full text-[var(--color-ink-faint)] hover:bg-black/10"
-                >
+                <button type="button" onClick={() => setDeleteTarget(cat)} className="ml-0.5 flex h-5 w-5 items-center justify-center rounded-full text-[var(--color-ink-faint)] hover:bg-black/10">
                   <Trash2 size={11} />
                 </button>
               )}
             </span>
           ))}
           {adding ? (
-            <TextInput
-              autoFocus
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={submit}
-              onKeyDown={(e) => e.key === 'Enter' && submit()}
-              placeholder="Category name"
-              className="!w-36 !py-1.5 !text-[13.5px]"
-            />
+            <TextInput autoFocus value={name} onChange={(e) => setName(e.target.value)} onBlur={submit} onKeyDown={(e) => e.key === 'Enter' && submit()} placeholder={t('categories.namePlaceholder')} className="!w-36 !py-1.5 !text-[13.5px]" />
           ) : (
-            <button
-              type="button"
-              onClick={() => setAdding(true)}
-              className="flex items-center gap-1 rounded-full bg-[var(--color-accent-soft)] px-3 py-1.5 text-[13.5px] font-semibold text-[var(--color-accent)]"
-            >
-              <Plus size={13} /> New
+            <button type="button" onClick={() => setAdding(true)} className="flex items-center gap-1 rounded-full bg-[var(--color-accent-soft)] px-3 py-1.5 text-[13.5px] font-semibold text-[var(--color-accent)]">
+              <Plus size={13} /> {t('categories.new')}
             </button>
           )}
         </div>
@@ -71,13 +55,13 @@ export const CategoriesSection = () => {
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title={`Delete "${deleteTarget?.name}"?`}
+        title={t('categories.deleteTitle', { name: deleteTarget ? getCategoryDisplayName(deleteTarget, t) : '' })}
         message={
           affectedItemCount > 0
-            ? `${affectedItemCount} item${affectedItemCount === 1 ? '' : 's'} using this category will become uncategorized. This can't be undone.`
-            : "This can't be undone."
+            ? t('categories.deleteMessageWithItems', { count: affectedItemCount })
+            : t('categories.deleteMessageNoItems')
         }
-        confirmLabel="Delete"
+        confirmLabel={t('categories.delete')}
         onConfirm={() => {
           if (deleteTarget) deleteCategory(deleteTarget.id)
           setDeleteTarget(null)

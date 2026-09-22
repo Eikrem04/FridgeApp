@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { addDaysISO, formatFriendlyDate, todayISODate } from '../../lib/date'
 
 interface ExpirationPickerProps {
@@ -5,18 +6,20 @@ interface ExpirationPickerProps {
   onChange: (value: string | null) => void
 }
 
-const QUICK_OPTIONS: { label: string; days: number | null }[] = [
-  { label: 'Today', days: 0 },
-  { label: 'Tomorrow', days: 1 },
-  { label: '3 days', days: 3 },
-  { label: '1 week', days: 7 },
-  { label: '2 weeks', days: 14 },
-  { label: '1 month', days: 30 },
-  { label: '3 months', days: 90 },
-  { label: '6 months', days: 180 },
-]
-
 export const ExpirationPicker = ({ value, onChange }: ExpirationPickerProps) => {
+  const { t } = useTranslation('addItem')
+
+  const QUICK_OPTIONS: { label: string; days: number | null }[] = [
+    { label: t('expirationPicker.today'), days: 0 },
+    { label: t('expirationPicker.tomorrow'), days: 1 },
+    { label: t('expirationPicker.days3'), days: 3 },
+    { label: t('expirationPicker.week1'), days: 7 },
+    { label: t('expirationPicker.weeks2'), days: 14 },
+    { label: t('expirationPicker.month1'), days: 30 },
+    { label: t('expirationPicker.months3'), days: 90 },
+    { label: t('expirationPicker.months6'), days: 180 },
+  ]
+
   const activeDays = value ? Math.round((new Date(value).getTime() - new Date(todayISODate()).getTime()) / 86400000) : null
 
   return (
@@ -43,7 +46,7 @@ export const ExpirationPicker = ({ value, onChange }: ExpirationPickerProps) => 
             value === null ? 'bg-[var(--color-accent)] text-white' : 'bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10'
           }`}
         >
-          None
+          {t('expirationPicker.none')}
         </button>
       </div>
       <div className="flex items-center gap-3 rounded-2xl bg-black/[0.04] px-4 py-3 dark:bg-white/[0.06]">

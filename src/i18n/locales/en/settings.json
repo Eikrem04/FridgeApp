@@ -1,0 +1,107 @@
+{
+  "title": "Settings",
+  "account": {
+    "title": "Account",
+    "signedIn": "Signed in",
+    "synced": "Synced across your devices",
+    "logOut": "Log out",
+    "deleteAccount": "Delete account"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "title": "Language",
+    "system": "System default",
+    "english": "English",
+    "norwegian": "Norsk"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "enabled": "Enabled",
+    "granted": "Browser notifications allowed",
+    "denied": "Blocked in browser settings",
+    "inAppOnly": "In-app alerts always on",
+    "allowAlerts": "Allow browser alerts",
+    "allowAlertsSubtitle": "Get a native notification when the app is open",
+    "notifyMe": "Notify me",
+    "timing3": "3 days before",
+    "timing2": "2 days before",
+    "timing1": "1 day before",
+    "timingNever": "Never"
+  },
+  "expiration": {
+    "title": "Expiration",
+    "windowTitle": "\"Expiring soon\" window",
+    "windowSubtitle": "Days before expiration to start warning"
+  },
+  "about": {
+    "title": "About",
+    "appName": "Kitchen",
+    "version": "Version 1.0.0"
+  },
+  "data": {
+    "title": "Data",
+    "export": "Export data",
+    "exportSubtitle": "Save a backup as JSON",
+    "import": "Import data",
+    "importSubtitle": "Restore from a backup file",
+    "reset": "Reset all data",
+    "resetSubtitle": "Erase everything and start over",
+    "resetConfirmTitle": "Reset all data?",
+    "resetConfirmMessage": "This permanently deletes every item, storage unit and setting. This cannot be undone.",
+    "resetConfirmButton": "Reset everything",
+    "importedToast": "Data imported successfully"
+  },
+  "deleteAccount": {
+    "title": "Delete account",
+    "warning": "This permanently deletes your Kitchen account and everything in it — every storage unit, item, category, shopping list entry, and stat — on every device. This cannot be undone.",
+    "confirmLabel": "Type DELETE to confirm",
+    "confirmPlaceholder": "DELETE",
+    "cancel": "Cancel",
+    "submit": "Delete account permanently",
+    "submitting": "Deleting…"
+  },
+  "categories": {
+    "title": "Categories",
+    "new": "New",
+    "namePlaceholder": "Category name",
+    "deleteTitle": "Delete \"{{name}}\"?",
+    "deleteMessageWithItems_one": "{{count}} item using this category will become uncategorized. This can't be undone.",
+    "deleteMessageWithItems_other": "{{count}} items using this category will become uncategorized. This can't be undone.",
+    "deleteMessageNoItems": "This can't be undone.",
+    "delete": "Delete"
+  },
+  "storageUnits": {
+    "title": "Storage units",
+    "addStorage": "Add storage",
+    "addSheetTitle": "Add storage",
+    "type": "Type",
+    "namePlaceholderFridge": "e.g. Main Fridge",
+    "namePlaceholderFreezer": "e.g. Chest Freezer",
+    "namePlaceholderPantry": "e.g. Kitchen Pantry",
+    "add": "Add",
+    "renameSheetTitle": "Rename storage",
+    "save": "Save",
+    "deleteTitle": "Delete {{name}}?",
+    "deleteMessage_one": "This will remove it and all {{count}} item inside.",
+    "deleteMessage_other": "This will remove it and all {{count}} items inside.",
+    "delete": "Delete",
+    "itemsCount_one": "{{count}} item",
+    "itemsCount_other": "{{count}} items"
+  },
+  "notificationsPanel": {
+    "title": "Notifications",
+    "emptyTitle": "No notifications yet",
+    "emptySubtitle": "We'll let you know when something is about to expire.",
+    "markAllRead": "Mark all read",
+    "clear": "Clear",
+    "expiringSoonTitle": "Expiring soon",
+    "expiresToday": "{{name}} expires today.",
+    "expiresTomorrow": "{{name}} expires tomorrow.",
+    "expiresInDays": "{{name}} expires in {{days}} days."
+  }
+}

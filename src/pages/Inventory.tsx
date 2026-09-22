@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { SlidersHorizontal, PackageSearch } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import { TopBar } from '../components/layout/TopBar'
 import { ItemRow } from '../components/inventory/ItemRow'
@@ -14,6 +15,7 @@ import { getExpirationStatus } from '../lib/expiration'
 type QuickFilter = 'all' | 'expiring' | 'expired' | 'fridge' | 'freezer' | 'pantry'
 
 export const Inventory = () => {
+  const { t } = useTranslation('inventory')
   const [params] = useSearchParams()
   const items = useStore((s) => s.items)
   const storageUnits = useStore((s) => s.storageUnits)
@@ -46,22 +48,22 @@ export const Inventory = () => {
   const activeFilterCount = (storageId ? 1 : 0) + (categoryId ? 1 : 0) + (sort !== 'expiration' ? 1 : 0)
 
   const quickFilters: { value: QuickFilter; label: string }[] = [
-    { value: 'all', label: 'All' },
-    { value: 'expiring', label: 'Expiring soon' },
-    { value: 'expired', label: 'Expired' },
-    { value: 'fridge', label: 'Fridge' },
-    { value: 'freezer', label: 'Freezer' },
-    { value: 'pantry', label: 'Pantry' },
+    { value: 'all', label: t('filters.all') },
+    { value: 'expiring', label: t('filters.expiring') },
+    { value: 'expired', label: t('filters.expired') },
+    { value: 'fridge', label: t('filters.fridge') },
+    { value: 'freezer', label: t('filters.freezer') },
+    { value: 'pantry', label: t('filters.pantry') },
   ]
 
   return (
     <div className="pb-28 md:pb-12">
-      <TopBar title="Inventory" />
+      <TopBar title={t('title')} />
       <div className="px-5 md:px-8">
         <div className="mb-4 flex items-center gap-4 text-[14px]">
-          <span className="font-semibold text-[var(--color-ink)]">{items.length} items</span>
-          {expiringCount > 0 && <span className="font-medium text-[var(--color-warn)]">{expiringCount} expiring soon</span>}
-          {expiredCount > 0 && <span className="font-medium text-[var(--color-bad)]">{expiredCount} expired</span>}
+          <span className="font-semibold text-[var(--color-ink)]">{t('itemsCount', { count: items.length })}</span>
+          {expiringCount > 0 && <span className="font-medium text-[var(--color-warn)]">{t('expiringSoonCount', { count: expiringCount })}</span>}
+          {expiredCount > 0 && <span className="font-medium text-[var(--color-bad)]">{t('expiredCount', { count: expiredCount })}</span>}
         </div>
 
         <div className="flex items-center gap-2">
@@ -100,8 +102,8 @@ export const Inventory = () => {
           {filtered.length === 0 && (
             <EmptyState
               icon={<PackageSearch size={26} />}
-              title="No items found"
-              subtitle="Try a different filter, or add something new to your kitchen."
+              title={t('noItemsTitle')}
+              subtitle={t('noItemsSubtitle')}
             />
           )}
         </div>

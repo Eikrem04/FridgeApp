@@ -1,0 +1,11 @@
+{
+  "title": "Statistikk",
+  "noActivityTitle": "Ingen aktivitet ennå",
+  "noActivitySubtitle": "Når du begynner å legge til og bruke varer, vises statistikken din her.",
+  "consumed": "Brukt",
+  "expired": "Utløpt",
+  "added": "Lagt til",
+  "foodWaste": "Matsvinn denne måneden",
+  "foodWasteSubtitle": "Utløpt eller kastet mot totalt brukt",
+  "mostAdded": "Mest lagt til denne måneden"
+}

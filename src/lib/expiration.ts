@@ -22,13 +22,12 @@ export const statusOrder: Record<ExpirationStatus, number> = {
   none: 4,
 }
 
-export const statusColors: Record<
-  ExpirationStatus,
-  { text: string; bg: string; dot: string; label: string }
-> = {
-  expired: { text: 'text-[var(--color-bad)]', bg: 'bg-[var(--color-bad-soft)]', dot: 'bg-[var(--color-bad)]', label: 'Expired' },
-  expiresToday: { text: 'text-[var(--color-warn)]', bg: 'bg-[var(--color-warn-soft)]', dot: 'bg-[var(--color-warn)]', label: 'Expires today' },
-  expiringSoon: { text: 'text-[var(--color-warn)]', bg: 'bg-[var(--color-warn-soft)]', dot: 'bg-[var(--color-warn)]', label: 'Expiring soon' },
-  fresh: { text: 'text-[var(--color-good)]', bg: 'bg-[var(--color-good-soft)]', dot: 'bg-[var(--color-good)]', label: 'Fresh' },
-  none: { text: 'text-[var(--color-ink-faint)]', bg: 'bg-black/5', dot: 'bg-[var(--color-ink-faint)]', label: 'No date' },
+// Display labels for each status live in common.json (common:expiration.*),
+// translated at the point of use — see StatusBadge's callers.
+export const statusColors: Record<ExpirationStatus, { text: string; bg: string; dot: string }> = {
+  expired: { text: 'text-[var(--color-bad)]', bg: 'bg-[var(--color-bad-soft)]', dot: 'bg-[var(--color-bad)]' },
+  expiresToday: { text: 'text-[var(--color-warn)]', bg: 'bg-[var(--color-warn-soft)]', dot: 'bg-[var(--color-warn)]' },
+  expiringSoon: { text: 'text-[var(--color-warn)]', bg: 'bg-[var(--color-warn-soft)]', dot: 'bg-[var(--color-warn)]' },
+  fresh: { text: 'text-[var(--color-good)]', bg: 'bg-[var(--color-good-soft)]', dot: 'bg-[var(--color-good)]' },
+  none: { text: 'text-[var(--color-ink-faint)]', bg: 'bg-black/5', dot: 'bg-[var(--color-ink-faint)]' },
 }

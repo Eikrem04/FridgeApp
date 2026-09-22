@@ -1,5 +1,6 @@
 import { Minus, Plus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 interface StepperProps {
   value: number
@@ -10,12 +11,13 @@ interface StepperProps {
 }
 
 export const Stepper = ({ value, onChange, min = 0, max = 999, size = 'md' }: StepperProps) => {
+  const { t } = useTranslation('common')
   const btnSize = size === 'sm' ? 'h-8 w-8' : 'h-10 w-10'
   return (
     <div className="flex items-center gap-3">
       <button
         type="button"
-        aria-label="Decrease"
+        aria-label={t('actions.decrease')}
         disabled={value <= min}
         onClick={() => onChange(Math.max(min, value - 1))}
         className={`flex ${btnSize} items-center justify-center rounded-full bg-black/[0.06] text-[var(--color-ink)] transition active:scale-90 disabled:opacity-30 dark:bg-white/10`}
@@ -38,7 +40,7 @@ export const Stepper = ({ value, onChange, min = 0, max = 999, size = 'md' }: St
       </div>
       <button
         type="button"
-        aria-label="Increase"
+        aria-label={t('actions.increase')}
         disabled={value >= max}
         onClick={() => onChange(Math.min(max, value + 1))}
         className={`flex ${btnSize} items-center justify-center rounded-full bg-[var(--color-accent)] text-white transition active:scale-90 disabled:opacity-30`}

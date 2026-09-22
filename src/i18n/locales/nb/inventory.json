@@ -1,0 +1,58 @@
+{
+  "title": "Beholdning",
+  "itemsCount_one": "{{count}} vare",
+  "itemsCount_other": "{{count}} varer",
+  "expiringSoonCount_one": "{{count}} utløper snart",
+  "expiringSoonCount_other": "{{count}} utløper snart",
+  "expiredCount_one": "{{count}} utløpt",
+  "expiredCount_other": "{{count}} utløpt",
+  "filters": {
+    "all": "Alle",
+    "expiring": "Utløper snart",
+    "expired": "Utløpt",
+    "fridge": "Kjøleskap",
+    "freezer": "Fryser",
+    "pantry": "Tørrvarelager"
+  },
+  "noItemsTitle": "Ingen varer funnet",
+  "noItemsSubtitle": "Prøv et annet filter, eller legg til noe nytt i kjøkkenet ditt.",
+  "filterSheet": {
+    "title": "Filtrer og sorter",
+    "storage": "Lagringssted",
+    "category": "Kategori",
+    "sortBy": "Sorter etter",
+    "all": "Alle",
+    "showResults": "Vis resultater",
+    "sort": {
+      "expiration": "Utløpsdato",
+      "name": "Navn",
+      "recent": "Nylig lagt til",
+      "quantity": "Antall",
+      "category": "Kategori"
+    }
+  },
+  "storageDetail": {
+    "notFoundTitle": "Fant ikke lagringsstedet",
+    "notFoundSubtitle": "Det kan ha blitt slettet.",
+    "itemsCount_one": "{{count}} vare",
+    "itemsCount_other": "{{count}} varer",
+    "expiringSoon_one": "{{count}} utløper snart",
+    "expiringSoon_other": "{{count}} utløper snart",
+    "expired_one": "{{count}} utløpt",
+    "expired_other": "{{count}} utløpt",
+    "emptyTitle": "{{name}} ser ganske tomt ut",
+    "emptySubtitle": "Legg til din første vare for å begynne å holde oversikt.",
+    "addFirstItem": "Legg til din første vare",
+    "renameTitle": "Endre navn på lagringssted",
+    "deleteTitle": "Slette {{name}}?",
+    "deleteMessage_one": "Dette fjerner det og {{count}} vare inni.",
+    "deleteMessage_other": "Dette fjerner det og alle {{count}} varene inni."
+  },
+  "search": {
+    "placeholder": "Søk i kjøleskap og fryser",
+    "emptyTitle": "Søk i kjøkkenet ditt",
+    "emptySubtitle": "Finn hva som helst i alle kjøleskap og frysere umiddelbart.",
+    "noMatchesTitle": "Ingen treff",
+    "noMatchesSubtitle": "Fant ingenting for «{{query}}»"
+  }
+}

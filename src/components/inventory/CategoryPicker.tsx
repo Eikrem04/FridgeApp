@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../../store/useStore'
 import { CategoryIcon } from '../../lib/icons'
+import { getCategoryDisplayName } from '../../lib/categoryLocalization'
 
 interface CategoryPickerProps {
   value: string
@@ -9,6 +11,7 @@ interface CategoryPickerProps {
 }
 
 export const CategoryPicker = ({ value, onChange }: CategoryPickerProps) => {
+  const { t } = useTranslation(['addItem', 'common'])
   const categories = useStore((s) => s.categories)
   const addCategory = useStore((s) => s.addCategory)
   const [adding, setAdding] = useState(false)
@@ -38,7 +41,7 @@ export const CategoryPicker = ({ value, onChange }: CategoryPickerProps) => {
           }`}
         >
           <CategoryIcon name={cat.icon} size={15} />
-          {cat.name}
+          {getCategoryDisplayName(cat, t)}
         </button>
       ))}
       {adding ? (
@@ -48,7 +51,7 @@ export const CategoryPicker = ({ value, onChange }: CategoryPickerProps) => {
           onChange={(e) => setNewName(e.target.value)}
           onBlur={submitNew}
           onKeyDown={(e) => e.key === 'Enter' && submitNew()}
-          placeholder="Category name"
+          placeholder={t('form.categoryNamePlaceholder')}
           className="w-32 shrink-0 rounded-full bg-black/[0.05] px-3.5 py-2 text-[13.5px] outline-none dark:bg-white/10"
         />
       ) : (
@@ -57,7 +60,7 @@ export const CategoryPicker = ({ value, onChange }: CategoryPickerProps) => {
           onClick={() => setAdding(true)}
           className="flex shrink-0 items-center gap-1 rounded-full bg-black/[0.05] px-3 py-2 text-[13.5px] font-semibold text-[var(--color-ink-dim)] dark:bg-white/10"
         >
-          <Plus size={14} /> New
+          <Plus size={14} /> {t('form.newCategory')}
         </button>
       )}
     </div>

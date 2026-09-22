@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../../store/useStore'
 import { DEFAULT_UNITS } from '../../data/defaultCategories'
 import { FieldWrap, SelectInput, TextArea, TextInput } from '../ui/Field'
@@ -6,6 +7,8 @@ import { CategoryPicker } from './CategoryPicker'
 import { ExpirationPicker } from './ExpirationPicker'
 import { Stepper } from '../ui/Stepper'
 import { Button } from '../ui/Button'
+import { getStorageDisplayName } from '../../lib/storageTypes'
+import { getUnitLabel } from '../../lib/inventory'
 
 export interface ItemFormValues {
   name: string
@@ -26,6 +29,7 @@ interface ItemFormProps {
 }
 
 export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormProps) => {
+  const { t } = useTranslation(['addItem', 'common'])
   const storageUnits = useStore((s) => s.storageUnits)
   const categories = useStore((s) => s.categories)
   const defaultCategoryId =
@@ -50,18 +54,18 @@ export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormP
       }}
       className="flex flex-col gap-5"
     >
-      <FieldWrap label="Storage">
+      <FieldWrap label={t('form.storage')}>
         <SelectInput value={storageId} onChange={(e) => setStorageId(e.target.value)} required>
-          {storageUnits.length === 0 && <option value="">No storage units — add one first</option>}
+          {storageUnits.length === 0 && <option value="">{t('form.noStorageUnits')}</option>}
           {storageUnits.map((u) => (
             <option key={u.id} value={u.id}>
-              {u.name}
+              {getStorageDisplayName(u, t)}
             </option>
           ))}
         </SelectInput>
       </FieldWrap>
 
-      <FieldWrap label="Name">
+      <FieldWrap label={t('form.name')}>
         <div className="flex items-center gap-3">
           {imageUrl && (
             <img
@@ -76,7 +80,7 @@ export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormP
           <TextInput
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Milk"
+            placeholder={t('form.namePlaceholder')}
             autoFocus
             required
             className="flex-1"
@@ -84,24 +88,24 @@ export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormP
         </div>
       </FieldWrap>
 
-      <FieldWrap label="Category">
+      <FieldWrap label={t('form.category')}>
         <CategoryPicker value={categoryId} onChange={setCategoryId} />
       </FieldWrap>
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <FieldWrap label="Quantity">
+          <FieldWrap label={t('form.quantity')}>
             <div className="flex items-center rounded-2xl bg-black/[0.04] px-4 py-2.5 dark:bg-white/[0.06]">
               <Stepper value={quantity} onChange={setQuantity} min={1} size="sm" />
             </div>
           </FieldWrap>
         </div>
         <div className="flex-1">
-          <FieldWrap label="Unit">
+          <FieldWrap label={t('form.unit')}>
             <SelectInput value={unit} onChange={(e) => setUnit(e.target.value)}>
               {DEFAULT_UNITS.map((u) => (
                 <option key={u} value={u}>
-                  {u}
+                  {getUnitLabel(u, t)}
                 </option>
               ))}
             </SelectInput>
@@ -109,18 +113,18 @@ export const ItemForm = ({ initial, submitLabel, onSubmit, onCancel }: ItemFormP
         </div>
       </div>
 
-      <FieldWrap label="Expiration date">
+      <FieldWrap label={t('form.expirationDate')}>
         <ExpirationPicker value={expirationDate} onChange={setExpirationDate} />
       </FieldWrap>
 
-      <FieldWrap label="Notes (optional)">
-        <TextArea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder="Anything worth remembering" />
+      <FieldWrap label={t('form.notes')}>
+        <TextArea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} placeholder={t('form.notesPlaceholder')} />
       </FieldWrap>
 
       <div className="flex gap-3 pt-1">
         {onCancel && (
           <Button type="button" variant="secondary" fullWidth onClick={onCancel}>
-            Cancel
+            {t('common:actions.cancel')}
           </Button>
         )}
         <Button type="submit" fullWidth disabled={!canSubmit}>

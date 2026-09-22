@@ -1,0 +1,25 @@
+{
+  "title": "Shopping List",
+  "addPlaceholder": "Add an item, e.g. Eggs",
+  "emptyTitle": "Your shopping list is empty",
+  "emptySubtitle": "Add items manually, or they'll show up here automatically when you run out.",
+  "toBuy_one": "To buy ({{count}})",
+  "toBuy_other": "To buy ({{count}})",
+  "purchased_one": "Purchased ({{count}})",
+  "purchased_other": "Purchased ({{count}})",
+  "clear": "Clear",
+  "restock": {
+    "title": "Add to your kitchen?",
+    "body": "Nice! Want to add this straight into storage?",
+    "storage": "Storage",
+    "notNow": "Not now",
+    "addIt": "Add it",
+    "done": "Done",
+    "addedToast": "Added to inventory"
+  },
+  "row": {
+    "markNotPurchased": "Mark as not purchased",
+    "markPurchased": "Mark as purchased",
+    "remove": "Remove"
+  }
+}

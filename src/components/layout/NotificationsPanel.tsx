@@ -1,4 +1,5 @@
 import { Bell, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Sheet } from '../ui/Sheet'
 import { useStore } from '../../store/useStore'
 import { useUiStore } from '../../store/useUiStore'
@@ -6,6 +7,7 @@ import { EmptyState } from '../ui/EmptyState'
 import { formatAddedDate } from '../../lib/date'
 
 export const NotificationsPanel = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const { t } = useTranslation('settings')
   const notifications = useStore((s) => s.notifications)
   const markRead = useStore((s) => s.markNotificationRead)
   const markAllRead = useStore((s) => s.markAllNotificationsRead)
@@ -13,17 +15,21 @@ export const NotificationsPanel = ({ open, onClose }: { open: boolean; onClose: 
   const openItem = useUiStore((s) => s.openItem)
 
   return (
-    <Sheet open={open} onClose={onClose} title="Notifications">
+    <Sheet open={open} onClose={onClose} title={t('notificationsPanel.title')}>
       {notifications.length === 0 ? (
-        <EmptyState icon={<Bell size={24} />} title="No notifications yet" subtitle="We'll let you know when something is about to expire." />
+        <EmptyState
+          icon={<Bell size={24} />}
+          title={t('notificationsPanel.emptyTitle')}
+          subtitle={t('notificationsPanel.emptySubtitle')}
+        />
       ) : (
         <div className="flex flex-col gap-2">
           <div className="flex justify-end gap-4 pb-1">
             <button type="button" onClick={markAllRead} className="text-[13px] font-semibold text-[var(--color-accent)]">
-              Mark all read
+              {t('notificationsPanel.markAllRead')}
             </button>
             <button type="button" onClick={clearAll} className="flex items-center gap-1 text-[13px] font-semibold text-[var(--color-bad)]">
-              <Trash2 size={14} /> Clear
+              <Trash2 size={14} /> {t('notificationsPanel.clear')}
             </button>
           </div>
           {notifications.map((n) => (

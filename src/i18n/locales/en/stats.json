@@ -1,0 +1,11 @@
+{
+  "title": "Statistics",
+  "noActivityTitle": "No activity yet",
+  "noActivitySubtitle": "Once you start adding and using items, your stats will show up here.",
+  "consumed": "Consumed",
+  "expired": "Expired",
+  "added": "Added",
+  "foodWaste": "Food waste this month",
+  "foodWasteSubtitle": "Expired or discarded vs. total used",
+  "mostAdded": "Most added this month"
+}

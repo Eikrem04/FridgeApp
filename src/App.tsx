@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Route, Routes } from 'react-router-dom'
 import { useStore } from './store/useStore'
 import { useAuthStore } from './store/useAuthStore'
 import { isSupabaseConfigured } from './lib/supabase'
 import { useThemeSync } from './lib/useThemeSync'
+import { useLanguageSync } from './lib/useLanguageSync'
 import { useNotificationSync } from './lib/useNotificationSync'
 import { getLegacyLocalData, type LegacyBackup } from './lib/migrateLocalData'
 import { OnboardingFlow } from './components/onboarding/OnboardingFlow'
@@ -22,7 +24,9 @@ import { Stats } from './pages/Stats'
 import { Settings } from './pages/Settings'
 
 function App() {
+  const { t } = useTranslation('common')
   useThemeSync()
+  useLanguageSync()
   useNotificationSync()
 
   const authStatus = useAuthStore((s) => s.status)
@@ -63,7 +67,7 @@ function App() {
   }
 
   if (authStatus === 'loading') {
-    return <LoadingScreen message="Loading…" />
+    return <LoadingScreen message={t('loading')} />
   }
 
   if (authStatus === 'unauthenticated') {
@@ -78,7 +82,7 @@ function App() {
   }
 
   if (dataStatus === 'idle' || dataStatus === 'loading') {
-    return <LoadingScreen message="Loading your kitchen…" />
+    return <LoadingScreen message={t('loadingKitchen')} />
   }
 
   if (dataStatus === 'error') {

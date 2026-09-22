@@ -2,12 +2,14 @@ import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { StorageUnit } from '../../types'
 import { useStore } from '../../store/useStore'
 import { getExpirationStatus } from '../../lib/expiration'
-import { STORAGE_TYPE_META } from '../../lib/storageTypes'
+import { STORAGE_TYPE_META, getStorageDisplayName } from '../../lib/storageTypes'
 
 export const StorageCard = ({ unit, index = 0 }: { unit: StorageUnit; index?: number }) => {
+  const { t } = useTranslation(['home', 'common'])
   const navigate = useNavigate()
   const allItems = useStore((s) => s.items)
   const items = useMemo(() => allItems.filter((it) => it.storageId === unit.id), [allItems, unit.id])
@@ -31,13 +33,13 @@ export const StorageCard = ({ unit, index = 0 }: { unit: StorageUnit; index?: nu
         <Icon size={26} />
       </span>
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-[17px] font-bold text-[var(--color-ink)]">{unit.name}</h3>
+        <h3 className="truncate text-[17px] font-bold text-[var(--color-ink)]">{getStorageDisplayName(unit, t)}</h3>
         <p className="text-[14px] text-[var(--color-ink-dim)]">
-          {items.length} {items.length === 1 ? 'item' : 'items'}
+          {t('common:item', { count: items.length })}
           {expiringSoon > 0 && (
-            <span className="text-[var(--color-warn)]"> · {expiringSoon} expiring soon</span>
+            <span className="text-[var(--color-warn)]"> · {t('storageCard.expiringSoon', { count: expiringSoon })}</span>
           )}
-          {expired > 0 && <span className="text-[var(--color-bad)]"> · {expired} expired</span>}
+          {expired > 0 && <span className="text-[var(--color-bad)]"> · {t('storageCard.expired', { count: expired })}</span>}
         </p>
       </div>
       <ChevronRight size={18} className="shrink-0 text-[var(--color-ink-faint)]" />

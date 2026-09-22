@@ -1,0 +1,30 @@
+{
+  "greeting": {
+    "night": "God natt",
+    "morning": "God morgen",
+    "afternoon": "God ettermiddag",
+    "evening": "God kveld"
+  },
+  "title": "Kjøkkenet ditt",
+  "needsAttention": "Trenger oppmerksomhet",
+  "expiredCount_one": "{{count}} utløpt",
+  "expiredCount_other": "{{count}} utløpt",
+  "expiringSoonCount_one": "{{count}} utløper snart",
+  "expiringSoonCount_other": "{{count}} utløper snart",
+  "noStorageTitle": "Ingen lagringssteder ennå",
+  "noStorageSubtitle": "Legg til ditt første lagringssted for å begynne å holde oversikt.",
+  "addStorage": "Legg til lagringssted",
+  "useSoon": "Bruk snart",
+  "seeAll": "Se alle",
+  "quickTiles": {
+    "shopping": "Handling",
+    "recipes": "Oppskrifter",
+    "stats": "Statistikk"
+  },
+  "storageCard": {
+    "expiringSoon_one": "{{count}} utløper snart",
+    "expiringSoon_other": "{{count}} utløper snart",
+    "expired_one": "{{count}} utløpt",
+    "expired_other": "{{count}} utløpt"
+  }
+}

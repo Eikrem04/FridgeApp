@@ -1,0 +1,10 @@
+{
+  "title": "What can I make?",
+  "noItemsTitle": "Add some items first",
+  "noItemsSubtitle": "Once your fridge has ingredients, we'll suggest meals you can make.",
+  "noMatchesTitle": "No matching recipes yet",
+  "noMatchesSubtitle": "Add a few more staple ingredients and we'll find something for you.",
+  "haveEverything": "You have everything!",
+  "missingIngredients_one": "Missing {{count}} ingredient",
+  "missingIngredients_other": "Missing {{count}} ingredients"
+}

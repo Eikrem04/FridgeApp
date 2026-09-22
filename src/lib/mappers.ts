@@ -65,6 +65,12 @@ export const statEventFromRow = (row: StatEventRow): StatEvent => ({
 export const settingsFromRow = (row: UserSettingsRow): AppSettings => ({
   onboardingComplete: row.onboarding_complete,
   theme: row.theme,
+  // Defensive fallback: if migration 0005 hasn't been applied yet, the
+  // `language` column doesn't exist and `select('*')` simply omits it —
+  // `row.language` is `undefined` at runtime despite the type saying
+  // otherwise. Falling back to 'system' (the migration's own default)
+  // keeps the app fully working either way.
+  language: row.language ?? 'system',
   userName: row.user_name ?? undefined,
   notifications: {
     enabled: row.notifications_enabled,
@@ -83,6 +89,7 @@ export const settingsToRow = (
   const row: Database['public']['Tables']['user_settings']['Insert'] = { user_id: userId }
   if (settings.onboardingComplete !== undefined) row.onboarding_complete = settings.onboardingComplete
   if (settings.theme !== undefined) row.theme = settings.theme
+  if (settings.language !== undefined) row.language = settings.language
   if (settings.userName !== undefined) row.user_name = settings.userName ?? null
   if (settings.notifications !== undefined) {
     row.notifications_enabled = settings.notifications.enabled

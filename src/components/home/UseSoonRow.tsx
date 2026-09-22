@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { InventoryItem } from '../../types'
 import { useStore } from '../../store/useStore'
 import { useUiStore } from '../../store/useUiStore'
@@ -7,6 +8,7 @@ import { getExpirationStatus, statusColors } from '../../lib/expiration'
 import { motion } from 'framer-motion'
 
 export const UseSoonRow = ({ item, index = 0 }: { item: InventoryItem; index?: number }) => {
+  useTranslation('common') // subscribes to language changes so the relative-expiration text below stays in sync
   const category = useStore((s) => s.categories.find((c) => c.id === item.categoryId))
   const expiringSoonDays = useStore((s) => s.settings.expiration.expiringSoonDays)
   const openItem = useUiStore((s) => s.openItem)

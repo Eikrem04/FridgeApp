@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 interface SheetProps {
   open: boolean
@@ -11,6 +12,7 @@ interface SheetProps {
 }
 
 export const Sheet = ({ open, onClose, title, children, maxWidth = 'max-w-lg' }: SheetProps) => {
+  const { t } = useTranslation('common')
   return (
     <AnimatePresence>
       {open && (
@@ -39,7 +41,7 @@ export const Sheet = ({ open, onClose, title, children, maxWidth = 'max-w-lg' }:
                 <button
                   type="button"
                   onClick={onClose}
-                  aria-label="Close"
+                  aria-label={t('actions.close')}
                   className="rounded-full bg-black/[0.05] p-1.5 text-[var(--color-ink-dim)] transition hover:bg-black/10 dark:bg-white/10"
                 >
                   <X size={18} />

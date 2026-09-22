@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { ChefHat, Check, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import { TopBar } from '../components/layout/TopBar'
 import { EmptyState } from '../components/ui/EmptyState'
@@ -8,24 +9,25 @@ import { matchRecipes } from '../lib/recipes'
 import { Card } from '../components/ui/Card'
 
 export const Recipes = () => {
+  const { t } = useTranslation('recipes')
   const items = useStore((s) => s.items)
   const matches = useMemo(() => matchRecipes(items, RECIPES_DB), [items])
 
   return (
     <div className="pb-28 md:pb-12">
-      <TopBar title="What can I make?" />
+      <TopBar title={t('title')} />
       <div className="px-5 md:px-8">
         {items.length === 0 ? (
           <EmptyState
             icon={<ChefHat size={26} />}
-            title="Add some items first"
-            subtitle="Once your fridge has ingredients, we'll suggest meals you can make."
+            title={t('noItemsTitle')}
+            subtitle={t('noItemsSubtitle')}
           />
         ) : matches.length === 0 ? (
           <EmptyState
             icon={<ChefHat size={26} />}
-            title="No matching recipes yet"
-            subtitle="Add a few more staple ingredients and we'll find something for you."
+            title={t('noMatchesTitle')}
+            subtitle={t('noMatchesSubtitle')}
           />
         ) : (
           <div className="flex flex-col gap-3">
@@ -38,7 +40,7 @@ export const Recipes = () => {
                   <div>
                     <h3 className="text-[16.5px] font-bold text-[var(--color-ink)]">{recipe.name}</h3>
                     <p className="text-[13px] text-[var(--color-ink-dim)]">
-                      {missing.length === 0 ? 'You have everything!' : `Missing ${missing.length} ingredient${missing.length > 1 ? 's' : ''}`}
+                      {missing.length === 0 ? t('haveEverything') : t('missingIngredients', { count: missing.length })}
                     </p>
                   </div>
                 </div>

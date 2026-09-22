@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { KeyRound, CircleAlert, Check } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../store/useAuthStore'
 import { Button } from '../components/ui/Button'
 import { FieldWrap, TextInput } from '../components/ui/Field'
 
 export const ResetPassword = () => {
+  const { t } = useTranslation('auth')
   const updatePassword = useAuthStore((s) => s.updatePassword)
   const signOut = useAuthStore((s) => s.signOut)
   const clearPasswordRecovery = useAuthStore((s) => s.clearPasswordRecovery)
@@ -24,11 +26,11 @@ export const ResetPassword = () => {
     clearAuthError()
 
     if (password !== confirmPassword) {
-      setFormError("Passwords don't match.")
+      setFormError(t('errors.passwordsDontMatch'))
       return
     }
     if (password.length < 6) {
-      setFormError('Password must be at least 6 characters.')
+      setFormError(t('errors.passwordTooShort'))
       return
     }
 
@@ -58,26 +60,22 @@ export const ResetPassword = () => {
 
           {done ? (
             <>
-              <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink)]">Password updated</h1>
-              <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-ink-dim)]">
-                Your password has been changed. You're signed in — continue into Kitchen below.
-              </p>
+              <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink)]">{t('resetPassword.successTitle')}</h1>
+              <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-ink-dim)]">{t('resetPassword.successBody')}</p>
               <div className="mt-8 flex w-full flex-col items-center gap-3 rounded-3xl bg-[var(--color-good-soft)] p-6 text-center">
                 <Check size={28} className="text-[var(--color-good)]" />
                 <Button fullWidth onClick={clearPasswordRecovery}>
-                  Continue to Kitchen
+                  {t('resetPassword.continue')}
                 </Button>
               </div>
             </>
           ) : (
             <>
-              <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink)]">Set a new password</h1>
-              <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-ink-dim)]">
-                Choose a new password for your Kitchen account.
-              </p>
+              <h1 className="text-[28px] font-bold tracking-tight text-[var(--color-ink)]">{t('resetPassword.heading')}</h1>
+              <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-ink-dim)]">{t('resetPassword.subtitle')}</p>
 
               <form onSubmit={handleSubmit} className="mt-8 flex w-full flex-col gap-4">
-                <FieldWrap label="New password">
+                <FieldWrap label={t('resetPassword.newPassword')}>
                   <TextInput
                     type="password"
                     autoComplete="new-password"
@@ -89,7 +87,7 @@ export const ResetPassword = () => {
                     autoFocus
                   />
                 </FieldWrap>
-                <FieldWrap label="Confirm new password">
+                <FieldWrap label={t('resetPassword.confirmNewPassword')}>
                   <TextInput
                     type="password"
                     autoComplete="new-password"
@@ -109,7 +107,7 @@ export const ResetPassword = () => {
                 )}
 
                 <Button type="submit" fullWidth size="lg" className="mt-1" disabled={submitting}>
-                  {submitting ? 'Please wait…' : 'Update password'}
+                  {submitting ? t('pleaseWait') : t('resetPassword.submit')}
                 </Button>
               </form>
 
@@ -118,7 +116,7 @@ export const ResetPassword = () => {
                 onClick={() => void signOut()}
                 className="mt-6 text-[14px] font-medium text-[var(--color-ink-dim)]"
               >
-                Cancel and sign out
+                {t('resetPassword.cancel')}
               </button>
             </>
           )}

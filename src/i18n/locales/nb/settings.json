@@ -1,0 +1,107 @@
+{
+  "title": "Innstillinger",
+  "account": {
+    "title": "Konto",
+    "signedIn": "Innlogget",
+    "synced": "Synkronisert på alle enhetene dine",
+    "logOut": "Logg ut",
+    "deleteAccount": "Slett konto"
+  },
+  "appearance": {
+    "title": "Utseende",
+    "light": "Lyst",
+    "dark": "Mørkt",
+    "system": "System"
+  },
+  "language": {
+    "title": "Språk",
+    "system": "Systemstandard",
+    "english": "English",
+    "norwegian": "Norsk"
+  },
+  "notifications": {
+    "title": "Varsler",
+    "enabled": "Aktivert",
+    "granted": "Nettleservarsler tillatt",
+    "denied": "Blokkert i nettleserinnstillingene",
+    "inAppOnly": "Varsler i appen er alltid på",
+    "allowAlerts": "Tillat nettleservarsler",
+    "allowAlertsSubtitle": "Få et varsel når appen er åpen",
+    "notifyMe": "Varsle meg",
+    "timing3": "3 dager før",
+    "timing2": "2 dager før",
+    "timing1": "1 dag før",
+    "timingNever": "Aldri"
+  },
+  "expiration": {
+    "title": "Utløp",
+    "windowTitle": "Varsel om «utløper snart»",
+    "windowSubtitle": "Antall dager før utløp du vil bli varslet"
+  },
+  "about": {
+    "title": "Om",
+    "appName": "Kitchen",
+    "version": "Versjon 1.0.0"
+  },
+  "data": {
+    "title": "Data",
+    "export": "Eksporter data",
+    "exportSubtitle": "Lagre en sikkerhetskopi som JSON",
+    "import": "Importer data",
+    "importSubtitle": "Gjenopprett fra en sikkerhetskopi",
+    "reset": "Nullstill alle data",
+    "resetSubtitle": "Slett alt og start på nytt",
+    "resetConfirmTitle": "Nullstille alle data?",
+    "resetConfirmMessage": "Dette sletter permanent alle varer, lagringssteder og innstillinger. Dette kan ikke angres.",
+    "resetConfirmButton": "Nullstill alt",
+    "importedToast": "Dataene ble importert"
+  },
+  "deleteAccount": {
+    "title": "Slett konto",
+    "warning": "Dette sletter permanent Kitchen-kontoen din og alt innholdet — hvert lagringssted, hver vare, kategori, handlelisteoppføring og statistikk — på alle enheter. Dette kan ikke angres.",
+    "confirmLabel": "Skriv SLETT for å bekrefte",
+    "confirmPlaceholder": "SLETT",
+    "cancel": "Avbryt",
+    "submit": "Slett kontoen permanent",
+    "submitting": "Sletter …"
+  },
+  "categories": {
+    "title": "Kategorier",
+    "new": "Ny",
+    "namePlaceholder": "Kategorinavn",
+    "deleteTitle": "Slette «{{name}}»?",
+    "deleteMessageWithItems_one": "{{count}} vare som bruker denne kategorien blir uten kategori. Dette kan ikke angres.",
+    "deleteMessageWithItems_other": "{{count}} varer som bruker denne kategorien blir uten kategori. Dette kan ikke angres.",
+    "deleteMessageNoItems": "Dette kan ikke angres.",
+    "delete": "Slett"
+  },
+  "storageUnits": {
+    "title": "Lagringssteder",
+    "addStorage": "Legg til lagringssted",
+    "addSheetTitle": "Legg til lagringssted",
+    "type": "Type",
+    "namePlaceholderFridge": "f.eks. Hovedkjøleskap",
+    "namePlaceholderFreezer": "f.eks. Fryseboks",
+    "namePlaceholderPantry": "f.eks. Kjøkkenskap",
+    "add": "Legg til",
+    "renameSheetTitle": "Endre navn på lagringssted",
+    "save": "Lagre",
+    "deleteTitle": "Slette {{name}}?",
+    "deleteMessage_one": "Dette fjerner det og {{count}} vare inni.",
+    "deleteMessage_other": "Dette fjerner det og alle {{count}} varene inni.",
+    "delete": "Slett",
+    "itemsCount_one": "{{count}} vare",
+    "itemsCount_other": "{{count}} varer"
+  },
+  "notificationsPanel": {
+    "title": "Varsler",
+    "emptyTitle": "Ingen varsler ennå",
+    "emptySubtitle": "Vi sier ifra når noe snart utløper.",
+    "markAllRead": "Merk alle som lest",
+    "clear": "Tøm",
+    "expiringSoonTitle": "Utløper snart",
+    "expiresToday": "{{name}} utløper i dag.",
+    "expiresTomorrow": "{{name}} utløper i morgen.",
+    "expiresInDays": "{{name}} utløper om {{days}} dager."
+  }
+}

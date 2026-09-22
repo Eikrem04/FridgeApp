@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { CloudUpload, HardDrive } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/Button'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
 import type { LegacyBackup } from '../../lib/migrateLocalData'
@@ -15,6 +16,7 @@ interface LocalDataMigrationProps {
 }
 
 export const LocalDataMigration = ({ userId, backup, onDone }: LocalDataMigrationProps) => {
+  const { t } = useTranslation('onboarding')
   const categories = useStore((s) => s.categories)
   const initializeForUser = useStore((s) => s.initializeForUser)
   const showToast = useToastStore((s) => s.show)
@@ -33,10 +35,10 @@ export const LocalDataMigration = ({ userId, backup, onDone }: LocalDataMigratio
       await importBackupToCloud(userId, backup, categories)
       clearLegacyLocalData()
       await initializeForUser(userId)
-      showToast('Your data is now synced to your account')
+      showToast(t('migration.importedToast'))
       onDone()
     } catch {
-      setError("Couldn't import your data — check your connection and try again.")
+      setError(t('migration.importError'))
       setImporting(false)
     }
   }
@@ -46,6 +48,16 @@ export const LocalDataMigration = ({ userId, backup, onDone }: LocalDataMigratio
     setConfirmDiscard(false)
     onDone()
   }
+
+  const bodyText = [
+    t('migration.bodyPrefix'),
+    t('migration.storageUnit', { count: storageCount }) + ',',
+    t('migration.itemCount', { count: itemCount }) + (shoppingCount > 0 ? ',' : '.'),
+    shoppingCount > 0 ? `${t('migration.and')} ${t('migration.shoppingItem', { count: shoppingCount })}.` : '',
+    t('migration.bodySuffix'),
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-[var(--color-bg)]">
@@ -59,13 +71,8 @@ export const LocalDataMigration = ({ userId, backup, onDone }: LocalDataMigratio
           <span className="mb-6 flex h-20 w-20 items-center justify-center rounded-[28px] bg-[var(--color-accent)] text-white shadow-xl shadow-[var(--color-accent)]/20">
             <HardDrive size={36} />
           </span>
-          <h1 className="text-[26px] font-bold tracking-tight text-[var(--color-ink)]">We found data on this device</h1>
-          <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-ink-dim)]">
-            Before you signed in, this browser had a local kitchen with {storageCount} storage unit
-            {storageCount === 1 ? '' : 's'}, {itemCount} item{itemCount === 1 ? '' : 's'}
-            {shoppingCount > 0 ? `, and ${shoppingCount} shopping list item${shoppingCount === 1 ? '' : 's'}` : ''}. Import it
-            into your account?
-          </p>
+          <h1 className="text-[26px] font-bold tracking-tight text-[var(--color-ink)]">{t('migration.heading')}</h1>
+          <p className="mt-2 text-[15px] leading-relaxed text-[var(--color-ink-dim)]">{bodyText}</p>
 
           {error && (
             <div className="mt-4 w-full rounded-2xl bg-[var(--color-bad-soft)] px-4 py-3 text-[13.5px] font-medium text-[var(--color-bad)]">
@@ -75,10 +82,10 @@ export const LocalDataMigration = ({ userId, backup, onDone }: LocalDataMigratio
 
           <div className="mt-8 flex w-full flex-col gap-3">
             <Button fullWidth size="lg" icon={<CloudUpload size={18} />} disabled={importing} onClick={handleImport}>
-              {importing ? 'Importing…' : 'Import my data'}
+              {importing ? t('migration.importing') : t('migration.importButton')}
             </Button>
             <Button variant="secondary" fullWidth disabled={importing} onClick={() => setConfirmDiscard(true)}>
-              Start fresh instead
+              {t('migration.startFresh')}
             </Button>
           </div>
         </motion.div>
@@ -86,9 +93,9 @@ export const LocalDataMigration = ({ userId, backup, onDone }: LocalDataMigratio
 
       <ConfirmDialog
         open={confirmDiscard}
-        title="Discard this device's data?"
-        message="This local data was never uploaded anywhere. If you start fresh, it will be permanently deleted from this device."
-        confirmLabel="Discard"
+        title={t('migration.discardTitle')}
+        message={t('migration.discardMessage')}
+        confirmLabel={t('migration.discardConfirm')}
         onConfirm={handleDiscard}
         onCancel={() => setConfirmDiscard(false)}
       />
