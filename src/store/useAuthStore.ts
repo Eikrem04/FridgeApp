@@ -1,7 +1,11 @@
 import { create } from 'zustand'
 import type { User } from '@supabase/supabase-js'
+import { Capacitor } from '@capacitor/core'
 import { supabase } from '../lib/supabase'
 import i18n from '../i18n'
+
+/** Custom URL scheme registered in ios/App/App/Info.plist (CFBundleURLTypes) for native deep links. */
+const NATIVE_AUTH_REDIRECT_URL = 'kitch://reset-password'
 
 export type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated'
 
@@ -25,6 +29,13 @@ interface AuthState {
   requestPasswordReset: (email: string) => Promise<{ error: string | null }>
   updatePassword: (password: string) => Promise<{ error: string | null }>
   clearPasswordRecovery: () => void
+  /**
+   * Handles a `kitch://reset-password#access_token=...&type=recovery` deep link received via
+   * @capacitor/app's `appUrlOpen` event (see useDeepLinkAuth.ts) — the native-app equivalent of
+   * the web's automatic `detectSessionInUrl` handling, since a Capacitor WebView's own
+   * `window.location` never reflects the external URL that opened/resumed the app.
+   */
+  handleAuthDeepLink: (url: string) => Promise<void>
   deleteAccount: () => Promise<{ error: string | null }>
 }
 
@@ -126,9 +137,11 @@ export const useAuthStore = create<AuthState>()((set) => ({
   // doesn't leak anything beyond what Supabase itself already avoids.
   requestPasswordReset: async (email) => {
     set({ authError: null })
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    })
+    // On native iOS, send the recovery link back through the app's own custom URL scheme instead
+    // of the web origin, so tapping it (from Mail/Safari on the same device) opens Kitch directly
+    // rather than a browser. Web/PWA behavior (the origin-based redirect) is unchanged.
+    const redirectTo = Capacitor.isNativePlatform() ? NATIVE_AUTH_REDIRECT_URL : `${window.location.origin}/reset-password`
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
     if (error) {
       const message = friendlyAuthError(error.message)
       set({ authError: message })
@@ -149,6 +162,30 @@ export const useAuthStore = create<AuthState>()((set) => ({
   },
 
   clearPasswordRecovery: () => set({ isPasswordRecovery: false }),
+
+  // Mirrors what Supabase's own `detectSessionInUrl` does for a web hash fragment, but driven
+  // from a URL string handed to us by the OS instead of `window.location` (which a Capacitor
+  // WebView never sets to the external deep-link URL). `setSession` establishes the real session
+  // and — via the existing onAuthStateChange subscription above — updates `user`/`status` exactly
+  // like any other sign-in; it always reports a plain `SIGNED_IN` event, though, never
+  // `PASSWORD_RECOVERY` (verified directly in @supabase/auth-js), so `type=recovery` from the
+  // link is checked here explicitly to set the same `isPasswordRecovery` flag the web flow relies
+  // on to show the reset-password screen instead of the normal app.
+  handleAuthDeepLink: async (url) => {
+    const hashIndex = url.indexOf('#')
+    if (hashIndex === -1) return
+    const params = new URLSearchParams(url.slice(hashIndex + 1))
+    const accessToken = params.get('access_token')
+    const refreshToken = params.get('refresh_token')
+    if (!accessToken || !refreshToken) return
+
+    const { error } = await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken })
+    if (error) {
+      set({ authError: friendlyAuthError(error.message) })
+      return
+    }
+    if (params.get('type') === 'recovery') set({ isPasswordRecovery: true })
+  },
 
   // Calls the `delete-account` Edge Function using the CURRENT session —
   // supabase-js automatically attaches this user's own access token as the

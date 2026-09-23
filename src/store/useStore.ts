@@ -18,6 +18,8 @@ import { DEFAULT_RECIPE_PREFERENCES } from '../types/recipePreferences'
 import { makeId } from '../lib/id'
 import { clampQuantity } from '../lib/quantity'
 import { nowISO, todayISODate } from '../lib/date'
+import { computeExpiringSchedule } from '../lib/notifications'
+import { isNativePlatform, rescheduleNativeNotifications } from '../lib/nativeNotifications'
 import { findDuplicateItem } from '../lib/inventory'
 import {
   categoryFromRow,
@@ -133,7 +135,16 @@ interface AppState {
   lastNotificationScan: string | null
 
   // lifecycle
-  initializeForUser: (userId: string) => Promise<void>
+  /**
+   * `silent`: refetch + resubscribe without flashing the full-screen loading
+   * state over data already on screen, and without downgrading to the
+   * full-screen error state on failure — used by useResumeSync.ts for
+   * background resume/reconnect refreshes, where the user already has
+   * (possibly slightly stale, never wrong) data visible. The normal
+   * sign-in/reset/import call sites intentionally omit this and keep the
+   * existing loading/error screens.
+   */
+  initializeForUser: (userId: string, options?: { silent?: boolean }) => Promise<void>
   teardown: () => void
 
   // onboarding
@@ -171,6 +182,13 @@ interface AppState {
   markNotificationRead: (id: string) => void
   markAllNotificationsRead: () => void
   clearNotifications: () => void
+  /**
+   * Local-only correction of the current platform's notification permission — never written to
+   * Supabase (there's no such column; see settingsFromRow/settingsToRow), same as the field's
+   * existing synchronous default. Used on mount to replace the synchronous web-API guess with
+   * the real (async-checked) native permission when running under Capacitor.
+   */
+  setNotificationPermission: (permission: AppSettings['notifications']['browserPermission']) => void
 
   // stats
   addStatEvent: (type: StatEventType, itemName: string, quantity: number, categoryId?: string) => Promise<void>
@@ -198,9 +216,10 @@ export const useStore = create<AppState>()((set, get) => ({
   notifications: [],
   lastNotificationScan: null,
 
-  initializeForUser: async (userId) => {
+  initializeForUser: async (userId, options) => {
+    const silent = options?.silent ?? false
     teardownChannel()
-    set({ dataStatus: 'loading', dataError: null, userId })
+    set(silent ? { userId } : { dataStatus: 'loading', dataError: null, userId })
 
     try {
       const [storageRes, categoriesRes, itemsRes, shoppingRes, statsRes, settingsRes] = await Promise.all([
@@ -350,7 +369,10 @@ export const useStore = create<AppState>()((set, get) => ({
         .subscribe()
     } catch (err) {
       console.error('[Kitchen] initializeForUser failed:', err)
-      set({ dataStatus: 'error', dataError: describeError(err, 'Failed to load your data.') })
+      // A silent background refresh (resume/reconnect) never downgrades the UI to the
+      // full-screen error state — the data already on screen is still valid, just possibly
+      // a little stale, and the next successful resume/reconnect/interaction will retry.
+      if (!silent) set({ dataStatus: 'error', dataError: describeError(err, 'Failed to load your data.') })
     }
   },
 
@@ -706,6 +728,21 @@ export const useStore = create<AppState>()((set, get) => ({
     const state = get()
     if (!state.settings.notifications.enabled || state.settings.notifications.timing === 'never') return
     const timing = state.settings.notifications.timing as number
+
+    // Native: reschedule from the current inventory on every call (on load + the existing
+    // 30-min interval — see useNotificationSync.ts), not gated by the once-a-day guard below.
+    // That guard exists only to stop the in-app list from growing a duplicate entry for the
+    // same item on the same day; rescheduleNativeNotifications always cancels+reschedules from
+    // scratch, so calling it more often is harmless (never a duplicate) and is what keeps native
+    // reminders in sync with inventory edits made between daily scans, without needing to hook
+    // into every individual add/edit/delete call site.
+    if (isNativePlatform()) {
+      const schedule = computeExpiringSchedule(state.items, timing)
+      void rescheduleNativeNotifications(schedule).catch((err) => {
+        console.warn('[Kitchen] Failed to reschedule native notifications', err)
+      })
+    }
+
     const today = todayISODate()
     if (state.lastNotificationScan === today) return
 
@@ -735,7 +772,9 @@ export const useStore = create<AppState>()((set, get) => ({
     }
 
     if (newNotifs.length > 0) {
-      if (state.settings.notifications.browserPermission === 'granted' && typeof Notification !== 'undefined') {
+      // Native delivery is handled entirely by the scheduled-ahead-of-time reschedule above —
+      // never also fire an immediate web Notification there, so "expires today" can't pop twice.
+      if (!isNativePlatform() && state.settings.notifications.browserPermission === 'granted' && typeof Notification !== 'undefined') {
         for (const n of newNotifs) {
           try {
             new Notification(n.title, { body: n.body, tag: n.itemId })
@@ -765,6 +804,10 @@ export const useStore = create<AppState>()((set, get) => ({
 
   clearNotifications: () => {
     set({ notifications: [] })
+  },
+
+  setNotificationPermission: (permission) => {
+    set((state) => ({ settings: { ...state.settings, notifications: { ...state.settings.notifications, browserPermission: permission } } }))
   },
 
   addStatEvent: async (type, itemName, quantity, categoryId) => {

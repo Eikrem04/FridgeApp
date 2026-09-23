@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion'
 import { ChevronLeft, Pencil, Plus, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
+import { HeaderShell } from '../components/layout/HeaderShell'
 import { ItemRow } from '../components/inventory/ItemRow'
 import { EmptyState } from '../components/ui/EmptyState'
 import { Button } from '../components/ui/Button'
@@ -47,45 +48,49 @@ export const StorageDetail = () => {
 
   return (
     <div className="pb-28 md:pb-12">
-      <header className="safe-top safe-left safe-right sticky top-0 z-30 flex items-center justify-between bg-[var(--color-bg)]/85 px-5 pb-3 pt-4 backdrop-blur-xl md:px-8 md:pt-6">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          aria-label={t('common:actions.back')}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <div className="flex items-center gap-2">
+      <HeaderShell
+        leading={
           <button
             type="button"
-            onClick={() => {
-              setNewName(displayName)
-              setRenaming(true)
-            }}
-            aria-label={t('storageDetail.renameTitle')}
+            onClick={() => navigate(-1)}
+            aria-label={t('common:actions.back')}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
           >
-            <Pencil size={17} />
+            <ChevronLeft size={20} />
           </button>
-          <button
-            type="button"
-            onClick={() => setConfirmDelete(true)}
-            aria-label={t('common:actions.delete')}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-bad-soft)] text-[var(--color-bad)]"
-          >
-            <Trash2 size={17} />
-          </button>
-        </div>
-      </header>
+        }
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={() => {
+                setNewName(displayName)
+                setRenaming(true)
+              }}
+              aria-label={t('storageDetail.renameTitle')}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
+            >
+              <Pencil size={17} />
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              aria-label={t('common:actions.delete')}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-bad-soft)] text-[var(--color-bad)]"
+            >
+              <Trash2 size={17} />
+            </button>
+          </>
+        }
+      />
 
       <div className="px-5 md:px-8">
         <div className="flex items-center gap-3.5">
           <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${meta.bg} ${meta.text}`}>
             <Icon size={26} />
           </span>
-          <div>
-            <h1 className="text-[24px] font-bold text-[var(--color-ink)]">{displayName}</h1>
+          <div className="min-w-0">
+            <h1 className="truncate text-[24px] font-bold text-[var(--color-ink)]">{displayName}</h1>
             <p className="text-[14px] text-[var(--color-ink-dim)]">
               {t('storageDetail.itemsCount', { count: items.length })}
               {expiringSoon > 0 && (

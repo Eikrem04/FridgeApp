@@ -7,6 +7,9 @@ import { isSupabaseConfigured } from './lib/supabase'
 import { useThemeSync } from './lib/useThemeSync'
 import { useLanguageSync } from './lib/useLanguageSync'
 import { useNotificationSync } from './lib/useNotificationSync'
+import { useResumeSync } from './lib/useResumeSync'
+import { useDeepLinkAuth } from './lib/useDeepLinkAuth'
+import { useScrollReset } from './lib/useScrollReset'
 import { getLegacyLocalData, type LegacyBackup } from './lib/migrateLocalData'
 import { OnboardingFlow } from './components/onboarding/OnboardingFlow'
 import { LocalDataMigration } from './components/onboarding/LocalDataMigration'
@@ -28,6 +31,9 @@ function App() {
   useThemeSync()
   useLanguageSync()
   useNotificationSync()
+  useResumeSync()
+  useDeepLinkAuth()
+  useScrollReset()
 
   const authStatus = useAuthStore((s) => s.status)
   const user = useAuthStore((s) => s.user)

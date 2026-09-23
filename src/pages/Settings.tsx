@@ -13,6 +13,7 @@ import { RecipePreferencesSheet } from '../components/settings/RecipePreferences
 import { Segmented } from '../components/ui/Segmented'
 import { Stepper } from '../components/ui/Stepper'
 import type { LanguagePreference, NotificationTiming, ThemePreference } from '../types'
+import { requestAppNotificationPermission } from '../lib/nativeNotifications'
 
 export const Settings = () => {
   const { t } = useTranslation(['settings', 'common', 'recipes'])
@@ -32,8 +33,8 @@ export const Settings = () => {
   ]
 
   const requestNotificationPermission = async () => {
-    if (typeof Notification === 'undefined') return
-    const permission = await Notification.requestPermission()
+    const permission = await requestAppNotificationPermission()
+    if (permission === 'unsupported') return
     updateSettings({ notifications: { ...settings.notifications, browserPermission: permission, enabled: permission === 'granted' } })
   }
 
