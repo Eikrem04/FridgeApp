@@ -7,6 +7,7 @@ import { Button } from '../ui/Button'
 import { useStore } from '../../store/useStore'
 import { useToastStore } from '../../store/useToastStore'
 import { findAvoidedIngredients } from '../../lib/avoidedIngredients'
+import { isAlreadyOnShoppingList } from '../../lib/shoppingListHelpers'
 
 const capitalize = (s: string) => (s.length > 0 ? s[0].toUpperCase() + s.slice(1) : s)
 
@@ -31,11 +32,8 @@ export const RecipeDetailSheet = ({ match, onClose }: RecipeDetailSheetProps) =>
   if (!match) return null
   const { recipe, matched, missing } = match
 
-  const isOnList = (name: string) =>
-    shoppingList.some((item) => !item.purchased && item.name.trim().toLowerCase() === name.trim().toLowerCase())
-
   const addOne = (name: string) => {
-    if (isOnList(name)) {
+    if (isAlreadyOnShoppingList(shoppingList, name)) {
       showToast(t('detail.alreadyOnListToast', { name: capitalize(name) }))
       return
     }
@@ -44,7 +42,7 @@ export const RecipeDetailSheet = ({ match, onClose }: RecipeDetailSheetProps) =>
   }
 
   const addAllMissing = () => {
-    const toAdd = missing.filter((ing) => !isOnList(ing.name))
+    const toAdd = missing.filter((ing) => !isAlreadyOnShoppingList(shoppingList, ing.name))
     if (toAdd.length === 0) {
       showToast(t('detail.allAdded'))
       return

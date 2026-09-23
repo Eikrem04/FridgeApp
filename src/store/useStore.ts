@@ -16,6 +16,7 @@ import type {
 } from '../types'
 import { DEFAULT_RECIPE_PREFERENCES } from '../types/recipePreferences'
 import { makeId } from '../lib/id'
+import { clampQuantity } from '../lib/quantity'
 import { nowISO, todayISODate } from '../lib/date'
 import { findDuplicateItem } from '../lib/inventory'
 import {
@@ -536,7 +537,7 @@ export const useStore = create<AppState>()((set, get) => ({
     // the real value. Two devices changing the same item at once both write correctly
     // because the actual arithmetic happens atomically in adjust_inventory_item_quantity
     // (a single `set quantity = greatest(0, quantity + delta)`), not here.
-    const optimisticQuantity = Math.max(0, previous.quantity + delta)
+    const optimisticQuantity = clampQuantity(previous.quantity, delta)
     set((s) => ({ items: upsert(s.items, { ...previous, quantity: optimisticQuantity }) }))
 
     const { data, error } = await supabase.rpc('adjust_inventory_item_quantity', {

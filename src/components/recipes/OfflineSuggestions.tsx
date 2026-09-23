@@ -8,6 +8,7 @@ import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { useStore } from '../../store/useStore'
 import { useToastStore } from '../../store/useToastStore'
+import { isAlreadyOnShoppingList } from '../../lib/shoppingListHelpers'
 
 const capitalize = (s: string) => (s.length > 0 ? s[0].toUpperCase() + s.slice(1) : s)
 
@@ -26,11 +27,8 @@ export const OfflineSuggestions = ({ items }: { items: InventoryItem[] }) => {
 
   if (matches.length === 0) return null
 
-  const isOnList = (name: string) =>
-    shoppingList.some((item) => !item.purchased && item.name.trim().toLowerCase() === name.trim().toLowerCase())
-
   const addMissing = (missing: string[]) => {
-    const toAdd = missing.filter((name) => !isOnList(name))
+    const toAdd = missing.filter((name) => !isAlreadyOnShoppingList(shoppingList, name))
     if (toAdd.length === 0) {
       showToast(t('detail.allAdded'))
       return
