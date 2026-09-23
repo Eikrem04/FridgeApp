@@ -114,7 +114,7 @@ export const Settings = () => {
                 }`}
               >
                 <span
-                  className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
+                  className={`absolute left-0 top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
                     settings.notifications.enabled ? 'translate-x-[22px]' : 'translate-x-0.5'
                   }`}
                 />
