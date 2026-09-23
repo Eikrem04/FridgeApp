@@ -4,6 +4,23 @@ export type NotificationTimingRow = '0' | '1' | '2' | '3' | 'never'
 export type ThemeRow = 'light' | 'dark' | 'system'
 export type LanguageRow = 'system' | 'en' | 'nb'
 
+export type MealInterestRow = 'dinner' | 'lunch' | 'breakfast' | 'snacks' | 'desserts'
+export type CookingTimeRow = 'under20' | '20to40' | '40to60' | 'any'
+export type InventoryImportanceRow = 'inventory_first' | 'balanced' | 'discovery'
+export type DietaryPreferenceRow = 'none' | 'vegetarian'
+export type HouseholdSizeRow = '1' | '2' | '3-4' | '5+'
+
+export interface RecipePreferencesRow {
+  mealInterests: MealInterestRow[]
+  cookingTime: CookingTimeRow
+  inventoryImportance: InventoryImportanceRow
+  dietary: DietaryPreferenceRow
+  householdSize: HouseholdSizeRow
+  /** Optional at the type level — rows saved before this field existed won't have it; see settingsFromRow. */
+  avoidedIngredients?: string[]
+  setupSeen: boolean
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -176,6 +193,7 @@ export interface Database {
           notifications_enabled: boolean
           notifications_timing: NotificationTimingRow
           expiring_soon_days: number
+          recipe_preferences: RecipePreferencesRow
           created_at: string
           updated_at: string
         }
@@ -188,6 +206,7 @@ export interface Database {
           notifications_enabled?: boolean
           notifications_timing?: NotificationTimingRow
           expiring_soon_days?: number
+          recipe_preferences?: RecipePreferencesRow
           created_at?: string
           updated_at?: string
         }
@@ -200,6 +219,7 @@ export interface Database {
           notifications_enabled: boolean
           notifications_timing: NotificationTimingRow
           expiring_soon_days: number
+          recipe_preferences: RecipePreferencesRow
           created_at: string
           updated_at: string
         }>

@@ -14,6 +14,7 @@ import type {
   StorageUnit,
   ThemePreference,
 } from '../types'
+import { DEFAULT_RECIPE_PREFERENCES } from '../types/recipePreferences'
 import { makeId } from '../lib/id'
 import { nowISO, todayISODate } from '../lib/date'
 import { findDuplicateItem } from '../lib/inventory'
@@ -54,6 +55,7 @@ const defaultSettings: AppSettings = {
   expiration: {
     expiringSoonDays: 3,
   },
+  recipePreferences: DEFAULT_RECIPE_PREFERENCES,
 }
 
 const upsert = <T extends { id: string }>(arr: T[], item: T): T[] => {

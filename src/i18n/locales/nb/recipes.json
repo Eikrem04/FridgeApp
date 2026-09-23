@@ -1,10 +1,127 @@
 {
-  "title": "Hva kan jeg lage?",
-  "noItemsTitle": "Legg til noen varer først",
-  "noItemsSubtitle": "Når kjøleskapet har ingredienser, foreslår vi retter du kan lage.",
-  "noMatchesTitle": "Ingen matchende oppskrifter ennå",
-  "noMatchesSubtitle": "Legg til noen flere grunnleggende ingredienser, så finner vi noe til deg.",
-  "haveEverything": "Du har alt du trenger!",
-  "missingIngredients_one": "Mangler {{count}} ingrediens",
-  "missingIngredients_other": "Mangler {{count}} ingredienser"
+  "title": "Oppskrifter",
+  "tabs": {
+    "suggestions": "Forslag",
+    "search": "Søk"
+  },
+  "search": {
+    "placeholder": "Søk etter oppskrifter…",
+    "submit": "Søk",
+    "emptyTitle": "Søk etter oppskrifter",
+    "emptySubtitle": "Finn ekte oppskrifter ved navn, f.eks. «kyllingcurry».",
+    "noResultsTitle": "Fant ingen oppskrifter",
+    "noResultsSubtitle": "Prøv et annet søkeord.",
+    "errorTitle": "Kunne ikke laste oppskrifter",
+    "errorSubtitle": "Sjekk tilkoblingen og prøv igjen.",
+    "retry": "Prøv igjen"
+  },
+  "suggestions": {
+    "loadingTitle": "Finner oppskrifter til deg …",
+    "noItemsTitle": "Legg til noen varer først",
+    "noItemsSubtitle": "Når kjøkkenet har ingredienser, foreslår vi oppskrifter du kan lage.",
+    "noMatchesTitle": "Ingen forslag ennå",
+    "noMatchesSubtitle": "Legg til noen flere vanlige ingredienser, så finner vi noe til deg.",
+    "noMatchesWithAvoidedSubtitle": "Ingenting passer akkurat nå når ingrediensene du unngår er utelatt. Prøv å legge til flere ingredienser, eller se over hva du unngår i Innstillinger.",
+    "errorTitle": "Kunne ikke laste forslag",
+    "errorSubtitle": "Sjekk tilkoblingen og prøv igjen.",
+    "retry": "Prøv igjen",
+    "offlineTitle": "Raske idéer fra det du har",
+    "offlineSubtitle": "Vi fikk ikke kontakt med oppskriftstjenesten, men her er noen idéer basert på kjøkkenet ditt."
+  },
+  "match": {
+    "have": "Du har {{count}} av {{total}} ingredienser",
+    "haveEverything": "Du har alt du trenger!",
+    "usesSoon": "Bruker mat som snart utløper",
+    "goodDinnerMatch": "God middagsmatch",
+    "goodLunchMatch": "God lunsjmatch",
+    "goodBreakfastMatch": "God frokostmatch",
+    "goodDessertMatch": "God dessertmatch",
+    "goodSnackMatch": "Godt mellommåltid"
+  },
+  "detail": {
+    "ingredients": "Ingredienser",
+    "inYourKitchen": "På kjøkkenet ditt",
+    "missing": "Mangler",
+    "instructions": "Fremgangsmåte",
+    "source": "Se original oppskrift",
+    "video": "Se video",
+    "addMissing": "Legg til manglende ingredienser",
+    "addOne": "Legg til på handlelisten",
+    "allAdded": "Alle manglende ingredienser er allerede på listen din",
+    "addedToast_one": "La til {{count}} ingrediens på handlelisten",
+    "addedToast_other": "La til {{count}} ingredienser på handlelisten",
+    "addedOneToast": "La til {{name}} på handlelisten",
+    "alreadyOnListToast": "{{name}} er allerede på handlelisten"
+  },
+  "filters": {
+    "forYou": "Til deg",
+    "dinner": "Middag",
+    "useSoon": "Snart utløp"
+  },
+  "avoided": {
+    "warning": "Inneholder en ingrediens du har valgt å unngå",
+    "disclaimer": "Kitchen sjekker bare ingrediensene som står oppført i oppskriften. Kontroller alltid ingrediensmerking og allergeninformasjon selv."
+  },
+  "preferences": {
+    "title": "Oppskriftspreferanser",
+    "settingsSub": "Måltidstype, kosthold og mer",
+    "quiz": {
+      "heading": "Tilpass oppskriftene til deg",
+      "subtitle": "Svar på noen raske spørsmål så Kitchen kan gi deg bedre forslag.",
+      "skip": "Hopp over",
+      "continue": "Fortsett",
+      "finish": "Ferdig"
+    },
+    "fields": {
+      "mealInterests": {
+        "label": "Hva lager du vanligvis?",
+        "dinner": "Middag",
+        "lunch": "Lunsj",
+        "breakfast": "Frokost",
+        "snacks": "Mellommåltid",
+        "desserts": "Bakst og dessert"
+      },
+      "inventoryImportance": {
+        "label": "Hvor mye skal vi vektlegge det du allerede har?",
+        "inventory_first": "Bruk mest mulig av det jeg har",
+        "balanced": "Balansert",
+        "discovery": "Vis gode oppskrifter selv om jeg mangler noen ingredienser"
+      },
+      "dietary": {
+        "label": "Kosthold",
+        "none": "Ingen preferanse",
+        "vegetarian": "Vegetar"
+      },
+      "householdSize": {
+        "label": "Antall personer",
+        "1": "1",
+        "2": "2",
+        "3-4": "3–4",
+        "5+": "5+"
+      },
+      "cookingTime": {
+        "label": "Ønsket tilberedningstid",
+        "under20": "Under 20 minutter",
+        "20to40": "20–40 minutter",
+        "40to60": "40–60 minutter",
+        "any": "Alle"
+      },
+      "avoidedIngredients": {
+        "label": "Er det noe du vil unngå?",
+        "hint": "Kitchen sjekker bare ingrediensene som står oppført i oppskriften — kontroller alltid ingrediensmerking og allergeninformasjon selv.",
+        "customPlaceholder": "Legg til en ingrediens til …",
+        "presets": {
+          "peanuts": "Peanøtter",
+          "treeNuts": "Nøtter",
+          "milk": "Melk / meieriprodukter",
+          "egg": "Egg",
+          "fish": "Fisk",
+          "shellfish": "Skalldyr",
+          "soy": "Soya",
+          "wheatGluten": "Hvete / gluten",
+          "sesame": "Sesam"
+        }
+      }
+    }
+  }
 }

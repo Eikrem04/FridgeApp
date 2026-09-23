@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Bell, Info, AlarmClock, LogOut, Mail, Trash2 } from 'lucide-react'
+import { Bell, Info, AlarmClock, ChefHat, LogOut, Mail, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
 import { useAuthStore } from '../store/useAuthStore'
@@ -9,18 +9,20 @@ import { StorageUnitsSection } from '../components/settings/StorageUnitsSection'
 import { CategoriesSection } from '../components/settings/CategoriesSection'
 import { DataSection } from '../components/settings/DataSection'
 import { DeleteAccountSheet } from '../components/settings/DeleteAccountSheet'
+import { RecipePreferencesSheet } from '../components/settings/RecipePreferencesSheet'
 import { Segmented } from '../components/ui/Segmented'
 import { Stepper } from '../components/ui/Stepper'
 import type { LanguagePreference, NotificationTiming, ThemePreference } from '../types'
 
 export const Settings = () => {
-  const { t } = useTranslation(['settings', 'common'])
+  const { t } = useTranslation(['settings', 'common', 'recipes'])
   const settings = useStore((s) => s.settings)
   const updateSettings = useStore((s) => s.updateSettings)
   const setTheme = useStore((s) => s.setTheme)
   const user = useAuthStore((s) => s.user)
   const signOut = useAuthStore((s) => s.signOut)
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false)
+  const [recipePrefsOpen, setRecipePrefsOpen] = useState(false)
 
   const TIMING_OPTIONS: { value: string; label: string }[] = [
     { value: '3', label: t('notifications.timing3') },
@@ -78,6 +80,15 @@ export const Settings = () => {
               onChange={(language) => updateSettings({ language })}
             />
           </div>
+        </SettingsSection>
+
+        <SettingsSection title={t('recipes:preferences.title')}>
+          <SettingsRow
+            icon={<ChefHat size={16} />}
+            label={t('recipes:preferences.title')}
+            sub={t('recipes:preferences.settingsSub')}
+            onClick={() => setRecipePrefsOpen(true)}
+          />
         </SettingsSection>
 
         <SettingsSection title={t('notifications.title')}>
@@ -167,6 +178,7 @@ export const Settings = () => {
       </div>
 
       <DeleteAccountSheet open={deleteAccountOpen} onClose={() => setDeleteAccountOpen(false)} />
+      <RecipePreferencesSheet open={recipePrefsOpen} onClose={() => setRecipePrefsOpen(false)} />
     </div>
   )
 }

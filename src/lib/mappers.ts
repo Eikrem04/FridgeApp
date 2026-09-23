@@ -7,6 +7,7 @@ import type {
   StatEvent,
   StorageUnit,
 } from '../types'
+import { DEFAULT_RECIPE_PREFERENCES } from '../types/recipePreferences'
 
 type StorageUnitRow = Database['public']['Tables']['storage_units']['Row']
 type CategoryRow = Database['public']['Tables']['categories']['Row']
@@ -71,6 +72,12 @@ export const settingsFromRow = (row: UserSettingsRow): AppSettings => ({
   // otherwise. Falling back to 'system' (the migration's own default)
   // keeps the app fully working either way.
   language: row.language ?? 'system',
+  // Same defensive fallback as `language` above — covers a pre-migration
+  // column entirely, AND a row saved before a newer field (e.g.
+  // avoidedIngredients) was added to the jsonb blob. Spreading defaults
+  // first means any individual missing sub-field gets its safe default
+  // without discarding the rest of the user's saved choices.
+  recipePreferences: { ...DEFAULT_RECIPE_PREFERENCES, ...(row.recipe_preferences ?? {}) },
   userName: row.user_name ?? undefined,
   notifications: {
     enabled: row.notifications_enabled,
@@ -90,6 +97,7 @@ export const settingsToRow = (
   if (settings.onboardingComplete !== undefined) row.onboarding_complete = settings.onboardingComplete
   if (settings.theme !== undefined) row.theme = settings.theme
   if (settings.language !== undefined) row.language = settings.language
+  if (settings.recipePreferences !== undefined) row.recipe_preferences = settings.recipePreferences
   if (settings.userName !== undefined) row.user_name = settings.userName ?? null
   if (settings.notifications !== undefined) {
     row.notifications_enabled = settings.notifications.enabled

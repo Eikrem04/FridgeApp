@@ -1,10 +1,127 @@
 {
-  "title": "What can I make?",
-  "noItemsTitle": "Add some items first",
-  "noItemsSubtitle": "Once your fridge has ingredients, we'll suggest meals you can make.",
-  "noMatchesTitle": "No matching recipes yet",
-  "noMatchesSubtitle": "Add a few more staple ingredients and we'll find something for you.",
-  "haveEverything": "You have everything!",
-  "missingIngredients_one": "Missing {{count}} ingredient",
-  "missingIngredients_other": "Missing {{count}} ingredients"
+  "title": "Recipes",
+  "tabs": {
+    "suggestions": "For you",
+    "search": "Search"
+  },
+  "search": {
+    "placeholder": "Search recipes…",
+    "submit": "Search",
+    "emptyTitle": "Search for recipes",
+    "emptySubtitle": "Find real recipes by name, e.g. \"chicken curry\".",
+    "noResultsTitle": "No recipes found",
+    "noResultsSubtitle": "Try a different search term.",
+    "errorTitle": "Couldn't load recipes",
+    "errorSubtitle": "Check your connection and try again.",
+    "retry": "Try again"
+  },
+  "suggestions": {
+    "loadingTitle": "Finding recipes for you…",
+    "noItemsTitle": "Add some items first",
+    "noItemsSubtitle": "Once your fridge has ingredients, we'll suggest recipes you can make.",
+    "noMatchesTitle": "No suggestions yet",
+    "noMatchesSubtitle": "Add a few more common ingredients and we'll find something for you.",
+    "noMatchesWithAvoidedSubtitle": "Nothing fits right now once your avoided ingredients are excluded. Try adding a few more ingredients, or review what you're avoiding in Settings.",
+    "errorTitle": "Couldn't load suggestions",
+    "errorSubtitle": "Check your connection and try again.",
+    "retry": "Try again",
+    "offlineTitle": "Quick ideas from what you have",
+    "offlineSubtitle": "We couldn't reach the recipe service, but here are a few ideas based on your kitchen."
+  },
+  "match": {
+    "have": "You have {{count}} of {{total}} ingredients",
+    "haveEverything": "You have everything!",
+    "usesSoon": "Uses food expiring soon",
+    "goodDinnerMatch": "Good dinner match",
+    "goodLunchMatch": "Good lunch match",
+    "goodBreakfastMatch": "Good breakfast match",
+    "goodDessertMatch": "Good dessert match",
+    "goodSnackMatch": "Good snack match"
+  },
+  "detail": {
+    "ingredients": "Ingredients",
+    "inYourKitchen": "In your kitchen",
+    "missing": "Missing",
+    "instructions": "Instructions",
+    "source": "View original recipe",
+    "video": "Watch video",
+    "addMissing": "Add missing ingredients",
+    "addOne": "Add to shopping list",
+    "allAdded": "All missing ingredients are already on your list",
+    "addedToast_one": "Added {{count}} ingredient to your shopping list",
+    "addedToast_other": "Added {{count}} ingredients to your shopping list",
+    "addedOneToast": "Added {{name}} to your shopping list",
+    "alreadyOnListToast": "{{name}} is already on your shopping list"
+  },
+  "filters": {
+    "forYou": "For you",
+    "dinner": "Dinner",
+    "useSoon": "Use soon"
+  },
+  "avoided": {
+    "warning": "Contains an ingredient you chose to avoid",
+    "disclaimer": "Kitchen checks the listed recipe ingredients only. Always verify labels and allergen information yourself."
+  },
+  "preferences": {
+    "title": "Recipe preferences",
+    "settingsSub": "Meal type, dietary needs and more",
+    "quiz": {
+      "heading": "Make Recipes work better for you",
+      "subtitle": "Answer a few quick questions so Kitchen can give you better suggestions.",
+      "skip": "Skip",
+      "continue": "Continue",
+      "finish": "Done"
+    },
+    "fields": {
+      "mealInterests": {
+        "label": "What are you usually cooking?",
+        "dinner": "Dinner",
+        "lunch": "Lunch",
+        "breakfast": "Breakfast",
+        "snacks": "Snacks",
+        "desserts": "Baking & desserts"
+      },
+      "inventoryImportance": {
+        "label": "How much should we lean on what you already have?",
+        "inventory_first": "Use as much as possible from what I already have",
+        "balanced": "Balanced",
+        "discovery": "Show me good recipes even if I'm missing a few ingredients"
+      },
+      "dietary": {
+        "label": "Dietary preference",
+        "none": "No preference",
+        "vegetarian": "Vegetarian"
+      },
+      "householdSize": {
+        "label": "Household size",
+        "1": "1",
+        "2": "2",
+        "3-4": "3–4",
+        "5+": "5+"
+      },
+      "cookingTime": {
+        "label": "Preferred cooking time",
+        "under20": "Under 20 minutes",
+        "20to40": "20–40 minutes",
+        "40to60": "40–60 minutes",
+        "any": "Any"
+      },
+      "avoidedIngredients": {
+        "label": "Anything you want to avoid?",
+        "hint": "Kitchen checks the listed recipe ingredients only — always verify labels and allergen information yourself.",
+        "customPlaceholder": "Add another ingredient…",
+        "presets": {
+          "peanuts": "Peanuts",
+          "treeNuts": "Tree nuts",
+          "milk": "Milk / dairy",
+          "egg": "Egg",
+          "fish": "Fish",
+          "shellfish": "Shellfish",
+          "soy": "Soy",
+          "wheatGluten": "Wheat / gluten",
+          "sesame": "Sesame"
+        }
+      }
+    }
+  }
 }

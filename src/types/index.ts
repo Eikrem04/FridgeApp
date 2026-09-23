@@ -1,3 +1,5 @@
+import type { RecipePreferences } from './recipePreferences'
+
 export type StorageType = 'fridge' | 'freezer' | 'pantry'
 
 export interface StorageUnit {
@@ -62,6 +64,7 @@ export interface AppSettings {
   language: LanguagePreference
   notifications: NotificationSettings
   expiration: ExpirationSettings
+  recipePreferences: RecipePreferences
   userName?: string
 }
 
