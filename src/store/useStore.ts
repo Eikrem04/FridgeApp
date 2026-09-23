@@ -531,20 +531,42 @@ export const useStore = create<AppState>()((set, get) => ({
   changeQuantity: async (id, delta) => {
     const previous = get().items.find((it) => it.id === id)
     if (!previous) return undefined
-    const nextQuantity = Math.max(0, previous.quantity + delta)
-    const consumedAmount = delta < 0 ? previous.quantity - nextQuantity : 0
-    const updated = { ...previous, quantity: nextQuantity }
-    set((s) => ({ items: upsert(s.items, updated) }))
-    const { error } = await supabase.from('inventory_items').update({ quantity: nextQuantity }).eq('id', id)
+
+    // Optimistic guess for instant stepper feedback — the database, not this, decides
+    // the real value. Two devices changing the same item at once both write correctly
+    // because the actual arithmetic happens atomically in adjust_inventory_item_quantity
+    // (a single `set quantity = greatest(0, quantity + delta)`), not here.
+    const optimisticQuantity = Math.max(0, previous.quantity + delta)
+    set((s) => ({ items: upsert(s.items, { ...previous, quantity: optimisticQuantity }) }))
+
+    const { data, error } = await supabase.rpc('adjust_inventory_item_quantity', {
+      p_item_id: id,
+      p_delta: delta,
+    })
     if (error) {
       set((s) => ({ items: upsert(s.items, previous) }))
       notifyError(i18n.t('common:storeErrors.updateQuantity'), error)
       return previous
     }
-    if (consumedAmount > 0) {
-      void get().addStatEvent('consumed', updated.name, consumedAmount, updated.categoryId)
+
+    // Reconcile with the authoritative database value — it can differ from our optimistic
+    // guess if another device changed this item concurrently. `numeric` columns can arrive
+    // as strings over PostgREST, same as elsewhere in mappers.ts, hence the Number() coercion.
+    const authoritativeQuantity = data === null ? optimisticQuantity : Number(data)
+    const reconciled = { ...previous, quantity: authoritativeQuantity }
+    set((s) => ({ items: upsert(s.items, reconciled) }))
+
+    // Stat logging reflects what THIS device's action intended to consume, clamped to what
+    // was actually available from this device's own last-known value — unchanged semantics
+    // from before, just derived without needing the removed client-computed absolute value.
+    if (delta < 0) {
+      const consumedAmount = Math.min(-delta, previous.quantity)
+      if (consumedAmount > 0) {
+        void get().addStatEvent('consumed', previous.name, consumedAmount, previous.categoryId)
+      }
     }
-    return updated
+
+    return reconciled
   },
 
   deleteItem: async (id, reason = 'consumed') => {

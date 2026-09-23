@@ -269,6 +269,12 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      /** Atomically applies a +/- delta to an item's quantity in the database, clamped at 0. See 0008_atomic_inventory_quantity.sql. */
+      adjust_inventory_item_quantity: {
+        Args: { p_item_id: string; p_delta: number }
+        Returns: number
+      }
+    }
   }
 }
