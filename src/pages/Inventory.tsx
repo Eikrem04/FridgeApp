@@ -84,7 +84,8 @@ export const Inventory = () => {
           <button
             type="button"
             onClick={() => setFilterOpen(true)}
-            className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
+            aria-label={t('filterSheet.title')}
+            className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
           >
             <SlidersHorizontal size={16} />
             {activeFilterCount > 0 && (

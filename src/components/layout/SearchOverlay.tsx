@@ -5,12 +5,16 @@ import { useTranslation } from 'react-i18next'
 import { useStore } from '../../store/useStore'
 import { ItemRow } from '../inventory/ItemRow'
 import { EmptyState } from '../ui/EmptyState'
+import { useDialogA11y } from '../../lib/useDialogA11y'
 
 export const SearchOverlay = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
   const { t } = useTranslation(['inventory', 'common'])
   const [query, setQuery] = useState('')
   const items = useStore((s) => s.items)
   const inputRef = useRef<HTMLInputElement>(null)
+  // autoFocus: false — this overlay already focuses its own search input on a deliberate
+  // delay so the entrance animation doesn't feel jumpy; the hook still adds Escape + Tab trap.
+  const containerRef = useDialogA11y(open, onClose, { autoFocus: false })
 
   useEffect(() => {
     if (open) {
@@ -31,16 +35,22 @@ export const SearchOverlay = ({ open, onClose }: { open: boolean; onClose: () =>
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={containerRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('common:search')}
+          tabIndex={-1}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[70] flex flex-col bg-[var(--color-bg)]"
+          className="fixed inset-0 z-[70] flex flex-col bg-[var(--color-bg)] outline-none"
         >
           <div className="safe-top flex items-center gap-2 px-4 pb-3 pt-4">
             <div className="flex flex-1 items-center gap-2 rounded-2xl bg-black/[0.05] px-4 py-3 dark:bg-white/10">
               <Search size={18} className="text-[var(--color-ink-faint)]" />
               <input
                 ref={inputRef}
+                aria-label={t('search.placeholder')}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t('search.placeholder')}

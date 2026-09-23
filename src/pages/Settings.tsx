@@ -105,6 +105,9 @@ export const Settings = () => {
             right={
               <button
                 type="button"
+                role="switch"
+                aria-checked={settings.notifications.enabled}
+                aria-label={t('notifications.enabled')}
                 onClick={() => updateSettings({ notifications: { ...settings.notifications, enabled: !settings.notifications.enabled } })}
                 className={`relative h-7 w-12 shrink-0 rounded-full transition ${
                   settings.notifications.enabled ? 'bg-[var(--color-good)]' : 'bg-black/15 dark:bg-white/20'

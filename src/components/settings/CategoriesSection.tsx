@@ -37,7 +37,12 @@ export const CategoriesSection = () => {
               <CategoryIcon name={cat.icon} size={14} />
               {getCategoryDisplayName(cat, t)}
               {cat.isCustom && (
-                <button type="button" onClick={() => setDeleteTarget(cat)} className="ml-0.5 flex h-5 w-5 items-center justify-center rounded-full text-[var(--color-ink-faint)] hover:bg-black/10">
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(cat)}
+                  aria-label={t('common:actions.delete')}
+                  className="ml-0.5 flex h-7 w-7 items-center justify-center rounded-full text-[var(--color-ink-faint)] hover:bg-black/10"
+                >
                   <Trash2 size={11} />
                 </button>
               )}

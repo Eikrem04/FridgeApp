@@ -4,6 +4,7 @@ import { Camera, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { BarcodeFormat, BrowserMultiFormatReader, type IScannerControls } from '@zxing/browser'
 import { DecodeHintType } from '@zxing/library'
+import { useDialogA11y } from '../../lib/useDialogA11y'
 
 interface BarcodeScannerProps {
   open: boolean
@@ -26,6 +27,13 @@ export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProp
   const videoRef = useRef<HTMLVideoElement>(null)
   const controlsRef = useRef<IScannerControls | null>(null)
   const [status, setStatus] = useState<ScannerStatus>('starting')
+
+  const handleClose = () => {
+    controlsRef.current?.stop()
+    controlsRef.current = null
+    onClose()
+  }
+  const containerRef = useDialogA11y(open, handleClose)
 
   useEffect(() => {
     if (!open) return
@@ -75,12 +83,6 @@ export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProp
     }
   }, [open, onDetected])
 
-  const handleClose = () => {
-    controlsRef.current?.stop()
-    controlsRef.current = null
-    onClose()
-  }
-
   const showCamera = status === 'starting' || status === 'scanning'
   const message =
     status === 'permission-denied' ? t('scanner.permissionDenied') : status === 'unsupported' ? t('scanner.unsupported') : null
@@ -89,10 +91,15 @@ export const BarcodeScanner = ({ open, onClose, onDetected }: BarcodeScannerProp
     <AnimatePresence>
       {open && (
         <motion.div
+          ref={containerRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('scanner.title')}
+          tabIndex={-1}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[80] flex flex-col bg-black"
+          className="fixed inset-0 z-[80] flex flex-col bg-black outline-none"
         >
           <div className="safe-top flex items-center justify-between px-5 pb-3 pt-4">
             <span className="text-[15px] font-semibold text-white">{t('scanner.title')}</span>

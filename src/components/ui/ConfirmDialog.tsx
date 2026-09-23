@@ -1,5 +1,7 @@
+import { useId } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from './Button'
+import { useDialogA11y } from '../../lib/useDialogA11y'
 
 interface ConfirmDialogProps {
   open: boolean
@@ -22,6 +24,8 @@ export const ConfirmDialog = ({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) => {
+  const titleId = useId()
+  const containerRef = useDialogA11y(open, onCancel)
   return (
     <AnimatePresence>
       {open && (
@@ -34,13 +38,20 @@ export const ConfirmDialog = ({
             onClick={onCancel}
           />
           <motion.div
+            ref={containerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            tabIndex={-1}
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.94 }}
             transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-            className="relative z-10 w-full max-w-sm rounded-3xl bg-[var(--color-surface)] p-6 text-center shadow-2xl"
+            className="relative z-10 w-full max-w-sm rounded-3xl bg-[var(--color-surface)] p-6 text-center shadow-2xl outline-none"
           >
-            <h3 className="text-[17px] font-semibold text-[var(--color-ink)]">{title}</h3>
+            <h3 id={titleId} className="text-[17px] font-semibold text-[var(--color-ink)]">
+              {title}
+            </h3>
             {message && <p className="mt-2 text-[15px] text-[var(--color-ink-dim)]">{message}</p>}
             <div className="mt-6 flex gap-3">
               <Button variant="secondary" fullWidth onClick={onCancel}>

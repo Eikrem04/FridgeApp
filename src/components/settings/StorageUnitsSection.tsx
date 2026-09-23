@@ -58,14 +58,16 @@ export const StorageUnitsSection = () => {
               <button
                 type="button"
                 onClick={() => openEdit(unit)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-ink-dim)] hover:bg-black/[0.04] dark:hover:bg-white/5"
+                aria-label={t('common:actions.edit')}
+                className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--color-ink-dim)] hover:bg-black/[0.04] dark:hover:bg-white/5"
               >
                 <Pencil size={15} />
               </button>
               <button
                 type="button"
                 onClick={() => setDeleteTarget(unit)}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-bad)] hover:bg-[var(--color-bad-soft)]"
+                aria-label={t('common:actions.delete')}
+                className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--color-bad)] hover:bg-[var(--color-bad-soft)]"
               >
                 <Trash2 size={15} />
               </button>

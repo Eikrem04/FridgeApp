@@ -13,7 +13,7 @@ export const BottomNav = () => {
   ]
 
   return (
-    <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-[var(--color-line)] bg-[var(--color-surface)]/85 backdrop-blur-xl md:hidden">
+    <nav className="safe-bottom safe-left safe-right fixed inset-x-0 bottom-0 z-40 border-t border-[var(--color-line)] bg-[var(--color-surface)]/85 backdrop-blur-xl md:hidden">
       <div className="mx-auto flex max-w-lg items-center justify-around px-2 pb-1 pt-1.5">
         {items.map((item) => {
           const Icon = item.icon

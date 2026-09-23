@@ -14,7 +14,7 @@ export const TopBar = ({ title }: { title: string }) => {
 
   return (
     <>
-      <header className="safe-top sticky top-0 z-30 flex items-center justify-between bg-[var(--color-bg)]/85 px-5 pb-3 pt-4 backdrop-blur-xl md:px-8 md:pt-6">
+      <header className="safe-top safe-left safe-right sticky top-0 z-30 flex items-center justify-between bg-[var(--color-bg)]/85 px-5 pb-3 pt-4 backdrop-blur-xl md:px-8 md:pt-6">
         {title ? (
           <h1 className="text-[22px] font-bold tracking-tight text-[var(--color-ink)]">{title}</h1>
         ) : (

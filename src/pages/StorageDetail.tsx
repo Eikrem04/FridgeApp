@@ -47,10 +47,11 @@ export const StorageDetail = () => {
 
   return (
     <div className="pb-28 md:pb-12">
-      <header className="safe-top sticky top-0 z-30 flex items-center justify-between bg-[var(--color-bg)]/85 px-5 pb-3 pt-4 backdrop-blur-xl md:px-8 md:pt-6">
+      <header className="safe-top safe-left safe-right sticky top-0 z-30 flex items-center justify-between bg-[var(--color-bg)]/85 px-5 pb-3 pt-4 backdrop-blur-xl md:px-8 md:pt-6">
         <button
           type="button"
           onClick={() => navigate(-1)}
+          aria-label={t('common:actions.back')}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
         >
           <ChevronLeft size={20} />
@@ -62,6 +63,7 @@ export const StorageDetail = () => {
               setNewName(displayName)
               setRenaming(true)
             }}
+            aria-label={t('storageDetail.renameTitle')}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10"
           >
             <Pencil size={17} />
@@ -69,6 +71,7 @@ export const StorageDetail = () => {
           <button
             type="button"
             onClick={() => setConfirmDelete(true)}
+            aria-label={t('common:actions.delete')}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--color-bad-soft)] text-[var(--color-bad)]"
           >
             <Trash2 size={17} />
