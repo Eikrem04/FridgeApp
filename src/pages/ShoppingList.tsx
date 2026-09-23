@@ -1,31 +1,25 @@
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
-import { Plus, ShoppingCart, Trash2 } from 'lucide-react'
+import { ChevronRight, PackageCheck, Plus, ShoppingCart, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useStore } from '../store/useStore'
-import { useToastStore } from '../store/useToastStore'
 import { TopBar } from '../components/layout/TopBar'
 import { ShoppingRow } from '../components/shopping/ShoppingRow'
+import { PurchasedItemsSheet } from '../components/shopping/PurchasedItemsSheet'
 import { EmptyState } from '../components/ui/EmptyState'
-import { TextInput, SelectInput, FieldWrap } from '../components/ui/Field'
-import { Sheet } from '../components/ui/Sheet'
+import { TextInput } from '../components/ui/Field'
 import { Button } from '../components/ui/Button'
-import { getStorageDisplayName } from '../lib/storageTypes'
 
 export const ShoppingList = () => {
   const { t } = useTranslation('shopping')
   const shoppingList = useStore((s) => s.shoppingList)
-  const storageUnits = useStore((s) => s.storageUnits)
   const addShoppingItem = useStore((s) => s.addShoppingItem)
   const removeShoppingItem = useStore((s) => s.removeShoppingItem)
   const togglePurchased = useStore((s) => s.togglePurchased)
   const clearPurchased = useStore((s) => s.clearPurchased)
-  const restockShoppingItem = useStore((s) => s.restockShoppingItem)
-  const showToast = useToastStore((s) => s.show)
 
   const [newName, setNewName] = useState('')
-  const [restockTarget, setRestockTarget] = useState<string | null>(null)
-  const [restockStorage, setRestockStorage] = useState(storageUnits[0]?.id ?? '')
+  const [handleSheetOpen, setHandleSheetOpen] = useState(false)
 
   const pending = shoppingList.filter((s) => !s.purchased)
   const purchased = shoppingList.filter((s) => s.purchased)
@@ -35,14 +29,6 @@ export const ShoppingList = () => {
     if (!name) return
     addShoppingItem(name)
     setNewName('')
-  }
-
-  const handleTogglePurchased = (id: string, wasPurchased: boolean) => {
-    togglePurchased(id)
-    if (!wasPurchased && storageUnits.length > 0) {
-      setRestockStorage(storageUnits[0].id)
-      setRestockTarget(id)
-    }
   }
 
   return (
@@ -67,6 +53,20 @@ export const ShoppingList = () => {
           />
         ) : (
           <div className="flex flex-col gap-6">
+            {purchased.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setHandleSheetOpen(true)}
+                className="flex items-center justify-between rounded-2xl bg-[var(--color-accent-soft)] px-4 py-3.5 text-left transition active:opacity-80"
+              >
+                <span className="flex items-center gap-2.5 text-[15px] font-semibold text-[var(--color-accent)]">
+                  <PackageCheck size={18} />
+                  {t('handlePurchased.button', { count: purchased.length })}
+                </span>
+                <ChevronRight size={18} className="text-[var(--color-accent)]" />
+              </button>
+            )}
+
             <div>
               {pending.length > 0 && (
                 <p className="mb-2 px-1 text-[13px] font-semibold text-[var(--color-ink-dim)]">{t('toBuy', { count: pending.length })}</p>
@@ -77,7 +77,7 @@ export const ShoppingList = () => {
                     <ShoppingRow
                       key={item.id}
                       item={item}
-                      onToggle={() => handleTogglePurchased(item.id, item.purchased)}
+                      onToggle={() => togglePurchased(item.id)}
                       onRemove={() => removeShoppingItem(item.id)}
                     />
                   ))}
@@ -115,45 +115,7 @@ export const ShoppingList = () => {
         )}
       </div>
 
-      <Sheet open={!!restockTarget} onClose={() => setRestockTarget(null)} title={t('restock.title')}>
-        <div className="flex flex-col gap-4">
-          <p className="text-[14.5px] text-[var(--color-ink-dim)]">{t('restock.body')}</p>
-          {storageUnits.length > 0 ? (
-            <>
-              <FieldWrap label={t('restock.storage')}>
-                <SelectInput value={restockStorage} onChange={(e) => setRestockStorage(e.target.value)}>
-                  {storageUnits.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {getStorageDisplayName(u, t)}
-                    </option>
-                  ))}
-                </SelectInput>
-              </FieldWrap>
-              <div className="flex gap-3">
-                <Button variant="secondary" fullWidth onClick={() => setRestockTarget(null)}>
-                  {t('restock.notNow')}
-                </Button>
-                <Button
-                  fullWidth
-                  onClick={() => {
-                    if (restockTarget) {
-                      restockShoppingItem(restockTarget, restockStorage)
-                      showToast(t('restock.addedToast'))
-                    }
-                    setRestockTarget(null)
-                  }}
-                >
-                  {t('restock.addIt')}
-                </Button>
-              </div>
-            </>
-          ) : (
-            <Button fullWidth onClick={() => setRestockTarget(null)}>
-              {t('restock.done')}
-            </Button>
-          )}
-        </div>
-      </Sheet>
+      <PurchasedItemsSheet open={handleSheetOpen} onClose={() => setHandleSheetOpen(false)} />
     </div>
   )
 }

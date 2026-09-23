@@ -7,6 +7,7 @@ import { useToastStore } from '../../store/useToastStore'
 import { Stepper } from '../ui/Stepper'
 import { Button } from '../ui/Button'
 import { ConfirmDialog } from '../ui/ConfirmDialog'
+import { ZeroQuantityDialog } from './ZeroQuantityDialog'
 import { ItemForm, type ItemFormValues } from './ItemForm'
 import { CategoryIcon } from '../../lib/icons'
 import { getCategoryDisplayName } from '../../lib/categoryLocalization'
@@ -72,6 +73,34 @@ export const ItemDetailSheet = () => {
     if (updated && updated.quantity === 0) {
       setZeroPrompt(true)
     }
+  }
+
+  const handleZeroAddToShoppingList = () => {
+    addShoppingItem(item.name, { unit: item.unit, categoryId: item.categoryId })
+    deleteItem(item.id, 'consumed')
+    setZeroPrompt(false)
+    handleClose()
+    showToast(t('detail.movedToShoppingToast', { name: item.name }))
+  }
+
+  const handleZeroRemoveFromInventory = () => {
+    const snapshot = { ...item }
+    deleteItem(item.id, 'consumed')
+    setZeroPrompt(false)
+    handleClose()
+    showToast(t('detail.removedToast', { name: snapshot.name }), {
+      label: t('detail.undo'),
+      onClick: () =>
+        addItem({
+          name: snapshot.name,
+          categoryId: snapshot.categoryId,
+          quantity: snapshot.quantity,
+          unit: snapshot.unit,
+          storageId: snapshot.storageId,
+          expirationDate: snapshot.expirationDate,
+          notes: snapshot.notes,
+        }),
+    })
   }
 
   const handleSubmitEdit = (values: ItemFormValues) => {
@@ -170,21 +199,12 @@ export const ItemDetailSheet = () => {
         onCancel={() => setConfirmDelete(false)}
       />
 
-      <ConfirmDialog
+      <ZeroQuantityDialog
         open={zeroPrompt}
-        danger={false}
-        title={t('detail.zeroPromptTitle', { name: item.name })}
-        message={t('detail.zeroPromptMessage')}
-        confirmLabel={t('detail.addToShoppingList')}
-        cancelLabel={t('detail.keepAtZero')}
-        onConfirm={() => {
-          addShoppingItem(item.name, { unit: item.unit, categoryId: item.categoryId })
-          deleteItem(item.id, 'consumed')
-          setZeroPrompt(false)
-          handleClose()
-          showToast(t('detail.movedToShoppingToast', { name: item.name }))
-        }}
-        onCancel={() => setZeroPrompt(false)}
+        itemName={item.name}
+        onKeepAtZero={() => setZeroPrompt(false)}
+        onAddToShoppingList={handleZeroAddToShoppingList}
+        onRemove={handleZeroRemoveFromInventory}
       />
     </>
   )

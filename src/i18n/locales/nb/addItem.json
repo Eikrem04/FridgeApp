@@ -61,9 +61,10 @@
     "notes": "Notater",
     "added": "Lagt til {{date}}",
     "zeroPromptTitle": "Du er tom for {{name}}",
-    "zeroPromptMessage": "Legger du den til på handlelisten, fjernes den fra beholdningen. Eller behold den her på 0 til du er klar til å ta tak i det.",
+    "zeroPromptMessage": "Legg den til på handlelisten, fjern den fra beholdningen, eller behold den her på 0 til du er klar til å ta tak i det.",
     "addToShoppingList": "Legg til på handleliste",
     "keepAtZero": "Behold på 0",
+    "removeFromInventory": "Fjern fra beholdningen",
     "movedToShoppingToast": "{{name}} flyttet til handlelisten"
   },
   "scanner": {

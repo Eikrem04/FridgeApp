@@ -8,14 +8,21 @@
   "purchased_one": "Kjøpt ({{count}})",
   "purchased_other": "Kjøpt ({{count}})",
   "clear": "Tøm",
-  "restock": {
-    "title": "Legg til i kjøkkenet?",
-    "body": "Fint! Vil du legge den rett inn i et lagringssted?",
-    "storage": "Lagringssted",
-    "notNow": "Ikke nå",
-    "addIt": "Legg til",
-    "done": "Ferdig",
-    "addedToast": "Lagt til i beholdningen"
+  "handlePurchased": {
+    "button_one": "Håndter kjøpte varer ({{count}})",
+    "button_other": "Håndter kjøpte varer ({{count}})",
+    "sheetTitle_one": "Håndter kjøpte varer ({{count}})",
+    "sheetTitle_other": "Håndter kjøpte varer ({{count}})",
+    "body": "Velg hvor hver vare skal, eller fjern dem fra listen uten å legge dem til kjøkkenet.",
+    "setAllTo": "Sett alle til",
+    "addToKitchen": "Legg til på kjøkkenet",
+    "removeFromList": "Fjern fra listen",
+    "noStorageWarning": "Du har ingen lagringssteder ennå — legg til ett i Innstillinger før du legger varer til kjøkkenet.",
+    "addedAllToast_one": "La til {{count}} vare på kjøkkenet",
+    "addedAllToast_other": "La til {{count}} varer på kjøkkenet",
+    "addedPartialToast": "La til {{added}} av {{total}} varer på kjøkkenet",
+    "removedToast_one": "Fjernet {{count}} vare fra listen din",
+    "removedToast_other": "Fjernet {{count}} varer fra listen din"
   },
   "row": {
     "markNotPurchased": "Merk som ikke kjøpt",

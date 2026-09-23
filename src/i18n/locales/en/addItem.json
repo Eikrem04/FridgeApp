@@ -61,9 +61,10 @@
     "notes": "Notes",
     "added": "Added {{date}}",
     "zeroPromptTitle": "You're out of {{name}}",
-    "zeroPromptMessage": "Adding it to your shopping list will remove it from your inventory. Or keep it here at 0 until you're ready to deal with it.",
+    "zeroPromptMessage": "Add it to your shopping list, remove it from your inventory, or keep it here at 0 until you're ready to deal with it.",
     "addToShoppingList": "Add to shopping list",
     "keepAtZero": "Keep at 0",
+    "removeFromInventory": "Remove from inventory",
     "movedToShoppingToast": "{{name}} moved to shopping list"
   },
   "scanner": {

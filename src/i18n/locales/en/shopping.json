@@ -8,14 +8,21 @@
   "purchased_one": "Purchased ({{count}})",
   "purchased_other": "Purchased ({{count}})",
   "clear": "Clear",
-  "restock": {
-    "title": "Add to your kitchen?",
-    "body": "Nice! Want to add this straight into storage?",
-    "storage": "Storage",
-    "notNow": "Not now",
-    "addIt": "Add it",
-    "done": "Done",
-    "addedToast": "Added to inventory"
+  "handlePurchased": {
+    "button_one": "Handle purchased items ({{count}})",
+    "button_other": "Handle purchased items ({{count}})",
+    "sheetTitle_one": "Handle purchased items ({{count}})",
+    "sheetTitle_other": "Handle purchased items ({{count}})",
+    "body": "Choose where each item goes, or remove them from your list without adding to Kitchen.",
+    "setAllTo": "Set all to",
+    "addToKitchen": "Add to Kitchen",
+    "removeFromList": "Remove from list",
+    "noStorageWarning": "You don't have any storage units yet — add one in Settings before adding items to Kitchen.",
+    "addedAllToast_one": "Added {{count}} item to Kitchen",
+    "addedAllToast_other": "Added {{count}} items to Kitchen",
+    "addedPartialToast": "Added {{added}} of {{total}} items to Kitchen",
+    "removedToast_one": "Removed {{count}} item from your list",
+    "removedToast_other": "Removed {{count}} items from your list"
   },
   "row": {
     "markNotPurchased": "Mark as not purchased",
