@@ -6,6 +6,8 @@ const recipe = (overrides: Partial<ApiRecipe> = {}): ApiRecipe => ({
   id: '1',
   title: 'Test Recipe',
   ingredients: [],
+  isVegetarian: false,
+  mealType: ['dinner'],
   ...overrides,
 })
 
@@ -69,8 +71,8 @@ describe('computeRecipeMatch use-soon boost counting', () => {
 })
 
 describe('computeRecipeMatch mealClass classification pass-through', () => {
-  it('attaches the classified mealClass from the recipe category', () => {
-    const match = computeRecipeMatch(recipe({ category: 'Dessert', ingredients: [] }), [], [])
-    expect(match.mealClass).toBe('dessert')
+  it('attaches the recipe\'s own authored meal types', () => {
+    const match = computeRecipeMatch(recipe({ mealType: ['breakfast', 'lunch'], ingredients: [] }), [], [])
+    expect(match.mealClass).toEqual(['breakfast', 'lunch'])
   })
 })

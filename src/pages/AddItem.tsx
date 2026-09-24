@@ -155,9 +155,9 @@ export const AddItem = () => {
             setScannerLoaded(true)
             setScannerOpen(true)
           }}
-          className="mb-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-black/[0.05] py-3.5 text-[14.5px] font-semibold text-[var(--color-ink)] transition active:scale-[0.98] dark:bg-white/10"
+          className="mb-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-[var(--color-accent-soft)] py-3.5 text-[14.5px] font-semibold text-[var(--color-ink)] transition active:scale-[0.98]"
         >
-          <Barcode size={18} />
+          <Barcode size={18} className="text-[var(--color-accent)]" />
           {t('scanBarcode')}
         </button>
 

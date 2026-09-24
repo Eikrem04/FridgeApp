@@ -14,7 +14,7 @@ export function Segmented<T extends string>({ options, value, onChange }: Segmen
           onClick={() => onChange(opt.value)}
           className={`flex-1 rounded-xl px-3 py-2 text-[14px] font-semibold transition-all ${
             value === opt.value
-              ? 'bg-[var(--color-surface)] text-[var(--color-ink)] shadow-sm'
+              ? 'bg-[var(--color-surface)] text-[var(--color-accent)] shadow-sm'
               : 'text-[var(--color-ink-dim)]'
           }`}
         >

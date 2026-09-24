@@ -90,10 +90,3 @@ export interface InAppNotification {
   read: boolean
 }
 
-export interface Recipe {
-  id: string
-  name: string
-  icon: string
-  ingredients: string[]
-  steps?: string[]
-}

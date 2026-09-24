@@ -22,7 +22,7 @@ export const UseSoonRow = ({ item, index = 0 }: { item: InventoryItem; index?: n
       initial={{ opacity: 0, x: 12 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.28, delay: index * 0.04 }}
-      className="flex shrink-0 flex-col gap-3 rounded-3xl bg-[var(--color-surface)] p-4 text-left transition active:scale-[0.97]"
+      className="card-surface flex shrink-0 flex-col gap-3 rounded-3xl bg-[var(--color-surface)] p-4 text-left transition active:scale-[0.97]"
       style={{ width: 148 }}
     >
       <span className={`flex h-11 w-11 items-center justify-center rounded-full ${colors.bg} ${colors.text}`}>

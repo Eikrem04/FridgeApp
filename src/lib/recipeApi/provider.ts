@@ -1,14 +1,14 @@
-import type { ApiRecipe, ApiRecipeSummary } from '../../types/recipe'
+import type { ApiRecipe } from '../../types/recipe'
 
 /**
- * Everything the app needs from a recipe backend. Swapping TheMealDB for a
- * different API (or a server-side proxy in front of one) means writing a new
- * implementation of this interface and changing the one wiring point in
- * index.ts — the UI and recipeService.ts never depend on a specific provider.
+ * Everything the app needs from a recipe backend. The curated Kitch catalog is small enough
+ * (dozens, not thousands of recipes) to fetch in full and cache — so, unlike the old TheMealDB
+ * integration, there's no need for a server-side per-ingredient filter endpoint; `searchByName`
+ * and `getById` can both be served from the same cached set `getAllRecipes` returns.
  */
 export interface RecipeProvider {
+  /** Fetches (and internally caches) the full curated recipe catalog. */
+  getAllRecipes(signal?: AbortSignal): Promise<ApiRecipe[]>
   searchByName(query: string, signal: AbortSignal): Promise<ApiRecipe[]>
   getById(id: string, signal: AbortSignal): Promise<ApiRecipe | null>
-  /** TheMealDB's free tier only supports filtering by a single ingredient at a time. */
-  searchByIngredient(ingredient: string, signal: AbortSignal): Promise<ApiRecipeSummary[]>
 }

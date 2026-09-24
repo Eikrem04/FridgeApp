@@ -3,22 +3,27 @@
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  --color-bg: #F5F5F7;
+  /* Kitch brand palette — the single source of truth for app-wide color. Every component
+     references these CSS custom properties (via Tailwind arbitrary values, e.g.
+     bg-[var(--color-accent)]) rather than hardcoding hex values, so this block is the only
+     place brand color changes need to happen. */
+  --color-bg: #F7F7F5;
   --color-surface: #FFFFFF;
   --color-surface-2: #FAFAFA;
-  --color-ink: #1D1D1F;
-  --color-ink-dim: #6E6E73;
+  --color-ink: #1C1C1E;
+  --color-ink-dim: #737377;
   --color-ink-faint: #A1A1A6;
-  --color-line: rgba(0, 0, 0, 0.06);
+  --color-line: #E8E8E6;
 
-  --color-accent: #0A84FF;
-  --color-accent-soft: rgba(10, 132, 255, 0.12);
+  --color-accent: #0EA5B7;
+  --color-accent-soft: #DDF5F7;
+  --color-accent-pressed: #087D8C;
   --color-good: #30B650;
   --color-good-soft: rgba(48, 182, 80, 0.12);
-  --color-warn: #FF9F0A;
-  --color-warn-soft: rgba(255, 159, 10, 0.14);
-  --color-bad: #FF3B30;
-  --color-bad-soft: rgba(255, 59, 48, 0.12);
+  --color-warn: #F3A11A;
+  --color-warn-soft: rgba(243, 161, 26, 0.14);
+  --color-bad: #E5484D;
+  --color-bad-soft: rgba(229, 72, 77, 0.12);
   --color-frozen: #5AC8FA;
   --color-frozen-soft: rgba(90, 200, 250, 0.12);
   --color-pantry: #A2845E;
@@ -48,8 +53,9 @@
   --color-ink-faint: #6E6E73;
   --color-line: rgba(255, 255, 255, 0.08);
 
-  --color-accent: #0A84FF;
-  --color-accent-soft: rgba(10, 132, 255, 0.22);
+  --color-accent: #0EA5B7;
+  --color-accent-soft: rgba(14, 165, 183, 0.22);
+  --color-accent-pressed: #087D8C;
   --color-good: #32D74B;
   --color-good-soft: rgba(50, 215, 75, 0.16);
   --color-warn: #FF9F0A;
@@ -95,6 +101,15 @@ input, textarea, select, button {
 /* Hide scrollbars on horizontal chip rows while keeping scroll */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Subtle definition for card-like surfaces sitting on the app background — a thin border plus a
+   very soft shadow, applied alongside a surface's own rounded-3xl/bg-surface classes. Kept out of
+   modals/sheets (ConfirmDialog, Sheet, ...), which already have their own deliberate, heavier
+   elevation (shadow-2xl) appropriate for floating over a dimmed backdrop. */
+.card-surface {
+  border: 1px solid var(--color-line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
 
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);

@@ -21,6 +21,17 @@ export interface RecipePreferencesRow {
   setupSeen: boolean
 }
 
+export type MealTypeRow = 'breakfast' | 'lunch' | 'dinner'
+
+/** Shape of one element of recipes.ingredients (jsonb) — see supabase/migrations/0009_recipes.sql. */
+export interface RecipeIngredientRow {
+  canonical_name: string
+  name_en: string
+  name_nb: string
+  measure_en?: string | null
+  measure_nb?: string | null
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -263,6 +274,51 @@ export interface Database {
           image_url: string | null
           source: string
           last_used_at: string
+          created_at: string
+        }>
+        Relationships: []
+      }
+      recipes: {
+        Row: {
+          id: string
+          slug: string
+          title_en: string
+          title_nb: string
+          meal_type: MealTypeRow[]
+          category: string | null
+          is_vegetarian: boolean
+          ingredients: RecipeIngredientRow[]
+          instructions_en: string | null
+          instructions_nb: string | null
+          source_url: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title_en: string
+          title_nb: string
+          meal_type: MealTypeRow[]
+          category?: string | null
+          is_vegetarian?: boolean
+          ingredients: RecipeIngredientRow[]
+          instructions_en?: string | null
+          instructions_nb?: string | null
+          source_url?: string | null
+          created_at?: string
+        }
+        Update: Partial<{
+          id: string
+          slug: string
+          title_en: string
+          title_nb: string
+          meal_type: MealTypeRow[]
+          category: string | null
+          is_vegetarian: boolean
+          ingredients: RecipeIngredientRow[]
+          instructions_en: string | null
+          instructions_nb: string | null
+          source_url: string | null
           created_at: string
         }>
         Relationships: []

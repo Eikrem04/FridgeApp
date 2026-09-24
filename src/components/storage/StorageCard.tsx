@@ -27,7 +27,7 @@ export const StorageCard = ({ unit, index = 0 }: { unit: StorageUnit; index?: nu
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.32, delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
-      className="flex w-full items-center gap-4 rounded-3xl bg-[var(--color-surface)] p-5 text-left transition active:scale-[0.985]"
+      className="card-surface flex w-full items-center gap-4 rounded-3xl bg-[var(--color-surface)] p-5 text-left transition active:scale-[0.985]"
     >
       <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${meta.bg} ${meta.text}`}>
         <Icon size={26} />

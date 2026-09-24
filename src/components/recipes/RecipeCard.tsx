@@ -68,7 +68,7 @@ export const RecipeCard = ({ match, index = 0, onClick }: RecipeCardProps) => {
               key={ing.name}
               className="rounded-full bg-[var(--color-good-soft)] px-2.5 py-1 text-[12px] font-medium text-[var(--color-good)]"
             >
-              {capitalize(ing.name)}
+              {capitalize(ing.displayName ?? ing.name)}
             </span>
           ))}
         </div>

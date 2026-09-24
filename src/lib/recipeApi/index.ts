@@ -1,2 +1,2 @@
 export type { RecipeProvider } from './provider'
-export { theMealDbProvider as recipeProvider } from './theMealDbProvider'
+export { kitchRecipesProvider as recipeProvider } from './kitchRecipesProvider'

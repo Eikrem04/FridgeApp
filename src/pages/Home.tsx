@@ -35,7 +35,7 @@ export const Home = () => {
           <button
             type="button"
             onClick={() => navigate('/inventory?filter=expiring')}
-            className="mt-5 flex w-full items-center gap-3.5 rounded-3xl bg-[var(--color-bad-soft)] p-4 text-left transition active:scale-[0.99]"
+            className="mt-5 flex w-full items-center gap-3.5 rounded-3xl border border-[var(--color-bad)]/15 bg-[var(--color-surface)] p-4 text-left shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition active:scale-[0.99]"
           >
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-bad)] text-white">
               <AlertTriangle size={20} />
@@ -114,7 +114,7 @@ const QuickTile = ({
   <button
     type="button"
     onClick={onClick}
-    className="relative flex flex-col items-center gap-2 rounded-3xl bg-[var(--color-surface)] py-5 transition active:scale-[0.97]"
+    className="card-surface relative flex flex-col items-center gap-2 rounded-3xl bg-[var(--color-surface)] py-5 transition active:scale-[0.97]"
   >
     {badge !== undefined && (
       <span className="absolute right-3 top-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--color-accent)] px-1 text-[11px] font-bold text-white">

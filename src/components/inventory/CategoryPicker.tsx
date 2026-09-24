@@ -37,7 +37,9 @@ export const CategoryPicker = ({ value, onChange }: CategoryPickerProps) => {
           type="button"
           onClick={() => onChange(cat.id)}
           className={`flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[13.5px] font-semibold transition ${
-            value === cat.id ? 'bg-[var(--color-accent)] text-white' : 'bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10'
+            value === cat.id
+              ? 'bg-[var(--color-accent-soft)] text-[var(--color-accent)]'
+              : 'bg-black/[0.05] text-[var(--color-ink)] dark:bg-white/10'
           }`}
         >
           <CategoryIcon name={cat.icon} size={15} />

@@ -8,7 +8,6 @@ import { Button } from '../components/ui/Button'
 import { Segmented } from '../components/ui/Segmented'
 import { RecipeCard } from '../components/recipes/RecipeCard'
 import { RecipeDetailSheet } from '../components/recipes/RecipeDetailSheet'
-import { OfflineSuggestions } from '../components/recipes/OfflineSuggestions'
 import { RecipePreferencesQuiz } from '../components/recipes/RecipePreferencesQuiz'
 import { getUseSoonItems } from '../lib/selectors'
 import { searchRecipes, getSuggestions, computeRecipeMatch } from '../lib/recipeService'
@@ -99,7 +98,7 @@ export const Recipes = () => {
   // Client-side only — no re-fetch, just narrows the already-ranked suggestion list.
   const filteredSuggestions = useMemo(() => {
     if (suggestState.status !== 'success') return []
-    if (suggestionFilter === 'dinner') return suggestState.data.filter((m) => m.mealClass === 'main')
+    if (suggestionFilter === 'dinner') return suggestState.data.filter((m) => m.mealClass.includes('dinner'))
     if (suggestionFilter === 'useSoon') return suggestState.data.filter((m) => m.usesSoonCount > 0)
     return suggestState.data
   }, [suggestState, suggestionFilter])
@@ -183,15 +182,12 @@ export const Recipes = () => {
                     </div>
                   )}
                   {suggestState.status === 'error' && (
-                    <div className="flex flex-col gap-6">
-                      <EmptyState
-                        icon={<AlertTriangle size={26} />}
-                        title={t('suggestions.errorTitle')}
-                        subtitle={t('suggestions.errorSubtitle')}
-                        action={<Button onClick={() => setSuggestRetryToken((n) => n + 1)}>{t('suggestions.retry')}</Button>}
-                      />
-                      <OfflineSuggestions items={items} />
-                    </div>
+                    <EmptyState
+                      icon={<AlertTriangle size={26} />}
+                      title={t('suggestions.errorTitle')}
+                      subtitle={t('suggestions.errorSubtitle')}
+                      action={<Button onClick={() => setSuggestRetryToken((n) => n + 1)}>{t('suggestions.retry')}</Button>}
+                    />
                   )}
                   {suggestState.status === 'success' && suggestState.data.length === 0 && (
                     <EmptyState

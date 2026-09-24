@@ -1,7 +1,7 @@
 import type { ApiRecipe, RecipeMatch } from '../types/recipe'
 import type { InventoryImportance, RecipePreferences } from '../types/recipePreferences'
 import { computeRecipeMatch } from './recipeIngredients'
-import { classifyRecipe, isVegetarianFriendly, preferenceFitLabelKey } from './recipeClassification'
+import { classifyRecipe, preferenceFitLabelKey } from './recipeClassification'
 import { recipeContainsAvoidedIngredient } from './avoidedIngredients'
 
 /**
@@ -21,17 +21,17 @@ const INVENTORY_WEIGHTS: Record<InventoryImportance, { match: number; missing: n
 /**
  * Ranks candidate recipes for the Suggestions tab using the user's recipe
  * preferences. Priority order (highest first), matching the product spec:
- *   1. Recipe type/preference fit  — recipes whose class (main/breakfast/
- *      dessert/snack) doesn't satisfy ANY selected meal interest are
- *      dropped outright (e.g. desserts when only Dinner is selected).
- *      Recipes of unrecognized class ("unknown") are kept but rank below
- *      a confirmed fit, never above one.
+ *   1. Recipe type/preference fit — recipes whose authored meal types
+ *      (breakfast/lunch/dinner) don't satisfy ANY selected meal interest
+ *      are dropped outright (e.g. a dinner-only recipe when only
+ *      Breakfast is selected). Every curated recipe has an authored meal
+ *      type, so there's no "unrecognized class" case to keep around.
  *   2. Inventory relevance — matchCount and missing.length combined via
  *      the mode weights above into one score.
  *   3. Use-soon boost — more matched ingredients expiring soon ranks higher.
  *   4. Fewest missing ingredients, as a final deterministic tiebreak.
  * Vegetarian filtering (when selected) is applied before ranking, for the
- * same reason as the meal-class filter: it's a personal profile setting,
+ * same reason as the meal-type filter: it's a personal profile setting,
  * scoped to these personalized suggestions only (Search results are never
  * filtered by it — see Recipes.tsx).
  *
@@ -46,10 +46,9 @@ export const rankSuggestionsByPreference = (
   preferences: RecipePreferences,
 ): RecipeMatch[] => {
   const candidates = recipes.filter((recipe) => {
-    if (preferences.dietary === 'vegetarian' && !isVegetarianFriendly(recipe)) return false
+    if (preferences.dietary === 'vegetarian' && !recipe.isVegetarian) return false
     if (recipeContainsAvoidedIngredient(recipe, preferences.avoidedIngredients)) return false
-    const mealClass = classifyRecipe(recipe)
-    return mealClass === 'unknown' || preferenceFitLabelKey(mealClass, preferences.mealInterests) !== null
+    return preferenceFitLabelKey(classifyRecipe(recipe), preferences.mealInterests) !== null
   })
 
   const weights = INVENTORY_WEIGHTS[preferences.inventoryImportance]

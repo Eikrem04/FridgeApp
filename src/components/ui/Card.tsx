@@ -9,7 +9,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export const Card = ({ children, className = '', animate = true, ...props }: CardProps) => {
   if (!animate) {
     return (
-      <div className={`rounded-3xl bg-[var(--color-surface)] ${className}`} {...props}>
+      <div className={`card-surface rounded-3xl bg-[var(--color-surface)] ${className}`} {...props}>
         {children}
       </div>
     )
@@ -19,7 +19,7 @@ export const Card = ({ children, className = '', animate = true, ...props }: Car
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-      className={`rounded-3xl bg-[var(--color-surface)] ${className}`}
+      className={`card-surface rounded-3xl bg-[var(--color-surface)] ${className}`}
       {...(props as any)}
     >
       {children}

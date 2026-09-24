@@ -12,34 +12,41 @@ const prefs = (overrides: Partial<RecipePreferences> = {}): RecipePreferences =>
 const namedIngredients = (count: number, prefix = 'ingredient') =>
   Array.from({ length: count }, (_, i) => ({ name: `${prefix}${i + 1}` }))
 
+const recipe = (overrides: Partial<ApiRecipe> & Pick<ApiRecipe, 'id' | 'title'>): ApiRecipe => ({
+  ingredients: [],
+  isVegetarian: false,
+  mealType: ['dinner'],
+  ...overrides,
+})
+
 describe('rankSuggestionsByPreference — meal-type filtering', () => {
-  it('filters out a dessert-classified recipe when only Dinner is selected', () => {
-    const mainRecipe: ApiRecipe = { id: 'main', title: 'Roast Chicken', category: 'Chicken', ingredients: [] }
-    const dessertRecipe: ApiRecipe = { id: 'dessert', title: 'Chocolate Cake', category: 'Dessert', ingredients: [] }
+  it('filters out a breakfast-only recipe when only Dinner is selected', () => {
+    const dinnerRecipe = recipe({ id: 'dinner', title: 'Roast Chicken', mealType: ['dinner'] })
+    const breakfastRecipe = recipe({ id: 'breakfast', title: 'Porridge', mealType: ['breakfast'] })
 
-    const result = rankSuggestionsByPreference([mainRecipe, dessertRecipe], [], [], prefs({ mealInterests: ['dinner'] }))
+    const result = rankSuggestionsByPreference([dinnerRecipe, breakfastRecipe], [], [], prefs({ mealInterests: ['dinner'] }))
 
-    expect(result.map((m) => m.recipe.id)).toEqual(['main'])
+    expect(result.map((m) => m.recipe.id)).toEqual(['dinner'])
   })
 
-  it('keeps the dessert once Baking & desserts is also selected', () => {
-    const dessertRecipe: ApiRecipe = { id: 'dessert', title: 'Chocolate Cake', category: 'Dessert', ingredients: [] }
-    const result = rankSuggestionsByPreference([dessertRecipe], [], [], prefs({ mealInterests: ['dinner', 'desserts'] }))
-    expect(result.map((m) => m.recipe.id)).toEqual(['dessert'])
+  it('keeps a multi-meal-type recipe once either of its types is selected', () => {
+    const lunchAndDinner = recipe({ id: 'both', title: 'Taco', mealType: ['lunch', 'dinner'] })
+    const result = rankSuggestionsByPreference([lunchAndDinner], [], [], prefs({ mealInterests: ['lunch'] }))
+    expect(result.map((m) => m.recipe.id)).toEqual(['both'])
   })
 
-  it('keeps an unclassifiable ("unknown") recipe rather than dropping it outright', () => {
-    const mysteryRecipe: ApiRecipe = { id: 'mystery', title: 'Family Recipe', category: 'Miscellaneous', ingredients: [] }
-    const result = rankSuggestionsByPreference([mysteryRecipe], [], [], prefs({ mealInterests: ['dinner'] }))
-    expect(result.map((m) => m.recipe.id)).toEqual(['mystery'])
+  it('drops every recipe when the user only selects an interest the catalog never authors (snacks/desserts)', () => {
+    const dinnerRecipe = recipe({ id: 'dinner', title: 'Roast Chicken', mealType: ['dinner'] })
+    const result = rankSuggestionsByPreference([dinnerRecipe], [], [], prefs({ mealInterests: ['snacks'] }))
+    expect(result).toEqual([])
   })
 })
 
 describe('rankSuggestionsByPreference — inventory_first vs balanced vs discovery', () => {
   // Recipe A: lots of matches AND lots of missing (5 of 10 owned).
   // Recipe B: few matches but nothing missing (2 of 2 owned).
-  const recipeA: ApiRecipe = { id: 'A', title: 'Big Recipe', category: 'Chicken', ingredients: namedIngredients(10) }
-  const recipeB: ApiRecipe = { id: 'B', title: 'Small Recipe', category: 'Chicken', ingredients: namedIngredients(2) }
+  const recipeA = recipe({ id: 'A', title: 'Big Recipe', ingredients: namedIngredients(10) })
+  const recipeB = recipe({ id: 'B', title: 'Small Recipe', ingredients: namedIngredients(2) })
   const owned = ['ingredient1', 'ingredient2', 'ingredient3', 'ingredient4', 'ingredient5']
 
   it('inventory_first heavily penalizes missing ingredients — B (0 missing) beats A (5 missing) despite fewer matches', () => {
@@ -62,8 +69,8 @@ describe('rankSuggestionsByPreference — inventory_first vs balanced vs discove
 describe('rankSuggestionsByPreference — use-soon is a tiebreaker, not an override', () => {
   it('does not let a use-soon match override a clearly better inventory match', () => {
     // Distinct ingredient prefixes per recipe so `owned`/`useSoon` can apply asymmetrically.
-    const strongMatch: ApiRecipe = { id: 'strong', title: 'Strong', category: 'Chicken', ingredients: namedIngredients(5, 'strong') }
-    const weakMatchUsesSoon: ApiRecipe = { id: 'weak', title: 'Weak', category: 'Chicken', ingredients: namedIngredients(5, 'weak') }
+    const strongMatch = recipe({ id: 'strong', title: 'Strong', ingredients: namedIngredients(5, 'strong') })
+    const weakMatchUsesSoon = recipe({ id: 'weak', title: 'Weak', ingredients: namedIngredients(5, 'weak') })
     // strongMatch: owns 4 of 5, none expiring soon. weakMatchUsesSoon: owns only 1 of 5, but that 1 is expiring soon.
     const owned = ['strong1', 'strong2', 'strong3', 'strong4', 'weak1']
     const useSoon = ['weak1']
@@ -73,8 +80,8 @@ describe('rankSuggestionsByPreference — use-soon is a tiebreaker, not an overr
   })
 
   it('does break ties between otherwise-equal recipes in favor of the one using soon-to-expire ingredients', () => {
-    const withUseSoon: ApiRecipe = { id: 'with-use-soon', title: 'A', category: 'Chicken', ingredients: namedIngredients(3, 'a') }
-    const withoutUseSoon: ApiRecipe = { id: 'without-use-soon', title: 'B', category: 'Chicken', ingredients: namedIngredients(3, 'b') }
+    const withUseSoon = recipe({ id: 'with-use-soon', title: 'A', ingredients: namedIngredients(3, 'a') })
+    const withoutUseSoon = recipe({ id: 'without-use-soon', title: 'B', ingredients: namedIngredients(3, 'b') })
     // Each recipe owns exactly 1 of its own 3 ingredients — identical matchCount/missing on both
     // sides — but only the "a" recipe's matched ingredient is in the use-soon set.
     const owned = ['a1', 'b1']
@@ -85,10 +92,27 @@ describe('rankSuggestionsByPreference — use-soon is a tiebreaker, not an overr
   })
 })
 
+describe('rankSuggestionsByPreference — dietary (vegetarian) filtering', () => {
+  it('excludes a non-vegetarian recipe when the dietary preference is vegetarian', () => {
+    const meatRecipe = recipe({ id: 'meat', title: 'Roast Chicken', isVegetarian: false })
+    const veggieRecipe = recipe({ id: 'veggie', title: 'Veggie Bowl', isVegetarian: true })
+
+    const result = rankSuggestionsByPreference([meatRecipe, veggieRecipe], [], [], prefs({ dietary: 'vegetarian' }))
+
+    expect(result.map((m) => m.recipe.id)).toEqual(['veggie'])
+  })
+
+  it('keeps non-vegetarian recipes when the dietary preference is none', () => {
+    const meatRecipe = recipe({ id: 'meat', title: 'Roast Chicken', isVegetarian: false })
+    const result = rankSuggestionsByPreference([meatRecipe], [], [], prefs({ dietary: 'none' }))
+    expect(result.map((m) => m.recipe.id)).toEqual(['meat'])
+  })
+})
+
 describe('rankSuggestionsByPreference — avoided ingredients', () => {
   it('excludes a recipe containing an avoided ingredient from suggestions entirely', () => {
-    const withEgg: ApiRecipe = { id: 'egg-recipe', title: 'Omelette', category: 'Breakfast', ingredients: [{ name: 'egg' }] }
-    const withoutEgg: ApiRecipe = { id: 'no-egg', title: 'Porridge', category: 'Breakfast', ingredients: [{ name: 'oats' }] }
+    const withEgg = recipe({ id: 'egg-recipe', title: 'Omelette', mealType: ['breakfast'], ingredients: [{ name: 'egg' }] })
+    const withoutEgg = recipe({ id: 'no-egg', title: 'Porridge', mealType: ['breakfast'], ingredients: [{ name: 'oats' }] })
 
     const result = rankSuggestionsByPreference(
       [withEgg, withoutEgg],
@@ -101,7 +125,7 @@ describe('rankSuggestionsByPreference — avoided ingredients', () => {
   })
 
   it('never re-adds an excluded recipe even when it would otherwise be the best match', () => {
-    const withEgg: ApiRecipe = { id: 'egg-recipe', title: 'Omelette', category: 'Breakfast', ingredients: [{ name: 'egg' }] }
+    const withEgg = recipe({ id: 'egg-recipe', title: 'Omelette', mealType: ['breakfast'], ingredients: [{ name: 'egg' }] })
     const result = rankSuggestionsByPreference(
       [withEgg],
       ['egg'],

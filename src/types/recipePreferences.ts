@@ -14,8 +14,8 @@ export interface RecipePreferences {
    * Ingredients the user wants to avoid — a mix of preset keys (see
    * AvoidedPresetKey in lib/avoidedIngredients.ts, e.g. "milk", "peanuts")
    * and free-typed custom text, stored exactly as entered. Kitchen only
-   * checks TheMealDB's listed ingredient text — this is never a verified
-   * allergen database, see lib/avoidedIngredients.ts.
+   * checks each recipe's own listed ingredient text — this is never a
+   * verified allergen database, see lib/avoidedIngredients.ts.
    */
   avoidedIngredients: string[]
   /** Whether the one-time preferences quiz has been completed or explicitly skipped. */

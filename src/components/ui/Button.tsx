@@ -11,7 +11,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-[var(--color-accent)] text-white active:opacity-80 disabled:opacity-40',
+  primary: 'bg-[var(--color-accent)] text-white active:bg-[var(--color-accent-pressed)] disabled:opacity-40',
   secondary: 'bg-black/[0.05] dark:bg-white/10 text-[var(--color-ink)] active:opacity-70 disabled:opacity-40',
   ghost: 'bg-transparent text-[var(--color-accent)] active:opacity-60 disabled:opacity-40',
   danger: 'bg-[var(--color-bad-soft)] text-[var(--color-bad)] active:opacity-70 disabled:opacity-40',

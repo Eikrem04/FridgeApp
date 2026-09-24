@@ -2,13 +2,12 @@ import type { ApiRecipe, RecipeIngredient } from '../types/recipe'
 import { significantWords } from './recipeIngredients'
 
 /**
- * SAFETY: TheMealDB's ingredient list is free text from a public recipe
- * database, not a verified allergen database. This module can only ever
- * flag/exclude recipes based on the ingredient names TheMealDB happens to
- * list — it must never be used to claim a recipe IS allergy-safe, only that
- * a listed ingredient text did or didn't match. Callers must always show
- * the "verify labels yourself" disclaimer alongside any warning built from
- * this module's output (see recipes.json's `avoided.disclaimer`).
+ * SAFETY: a recipe's ingredient list is free text from Kitch's own curated catalog, not a
+ * verified allergen database. This module can only ever flag/exclude recipes based on the
+ * ingredient names it happens to list — it must never be used to claim a recipe IS allergy-safe,
+ * only that a listed ingredient text did or didn't match. Callers must always show the "verify
+ * labels yourself" disclaimer alongside any warning built from this module's output (see
+ * recipes.json's `avoided.disclaimer`).
  */
 
 export type AvoidedPresetKey = 'peanuts' | 'treeNuts' | 'milk' | 'egg' | 'fish' | 'shellfish' | 'soy' | 'wheatGluten' | 'sesame'
