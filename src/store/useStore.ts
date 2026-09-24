@@ -29,6 +29,7 @@ import {
   shoppingItemFromRow,
   statEventFromRow,
   storageUnitFromRow,
+  type PersistedSettings,
 } from '../lib/mappers'
 import { useToastStore } from './useToastStore'
 import { importBackupToCloud, type LegacyBackup } from '../lib/migrateLocalData'
@@ -53,13 +54,27 @@ const defaultSettings: AppSettings = {
   notifications: {
     enabled: true,
     timing: 1,
-    browserPermission: typeof Notification !== 'undefined' ? Notification.permission : 'unsupported',
+    // Neutral placeholder only — never recomputed from a persisted row (see PersistedSettings in
+    // mappers.ts). The real value comes solely from useNotificationSync's mount-time platform
+    // check via setNotificationPermission, both on web and native.
+    browserPermission: 'default',
   },
   expiration: {
     expiringSoonDays: 3,
   },
   recipePreferences: DEFAULT_RECIPE_PREFERENCES,
 }
+
+/**
+ * Settings fetched from Supabase never carry `browserPermission` (see PersistedSettings) — it's
+ * local-only runtime state, so every merge of freshly-fetched settings keeps whatever the
+ * current in-memory value already is, rather than letting a fetch/realtime update silently
+ * reset it.
+ */
+const mergeFetchedSettings = (current: AppSettings, fetched: PersistedSettings): AppSettings => ({
+  ...fetched,
+  notifications: { ...fetched.notifications, browserPermission: current.notifications.browserPermission },
+})
 
 const upsert = <T extends { id: string }>(arr: T[], item: T): T[] => {
   const idx = arr.findIndex((x) => x.id === item.id)
@@ -254,7 +269,7 @@ export const useStore = create<AppState>()((set, get) => ({
         items: (itemsRes.data ?? []).map(itemFromRow),
         shoppingList: (shoppingRes.data ?? []).map(shoppingItemFromRow),
         statEvents: (statsRes.data ?? []).map(statEventFromRow),
-        settings: settingsRes.data ? settingsFromRow(settingsRes.data) : defaultSettings,
+        settings: mergeFetchedSettings(get().settings, settingsRes.data ? settingsFromRow(settingsRes.data) : defaultSettings),
         dataStatus: 'ready',
       })
 
@@ -362,7 +377,7 @@ export const useStore = create<AppState>()((set, get) => ({
           { event: '*', schema: 'public', table: 'user_settings', filter: `user_id=eq.${userId}` },
           (payload) => {
             if (payload.eventType !== 'DELETE') {
-              set({ settings: settingsFromRow(payload.new as never) })
+              set((s) => ({ settings: mergeFetchedSettings(s.settings, settingsFromRow(payload.new as never)) }))
             }
           },
         )

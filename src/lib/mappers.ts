@@ -3,11 +3,23 @@ import type {
   AppSettings,
   Category,
   InventoryItem,
+  NotificationSettings,
   ShoppingListItem,
   StatEvent,
   StorageUnit,
 } from '../types'
 import { DEFAULT_RECIPE_PREFERENCES } from '../types/recipePreferences'
+
+/**
+ * What `settingsFromRow` can actually know from a Supabase row — `browserPermission` is
+ * deliberately excluded. It's local-only runtime state (see `NotificationSettings`): the real
+ * value can only come from a live platform check (`getNotificationPermission` in
+ * nativeNotifications.ts, surfaced via `setNotificationPermission` in useStore.ts), never from a
+ * persisted row. Call sites merge this with the current in-memory `browserPermission` themselves.
+ */
+export type PersistedSettings = Omit<AppSettings, 'notifications'> & {
+  notifications: Omit<NotificationSettings, 'browserPermission'>
+}
 
 type StorageUnitRow = Database['public']['Tables']['storage_units']['Row']
 type CategoryRow = Database['public']['Tables']['categories']['Row']
@@ -63,7 +75,7 @@ export const statEventFromRow = (row: StatEventRow): StatEvent => ({
   date: row.occurred_at,
 })
 
-export const settingsFromRow = (row: UserSettingsRow): AppSettings => ({
+export const settingsFromRow = (row: UserSettingsRow): PersistedSettings => ({
   onboardingComplete: row.onboarding_complete,
   theme: row.theme,
   // Defensive fallback: if migration 0005 hasn't been applied yet, the
@@ -82,7 +94,6 @@ export const settingsFromRow = (row: UserSettingsRow): AppSettings => ({
   notifications: {
     enabled: row.notifications_enabled,
     timing: row.notifications_timing === 'never' ? 'never' : (Number(row.notifications_timing) as 0 | 1 | 2 | 3),
-    browserPermission: typeof Notification !== 'undefined' ? Notification.permission : 'unsupported',
   },
   expiration: {
     expiringSoonDays: row.expiring_soon_days,
